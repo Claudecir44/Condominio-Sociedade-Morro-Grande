@@ -192,18 +192,8 @@ public class MoradorFirestoreRepository {
 
     // ==================== CONVERSÃO JSON -> MAP ====================
     private Map<String, Object> jsonToMap(JSONObject json) {
-        Map<String, Object> map = new HashMap<>();
-        Iterator<String> keys = json.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            try {
-                Object value = json.get(key);
-                map.put(key, value);
-            } catch (JSONException e) {
-                Log.e(TAG, "Erro ao converter JSON para Map: " + e.getMessage());
-            }
-        }
-        return map;
+        // Converte também listas (anexos) para o formato aceito pelo Firestore
+        return com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ColecaoFirestore.paraMapa(json);
     }
 
     public interface OnCompleteListener<T> {

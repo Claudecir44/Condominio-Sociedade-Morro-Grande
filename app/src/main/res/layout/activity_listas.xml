@@ -21,48 +21,60 @@
     <Button
         android:id="@+id/btnListaMoradores"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:text="Lista de Moradores"
         android:textSize="16sp"
-        android:backgroundTint="#6E747E"
+        android:backgroundTint="@color/painelMoradores"
+        app:icon="@drawable/ic_painel_moradores"
+        app:iconGravity="textStart"
+        app:iconSize="26dp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:cornerRadius="8dp"
+        app:cornerRadius="14dp"
         android:layout_marginBottom="12dp"/>
 
     <Button
         android:id="@+id/btnListaAssembleias"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:text="Lista de Assembleias"
         android:textSize="16sp"
-        android:backgroundTint="#6E747E"
+        android:backgroundTint="@color/painelAssembleias"
+        app:icon="@drawable/ic_painel_assembleias"
+        app:iconGravity="textStart"
+        app:iconSize="26dp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:cornerRadius="8dp"
+        app:cornerRadius="14dp"
         android:layout_marginBottom="12dp"/>
 
     <Button
         android:id="@+id/btnListaDespesas"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:text="Prestação de Contas"
         android:textSize="16sp"
-        android:backgroundTint="#6E747E"
+        android:backgroundTint="@color/painelDespesas"
+        app:icon="@drawable/ic_painel_contas"
+        app:iconGravity="textStart"
+        app:iconSize="26dp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:cornerRadius="8dp"
+        app:cornerRadius="14dp"
         android:layout_marginBottom="12dp"/>
 
     <Button
         android:id="@+id/btnListaAvisos"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:text="Avisos"
         android:textSize="16sp"
-        android:backgroundTint="#6E747E"
+        android:backgroundTint="@color/painelAvisos"
+        app:icon="@drawable/ic_painel_avisos"
+        app:iconGravity="textStart"
+        app:iconSize="26dp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:cornerRadius="8dp"/>
+        app:cornerRadius="14dp"/>
 
 </LinearLayout>

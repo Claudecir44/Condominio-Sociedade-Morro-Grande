@@ -132,47 +132,11 @@ public class OcorrenciasAdapter extends RecyclerView.Adapter<OcorrenciasAdapter.
                     textEnvolvidos.setVisibility(View.GONE);
                 }
 
-                layoutAnexos.removeAllViews();
-                JSONArray anexosArray = new JSONArray(ocorrencia.optString("anexos", "[]"));
-                if (anexosArray.length() > 0 && isExpanded) {
+                // Fotos, PDF, Word, Excel... (abrir, baixar, exportar)
+                java.util.List<String> anexos = ListaAnexos.deValor(ocorrencia.opt("anexos"));
+                if (!anexos.isEmpty() && isExpanded) {
                     textAnexosTitulo.setVisibility(View.VISIBLE);
-                    layoutAnexos.setVisibility(View.VISIBLE);
-
-                    for (int i = 0; i < anexosArray.length(); i++) {
-                        String originalUriStr = anexosArray.getString(i);
-                        Uri originalUri = Uri.parse(originalUriStr);
-
-                        String fileName = "Anexo_" + (i + 1) + "_" + new File(originalUri.getPath()).getName();
-                        File internalFile = copyToInternal(context, originalUri, fileName);
-
-                        if (internalFile != null) {
-                            TextView anexItem = new TextView(context);
-                            String icone = getIconeArquivo(internalFile.getName());
-                            anexItem.setText(icone + " " + internalFile.getName());
-                            anexItem.setTextSize(13);
-                            anexItem.setTextColor(0xFF2196F3);
-                            anexItem.setPadding(8, 4, 8, 4);
-                            anexItem.setBackgroundResource(android.R.drawable.list_selector_background);
-
-                            anexItem.setOnClickListener(v -> {
-                                try {
-                                    Uri fileUri = FileProvider.getUriForFile(context,
-                                            context.getPackageName() + ".provider", internalFile);
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setDataAndType(fileUri, getMimeType(internalFile.getName()));
-                                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    context.startActivity(Intent.createChooser(intent, "Abrir com"));
-                                } catch (ActivityNotFoundException e) {
-                                    Toast.makeText(context, "Não há aplicativo disponível para abrir este arquivo.", Toast.LENGTH_SHORT).show();
-                                } catch (Exception e) {
-                                    Toast.makeText(context, "Erro ao abrir anexo.", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
-                            });
-
-                            layoutAnexos.addView(anexItem);
-                        }
-                    }
+                    ListaAnexos.mostrar(layoutAnexos, anexos);
                 } else {
                     textAnexosTitulo.setVisibility(View.GONE);
                     layoutAnexos.setVisibility(View.GONE);

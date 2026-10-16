@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,8 +18,11 @@ import com.cjstudio.condominio_sociedade_morro_grande.CadastroManutencaoActivity
 import com.cjstudio.condominio_sociedade_morro_grande.CadastroMoradorActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.FuncionariosActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaAssembleiasActivity;
+import com.cjstudio.condominio_sociedade_morro_grande.LeituraAguaActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaAvisosActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaDespesasActivity;
+import com.cjstudio.condominio_sociedade_morro_grande.ListaLeiturasAguaActivity;
+import com.cjstudio.condominio_sociedade_morro_grande.MainActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaMoradoresActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.R;
@@ -24,6 +30,7 @@ import com.cjstudio.condominio_sociedade_morro_grande.RegistroAssembleiasActivit
 import com.cjstudio.condominio_sociedade_morro_grande.RegistroDespesasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.RegistroOcorrenciasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.domain.model.ButtonVisibility;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +54,36 @@ public class DashBoardActivity extends AppCompatActivity {
         String tipoUsuario = getIntent().getStringExtra("tipo_usuario");
         String moradorNome = getIntent().getStringExtra("morador_nome");
         viewModel.loadUserPermissions(tipoUsuario, moradorNome);
+
+        // Cabeçalho: "Administração" para admin, saudação para o morador
+        TextView titulo = findViewById(R.id.textTitulo);
+        if ("morador".equals(tipoUsuario)) {
+            String primeiroNome = moradorNome != null ? moradorNome.trim().split(" ")[0] : "";
+            titulo.setText(primeiroNome.isEmpty() ? "Área do Morador" : "Olá, " + primeiroNome + "!");
+        }
+
+        // Voltar não sai do app nem desloga: só o botão "Sair" faz isso
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Toast.makeText(DashBoardActivity.this,
+                        "Para sair, toque em \"Sair\" no canto superior direito.", Toast.LENGTH_SHORT).show();
+            }
+        });
+        findViewById(R.id.buttonSair).setOnClickListener(v -> new AlertDialog.Builder(this)
+                .setTitle("Sair")
+                .setMessage("Deseja sair da sua conta?")
+                .setPositiveButton("Sair", (d, w) -> sair())
+                .setNegativeButton("Cancelar", null)
+                .show());
+    }
+
+    private void sair() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void initializeButtons() {
@@ -59,10 +96,12 @@ public class DashBoardActivity extends AppCompatActivity {
         buttons.put("ocorrencias", findViewById(R.id.buttonRegistroOcorrencias));
         buttons.put("manutencao", findViewById(R.id.buttonManutencao));
         buttons.put("funcionarios", findViewById(R.id.buttonFuncionarios));
+        buttons.put("leiturasAgua", findViewById(R.id.buttonLeiturasAgua));
 
         // Botões do morador (apenas os que ficam na Dashboard)
         buttons.put("listaDespesas", findViewById(R.id.buttonListaDespesas));
         buttons.put("avisosMorador", findViewById(R.id.buttonAvisosMorador));
+        buttons.put("leituraAgua", findViewById(R.id.buttonLeituraAgua));
 
         // Botão "Listas" (admin e morador)
         buttons.put("listas", findViewById(R.id.buttonListas));
@@ -83,10 +122,12 @@ public class DashBoardActivity extends AppCompatActivity {
         }
         ButtonVisibility visibility = uiState.getButtonVisibility();
         if (visibility != null) {
+            // Botões de outro perfil saem da grade (GONE no GridLayout ainda ocupa a posição e deixa buraco)
             for (Map.Entry<String, Button> entry : buttons.entrySet()) {
-                entry.getValue().setVisibility(
-                        visibility.isVisible(entry.getKey()) ? View.VISIBLE : View.GONE
-                );
+                Button botao = entry.getValue();
+                if (!visibility.isVisible(entry.getKey()) && botao.getParent() instanceof android.view.ViewGroup) {
+                    ((android.view.ViewGroup) botao.getParent()).removeView(botao);
+                }
             }
         }
     }
@@ -136,6 +177,12 @@ public class DashBoardActivity extends AppCompatActivity {
                 break;
             case LISTAS:
                 intent = new Intent(this, ListasActivity.class);
+                break;
+            case LEITURA_AGUA:
+                intent = new Intent(this, LeituraAguaActivity.class);
+                break;
+            case LISTA_LEITURAS_AGUA:
+                intent = new Intent(this, ListaLeiturasAguaActivity.class);
                 break;
             default:
                 break;

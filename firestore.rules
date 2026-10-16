@@ -67,6 +67,29 @@ service cloud.firestore {
     match /moradores/{uid} {
       allow read: if ehAdmin() || (logado() && request.auth.uid == uid);
       allow write: if ehAdmin();
+      // No primeiro login o próprio morador cadastra a foto (só esse campo)
+      allow update: if logado()
+                    && request.auth.uid == uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['foto'])
+                    && request.resource.data.foto is string;
+    }
+
+    // Leitura d'água: o morador envia a dele (com a quadra/lote do próprio cadastro);
+    // admin vê todas e pode excluir. Ninguém edita depois de enviada.
+    match /leituras_agua/{id} {
+      allow read: if ehAdmin() || (logado() && resource.data.moradorUid == request.auth.uid);
+      allow create: if ehMorador()
+                    && request.resource.data.keys().hasOnly(['moradorUid', 'nome', 'quadra', 'lote', 'leitura', 'foto', 'criadoEm'])
+                    && request.resource.data.moradorUid == request.auth.uid
+                    && request.resource.data.quadra == get(caminho('moradores', request.auth.uid)).data.quadra
+                    && request.resource.data.lote == get(caminho('moradores', request.auth.uid)).data.lote
+                    && request.resource.data.leitura is string
+                    && request.resource.data.leitura.size() > 0
+                    && request.resource.data.leitura.size() <= 12
+                    && request.resource.data.foto is string
+                    && request.resource.data.criadoEm == request.time;
+      allow update: if false;
+      allow delete: if ehAdmin();
     }
 
     // Informações do condomínio: todos os membros leem, só admin grava

@@ -44,10 +44,12 @@ public class DashBoardViewModel extends AndroidViewModel {
         visibility.setVisible("ocorrencias", isAdmin);
         visibility.setVisible("manutencao", isAdmin);
         visibility.setVisible("funcionarios", isAdmin);
+        visibility.setVisible("leiturasAgua", isAdmin);
 
         // Morador – apenas os que ficam na Dashboard (sem listaAssembleias)
         visibility.setVisible("listaDespesas", isMorador);
         visibility.setVisible("avisosMorador", isMorador);
+        visibility.setVisible("leituraAgua", isMorador);
 
         // "Listas" – visível para ambos
         visibility.setVisible("listas", isAdmin || isMorador);
@@ -76,9 +78,11 @@ public class DashBoardViewModel extends AndroidViewModel {
             case "manutencao": return NavigationTarget.MANUTENCAO;
             case "funcionarios": return NavigationTarget.FUNCIONARIOS;
             case "listas": return NavigationTarget.LISTAS;
+            case "leiturasAgua": return NavigationTarget.LISTA_LEITURAS_AGUA;
             // Morador
             case "listaDespesas": return NavigationTarget.LISTA_DESPESAS;
             case "avisosMorador": return NavigationTarget.LISTA_AVISOS;
+            case "leituraAgua": return NavigationTarget.LEITURA_AGUA;
             // O case "listaAssembleias" não é mais usado na Dashboard
             default: return null;
         }
@@ -97,7 +101,9 @@ public class DashBoardViewModel extends AndroidViewModel {
         LISTA_ASSEMBLEIAS,
         LISTA_DESPESAS,
         LISTA_AVISOS,
-        LISTA_MORADORES
+        LISTA_MORADORES,
+        LEITURA_AGUA,
+        LISTA_LEITURAS_AGUA
     }
 
     public static class NavigationEvent {

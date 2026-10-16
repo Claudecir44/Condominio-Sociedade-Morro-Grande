@@ -112,8 +112,8 @@
             android:textStyle="bold"
             android:letterSpacing="0.03"
             android:textColor="#FFFFFF"
-            app:cornerRadius="8dp"
-            app:backgroundTint="#6E747E"
+            app:cornerRadius="14dp"
+            app:backgroundTint="@color/botaoPrimario"
             android:layout_marginTop="16dp"/>
 
     </LinearLayout>

@@ -30,22 +30,12 @@ import java.util.Locale;
 public class CadastroManutencaoActivity extends AppCompatActivity {
 
     private EditText etTipo, etDataHora, etLocal, etServico, etResponsavel, etValor, etNotas;
-    private Button btnAnexar, btnSalvar, btnLista;
+    private Button btnSalvar, btnLista;
+    private PainelAnexos painelAnexos;
     private ManutencaoDAO manutencaoDAO;
-    private List<String> anexos = new ArrayList<>();
     private String idEdicao = null;
 
     private final SimpleDateFormat formatoDataHora = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-
-    private final ActivityResultLauncher<String[]> filePickerLauncher = registerForActivityResult(
-            new ActivityResultContracts.OpenDocument(),
-            uris -> {
-                if (uris != null) {
-                    anexos.add(uris.toString());
-                    Toast.makeText(this, "Arquivo anexado: " + getFileName(uris), Toast.LENGTH_SHORT).show();
-                }
-            }
-    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +50,13 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
         etValor = findViewById(R.id.editValor);
         etNotas = findViewById(R.id.editNotas);
 
-        btnAnexar = findViewById(R.id.buttonAnexar);
+        painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
         btnSalvar = findViewById(R.id.buttonSalvarManutencao);
         btnLista = findViewById(R.id.buttonListaManutencao);
 
         manutencaoDAO = new ManutencaoDAO();
 
         etDataHora.setOnClickListener(v -> mostrarDateTimePicker());
-
-        btnAnexar.setOnClickListener(v -> {
-            String[] mimeTypes = {"application/pdf", "application/msword",
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    "application/vnd.ms-excel",
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    "image/jpeg", "image/png", "text/plain"};
-            filePickerLauncher.launch(mimeTypes);
-        });
 
         btnSalvar.setOnClickListener(v -> salvarManutencao());
 
@@ -132,7 +113,7 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
         m.setNotas(notas);
         btnSalvar.setEnabled(false);
         // Anexos vão pro Firebase Storage; a manutenção guarda os links
-        ArquivosStorage.enviar(this, "manutencoes", new ArrayList<>(anexos), new ColecaoFirestore.Callback<List<String>>() {
+        painelAnexos.enviar("manutencoes", new ColecaoFirestore.Callback<List<String>>() {
             @Override
             public void onSucesso(List<String> links) {
                 m.setAnexos(links);
@@ -174,7 +155,7 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
         etResponsavel.setText("");
         etValor.setText("");
         etNotas.setText("");
-        anexos.clear();
+        painelAnexos.limpar();
         idEdicao = null;
     }
 
@@ -188,19 +169,8 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
             etResponsavel.setText(m.getResponsavel());
             etValor.setText(m.getValor());
             etNotas.setText(m.getNotas());
-            anexos = m.getAnexos() != null ? new ArrayList<>(m.getAnexos()) : new ArrayList<>();
+            painelAnexos.definir(m.getAnexos());
         }
     }
 
-    private String getFileName(Uri uri) {
-        String name = "Arquivo";
-        try (android.database.Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-            if (cursor != null && cursor.moveToFirst()) {
-                name = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return name;
-    }
 }

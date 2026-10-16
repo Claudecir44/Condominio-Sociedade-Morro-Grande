@@ -96,34 +96,10 @@ public class DespesaAdapter extends RecyclerView.Adapter<DespesaAdapter.DespesaV
                 btnExcluir.setVisibility(View.VISIBLE);
             }
 
-            layoutAnexos.removeAllViews();
-
-            if (despesa.getAnexos() != null && !despesa.getAnexos().isEmpty()) {
-                tvAnexosLabel.setVisibility(View.VISIBLE);
-                layoutAnexos.setVisibility(View.VISIBLE);
-
-                for (String uriString : despesa.getAnexos()) {
-                    try {
-                        Uri uri = Uri.parse(uriString);
-                        String nomeArquivo = getFileNameFromUri(uri);
-                        String icone = getIconeArquivo(nomeArquivo);
-
-                        TextView tvAnexo = new TextView(context);
-                        tvAnexo.setText(icone + " " + nomeArquivo);
-                        tvAnexo.setTextSize(13);
-                        tvAnexo.setTextColor(0xFF2196F3);
-                        tvAnexo.setPadding(8, 8, 8, 8);
-                        tvAnexo.setBackgroundResource(android.R.drawable.list_selector_background);
-                        tvAnexo.setOnClickListener(v -> abrirArquivo(uri));
-                        layoutAnexos.addView(tvAnexo);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                tvAnexosLabel.setVisibility(View.GONE);
-                layoutAnexos.setVisibility(View.GONE);
-            }
+            // Notas e comprovantes: fotos, PDF, Word, Excel... (abrir, baixar, exportar)
+            java.util.List<String> anexos = despesa.getAnexos() != null ? despesa.getAnexos() : new java.util.ArrayList<>();
+            tvAnexosLabel.setVisibility(anexos.isEmpty() ? View.GONE : View.VISIBLE);
+            ListaAnexos.mostrar(layoutAnexos, anexos);
 
             btnEditar.setOnClickListener(v -> {
                 if (listener != null) listener.onEditar(despesa, position);

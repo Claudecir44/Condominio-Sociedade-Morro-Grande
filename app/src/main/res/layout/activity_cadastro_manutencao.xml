@@ -153,36 +153,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Botão Anexar Documento -->
-        <Button
-            android:id="@+id/buttonAnexar"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#6E747E"
-            android:elevation="2dp"
-            android:letterSpacing="0.03"
-            android:text="Anexar Documento (PDF, Word, Excel)"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:cornerRadius="8dp"
-            app:layout_constraintTop_toBottomOf="@id/editNotas"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Layout para mostrar anexos -->
+        <!-- Anexos: tirar foto, buscar no celular, lista (abrir/baixar/exportar/remover) -->
         <LinearLayout
-            android:id="@+id/layoutAnexos"
+            android:id="@+id/painelAnexos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/buttonAnexar"
+            app:layout_constraintTop_toBottomOf="@id/editNotas"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -194,15 +174,15 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="#6E747E"
+            android:backgroundTint="@color/botaoPrimario"
             android:elevation="2dp"
             android:letterSpacing="0.03"
             android:text="Salvar"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:cornerRadius="8dp"
-            app:layout_constraintTop_toBottomOf="@id/layoutAnexos"
+            app:cornerRadius="14dp"
+            app:layout_constraintTop_toBottomOf="@id/painelAnexos"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -214,14 +194,14 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="2dp"
-            android:backgroundTint="#6E747E"
+            android:backgroundTint="@color/botaoPrimario"
             android:elevation="2dp"
             android:letterSpacing="0.03"
             android:text="Lista de Manutenções"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:cornerRadius="8dp"
+            app:cornerRadius="14dp"
             app:layout_constraintTop_toBottomOf="@id/buttonSalvarManutencao"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

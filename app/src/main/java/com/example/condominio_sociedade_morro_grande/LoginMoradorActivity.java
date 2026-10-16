@@ -34,10 +34,6 @@ public class LoginMoradorActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(com.cjstudio.condominio_sociedade_morro_grande.presentation.loginmorador.LoginMoradorViewModel.class);
 
-        // Ajusta os hints
-        editUsuario.setHint("Quadra + Lote (ex: A10)");
-        editSenha.setHint("3 primeiros dígitos do CPF");
-
         configurarCampoUsuario();
 
         viewModel.getUiState().observe(this, this::updateUi);
@@ -69,7 +65,7 @@ public class LoginMoradorActivity extends AppCompatActivity {
             }
         });
         tvLembrete.setVisibility(TextView.VISIBLE);
-        tvLembrete.setText("ℹ️ Dica: Use a quadra + lote (ex: A10) e os 3 primeiros dígitos do CPF.");
+        tvLembrete.setText("ℹ️ Dica: Use a quadra + lote (ex: A10) e os 6 primeiros dígitos do CPF.");
     }
 
     private void updateUi(com.cjstudio.condominio_sociedade_morro_grande.presentation.loginmorador.LoginMoradorUiState uiState) {
@@ -92,7 +88,11 @@ public class LoginMoradorActivity extends AppCompatActivity {
         if (data == null) return;
 
         Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, DashBoardActivity.class);
+        // Primeiro acesso sem foto: a foto é obrigatória antes de entrar no painel
+        boolean semFoto = data.getMoradorData().optString("foto", "").trim().isEmpty();
+        Intent intent = new Intent(this, semFoto
+                ? com.cjstudio.condominio_sociedade_morro_grande.FotoMoradorActivity.class
+                : DashBoardActivity.class);
         intent.putExtra("tipo_usuario", "morador");
         intent.putExtra("morador_nome", data.getMoradorNome());
         intent.putExtra("morador_cod", data.getMoradorCod());

@@ -126,35 +126,10 @@ public class AssembleiaAdapter extends RecyclerView.Adapter<AssembleiaAdapter.As
             if (isExpanded) {
                 layoutAnexos.removeAllViews();
 
-                try {
-                    JSONArray anexos = new JSONArray(assembleia.optString("anexos", "[]"));
-                    if (anexos.length() > 0) {
-                        tvAnexosLabel.setVisibility(View.VISIBLE);
-                        layoutAnexos.setVisibility(View.VISIBLE);
-
-                        for (int i = 0; i < anexos.length(); i++) {
-                            String caminho = anexos.getString(i);
-                            String nomeArquivo = getFileNameFromPath(caminho);
-                            String icone = getIconeArquivo(nomeArquivo);
-
-                            TextView tvAnexo = new TextView(context);
-                            tvAnexo.setText(icone + " " + nomeArquivo);
-                            tvAnexo.setTextSize(13);
-                            tvAnexo.setTextColor(0xFF2196F3);
-                            tvAnexo.setPadding(8, 8, 8, 8);
-                            tvAnexo.setBackgroundResource(android.R.drawable.list_selector_background);
-                            tvAnexo.setOnClickListener(v -> abrirArquivo(caminho));
-                            layoutAnexos.addView(tvAnexo);
-                        }
-                    } else {
-                        tvAnexosLabel.setVisibility(View.GONE);
-                        layoutAnexos.setVisibility(View.GONE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    tvAnexosLabel.setVisibility(View.GONE);
-                    layoutAnexos.setVisibility(View.GONE);
-                }
+                // Fotos, PDF, Word, Excel... (abrir, baixar, exportar)
+                java.util.List<String> anexos = ListaAnexos.deValor(assembleia.opt("anexos"));
+                tvAnexosLabel.setVisibility(anexos.isEmpty() ? View.GONE : View.VISIBLE);
+                ListaAnexos.mostrar(layoutAnexos, anexos);
             } else {
                 tvAnexosLabel.setVisibility(View.GONE);
                 layoutAnexos.setVisibility(View.GONE);

@@ -26,8 +26,8 @@ import java.util.List;
 public class RegistroDespesasActivity extends AppCompatActivity {
 
     private EditText editDataHora, editNome, editDescricao, editValor;
-    private Button btnSalvar, btnLista, btnAnexar;
-    private List<String> anexos = new ArrayList<>();
+    private Button btnSalvar, btnLista;
+    private PainelAnexos painelAnexos;
     private String editId = null;
     private DespesaDAO despesaDAO;
 
@@ -43,14 +43,13 @@ public class RegistroDespesasActivity extends AppCompatActivity {
 
         btnSalvar = findViewById(R.id.btnSalvarDespesa);
         btnLista = findViewById(R.id.btnListaDespesas);
-        btnAnexar = findViewById(R.id.btnAnexarNota);
+        painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
 
         despesaDAO = new DespesaDAO();
 
         String dataHoraAtual = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
         editDataHora.setText(dataHoraAtual);
 
-        btnAnexar.setOnClickListener(v -> selecionarArquivo());
         btnSalvar.setOnClickListener(v -> salvarDespesa());
 
         btnLista.setOnClickListener(v -> {
@@ -66,33 +65,7 @@ public class RegistroDespesasActivity extends AppCompatActivity {
                 editNome.setText(d.getNome());
                 editDescricao.setText(d.getDescricao());
                 editValor.setText(String.valueOf(d.getValor()));
-                anexos = d.getAnexos() != null ? new ArrayList<>(d.getAnexos()) : new ArrayList<>();
-            }
-        }
-    }
-
-    private void selecionarArquivo() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        String[] mimeTypes = {
-                "application/pdf",
-                "application/msword",
-                "application/vnd.ms-excel",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        };
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-        startActivityForResult(intent, 200);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
-            Uri uri = data.getData();
-            if (uri != null) {
-                anexos.add(uri.toString());
-                Toast.makeText(this, "Arquivo anexado", Toast.LENGTH_SHORT).show();
+                painelAnexos.definir(d.getAnexos());
             }
         }
     }
@@ -122,7 +95,7 @@ public class RegistroDespesasActivity extends AppCompatActivity {
         }
         btnSalvar.setEnabled(false);
         // Notas/anexos vão pro Firebase Storage; a despesa guarda os links
-        ArquivosStorage.enviar(this, "despesas", new ArrayList<>(anexos), new ColecaoFirestore.Callback<List<String>>() {
+        painelAnexos.enviar("despesas", new ColecaoFirestore.Callback<List<String>>() {
             @Override
             public void onSucesso(List<String> links) {
                 gravarDespesa(new Despesa(dataHora, nome, descricao, valor, links));
@@ -171,7 +144,7 @@ public class RegistroDespesasActivity extends AppCompatActivity {
         editNome.setText("");
         editDescricao.setText("");
         editValor.setText("");
-        anexos.clear();
+        painelAnexos.limpar();
         editId = null;
     }
 

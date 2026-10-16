@@ -131,7 +131,7 @@ public class ListaAvisosActivity extends AppCompatActivity {
                             aviso.put("datahora", data.get("datahora") != null ? data.get("datahora").toString() : "");
                             aviso.put("assunto", data.get("assunto") != null ? data.get("assunto").toString() : "");
                             aviso.put("descricao", data.get("descricao") != null ? data.get("descricao").toString() : "");
-                            aviso.put("anexos", data.get("anexos") != null ? data.get("anexos").toString() : "[]");
+                            aviso.put("anexos", new JSONArray(ListaAnexos.deValor(data.get("anexos"))).toString());
                             aviso.put("timestamp", data.get("timestamp") != null ? data.get("timestamp").toString() : "");
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -210,77 +210,12 @@ public class ListaAvisosActivity extends AppCompatActivity {
         ));
         cardAviso.addView(espaco3);
 
-        // Anexos
-        try {
-            JSONArray jsonAnexos = new JSONArray(aviso.optString("anexos", "[]"));
-            if (jsonAnexos.length() > 0) {
-                TextView tvSubtituloAnexos = new TextView(this);
-                tvSubtituloAnexos.setText("Documentos em Anexo:");
-                tvSubtituloAnexos.setTextSize(16);
-                tvSubtituloAnexos.setTextColor(getResources().getColor(android.R.color.black));
-                tvSubtituloAnexos.setTypeface(null, android.graphics.Typeface.BOLD);
-                tvSubtituloAnexos.setPadding(0, 0, 0, 8);
-                cardAviso.addView(tvSubtituloAnexos);
-
-                LinearLayout layoutAnexos = new LinearLayout(this);
-                layoutAnexos.setOrientation(LinearLayout.HORIZONTAL);
-                layoutAnexos.setPadding(0, 8, 0, 16);
-
-                for (int j = 0; j < jsonAnexos.length(); j++) {
-                    String path = jsonAnexos.optString(j);
-                    boolean ehLink = ArquivosStorage.ehLink(path);
-                    String nomeArquivo = new File(path).getName();
-                    if (ehLink) {
-                        String segmento = Uri.parse(path).getLastPathSegment();
-                        if (segmento != null) nomeArquivo = segmento.substring(segmento.lastIndexOf('/') + 1);
-                    }
-                    boolean existe = ehLink || new File(path).exists();
-
-                    LinearLayout containerAnexo = new LinearLayout(this);
-                    containerAnexo.setOrientation(LinearLayout.VERTICAL);
-                    containerAnexo.setPadding(0, 0, 16, 0);
-
-                    ImageView img = new ImageView(this);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
-                    img.setLayoutParams(params);
-                    img.setPadding(8, 8, 8, 8);
-                    img.setBackgroundResource(R.drawable.image_border);
-
-                    TextView tvNomeArquivo = new TextView(this);
-                    tvNomeArquivo.setLayoutParams(new LinearLayout.LayoutParams(
-                            120, LinearLayout.LayoutParams.WRAP_CONTENT
-                    ));
-                    tvNomeArquivo.setText(getNomeArquivoCompactado(nomeArquivo));
-                    tvNomeArquivo.setTextSize(10);
-                    tvNomeArquivo.setGravity(Gravity.CENTER);
-                    tvNomeArquivo.setMaxLines(2);
-                    tvNomeArquivo.setEllipsize(android.text.TextUtils.TruncateAt.END);
-
-                    if (existe) {
-                        if (isImagem(nomeArquivo)) {
-                            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                            ArquivosStorage.carregarImagem(img, path, R.drawable.ic_document);
-                        } else {
-                            img.setImageResource(R.drawable.ic_document);
-                            img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                        }
-                        img.setOnClickListener(v -> ArquivosStorage.abrir(ListaAvisosActivity.this, path));
-                    } else {
-                        img.setImageResource(android.R.drawable.ic_delete);
-                        img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                        tvNomeArquivo.setText("Arquivo\nnão encontrado");
-                    }
-
-                    containerAnexo.addView(img);
-                    containerAnexo.addView(tvNomeArquivo);
-                    layoutAnexos.addView(containerAnexo);
-                }
-                cardAviso.addView(layoutAnexos);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("LISTA_AVISOS", "Erro ao carregar anexos: " + e.getMessage());
-        }
+        // Anexos: fotos, PDF, Word, Excel... (abrir, baixar, exportar)
+        LinearLayout layoutAnexos = new LinearLayout(this);
+        layoutAnexos.setOrientation(LinearLayout.VERTICAL);
+        layoutAnexos.setPadding(0, 0, 0, 16);
+        ListaAnexos.mostrar(layoutAnexos, ListaAnexos.deValor(aviso.optString("anexos", "[]")));
+        cardAviso.addView(layoutAnexos);
 
         View separador = new View(this);
         separador.setLayoutParams(new LinearLayout.LayoutParams(

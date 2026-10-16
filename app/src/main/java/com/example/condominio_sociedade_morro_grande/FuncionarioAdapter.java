@@ -49,7 +49,7 @@ public class FuncionarioAdapter extends RecyclerView.Adapter<FuncionarioAdapter.
         holder.tvNomeFuncionario.setText(f.getNome() != null && !f.getNome().isEmpty() ? f.getNome() : "Nome não informado");
 
         if (f.getCargo() != null && !f.getCargo().isEmpty()) {
-            holder.tvCargoFuncionario.setText("📌 Cargo: " + f.getCargo());
+            holder.tvCargoFuncionario.setText("📌 Função: " + f.getCargo());
             holder.tvCargoFuncionario.setVisibility(View.VISIBLE);
         } else {
             holder.tvCargoFuncionario.setVisibility(View.GONE);
@@ -124,6 +124,9 @@ public class FuncionarioAdapter extends RecyclerView.Adapter<FuncionarioAdapter.
         } else {
             holder.layoutDocumentos.setVisibility(View.GONE);
         }
+
+        // Documentos anexados (contrato, RG, comprovantes...): abrir, baixar, exportar
+        ListaAnexos.mostrar(holder.layoutAnexosItem, f.getAnexos());
 
         if (f.getCargaHoraria() != null && !f.getCargaHoraria().isEmpty()) {
             holder.tvCargaHoraria.setText("⏱️ Carga Horária: " + f.getCargaHoraria() + "h");
@@ -207,6 +210,7 @@ public class FuncionarioAdapter extends RecyclerView.Adapter<FuncionarioAdapter.
         TextView tvTelefoneFuncionario;
         TextView tvEnderecoCompleto;
         LinearLayout layoutDocumentos;
+        LinearLayout layoutAnexosItem;
         TextView tvRGFuncionario;
         TextView tvCPFFuncionario;
         TextView tvCargaHoraria;
@@ -224,6 +228,7 @@ public class FuncionarioAdapter extends RecyclerView.Adapter<FuncionarioAdapter.
             tvTelefoneFuncionario = itemView.findViewById(R.id.tvTelefoneFuncionario);
             tvEnderecoCompleto = itemView.findViewById(R.id.tvEnderecoCompleto);
             layoutDocumentos = itemView.findViewById(R.id.layoutDocumentos);
+            layoutAnexosItem = itemView.findViewById(R.id.layoutAnexosItem);
             tvRGFuncionario = itemView.findViewById(R.id.tvRGFuncionario);
             tvCPFFuncionario = itemView.findViewById(R.id.tvCPFFuncionario);
             tvCargaHoraria = itemView.findViewById(R.id.tvCargaHoraria);

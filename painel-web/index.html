@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel Condomínio Sociedade Morro Grande</title>
+  <meta name="description" content="Painel administrativo do Condomínio Sociedade Morro Grande">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%231E3A8A' d='M12 3 2 12h3v8h5v-6h4v6h5v-8h3z'/></svg>">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <!-- Login -->
+  <section id="telaLogin" class="login" hidden>
+    <form id="formLogin" class="cartao-login">
+      <div class="marca">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
+        <div>
+          <h1>Painel Condomínio</h1>
+          <p>Sociedade Morro Grande</p>
+        </div>
+      </div>
+      <label>E-mail<input id="loginEmail" type="email" autocomplete="username" required></label>
+      <label>Senha<input id="loginSenha" type="password" autocomplete="current-password" required></label>
+      <button type="submit" class="btn primario" id="btnEntrar">Entrar</button>
+      <p class="erro" id="erroLogin"></p>
+      <p class="dica">Acesso só para administradores (mesma conta do app Administradores).</p>
+    </form>
+  </section>
+
+  <!-- Painel -->
+  <div id="telaPainel" class="painel" hidden>
+    <aside id="menu" class="menu">
+      <div class="marca menu-marca">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
+        <div><strong>Morro Grande</strong><small>Painel do condomínio</small></div>
+      </div>
+      <nav id="navSecoes"></nav>
+    </aside>
+    <div class="fundo-menu" id="fundoMenu"></div>
+
+    <main class="conteudo">
+      <header class="topo">
+        <button class="btn icone so-celular" id="btnMenu" aria-label="Abrir menu">☰</button>
+        <div class="topo-titulo">
+          <h1>Painel Condomínio Sociedade Morro Grande</h1>
+          <p id="olaAdmin"></p>
+        </div>
+        <button class="btn contorno" id="btnSair">Sair</button>
+      </header>
+
+      <section class="secao">
+        <div class="secao-cabecalho">
+          <h2 id="tituloSecao"></h2>
+          <div class="acoes">
+            <input type="search" id="busca" placeholder="Buscar…">
+            <button class="btn contorno" id="btnExportar">Exportar (Excel/CSV)</button>
+            <button class="btn primario" id="btnNovo">+ Novo</button>
+          </div>
+        </div>
+        <p class="resumo" id="resumoSecao"></p>
+        <div id="listaSecao" class="lista"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Formulário (novo/editar) -->
+  <dialog id="dialogo" class="dialogo">
+    <form id="formRegistro" method="dialog">
+      <header class="dialogo-topo">
+        <h3 id="tituloDialogo"></h3>
+        <button type="button" class="btn icone" id="btnFecharDialogo" aria-label="Fechar">✕</button>
+      </header>
+      <div id="camposDialogo" class="campos"></div>
+      <div id="blocoAnexos" class="anexos-edicao">
+        <h4>Anexos</h4>
+        <div class="zona-arquivos" id="zonaArquivos">
+          <p><strong>Arraste arquivos aqui</strong> ou</p>
+          <div class="botoes-arquivo">
+            <label class="btn primario">Buscar no computador
+              <input type="file" id="inputArquivos" multiple hidden
+                     accept="image/*,.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv">
+            </label>
+            <label class="btn contorno">Tirar foto
+              <input type="file" id="inputCamera" accept="image/*" capture="environment" hidden>
+            </label>
+          </div>
+          <small>Fotos, PDF, Word, Excel e outros (até 20 MB cada)</small>
+        </div>
+        <div id="listaAnexosEdicao" class="grade-anexos"></div>
+      </div>
+      <p class="erro" id="erroDialogo"></p>
+      <footer class="dialogo-rodape">
+        <button type="button" class="btn contorno" id="btnCancelar">Cancelar</button>
+        <button type="submit" class="btn primario" id="btnSalvar">Salvar</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div id="aviso" class="aviso" role="status"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

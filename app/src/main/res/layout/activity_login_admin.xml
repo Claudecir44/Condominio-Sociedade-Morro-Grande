@@ -79,12 +79,12 @@
                 android:layout_height="48dp"
                 android:text="Entrar"
                 android:layout_marginBottom="24dp"
-                android:backgroundTint="#6E747E"
+                android:backgroundTint="@color/botaoPrimario"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.03"
-                app:cornerRadius="8dp"/>
+                app:cornerRadius="14dp"/>
 
 
             <!-- Novo administrador: abre a tela de cadastro -->

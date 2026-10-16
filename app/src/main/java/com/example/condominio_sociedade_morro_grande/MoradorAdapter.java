@@ -141,6 +141,9 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
             holder.tvEmailMorador.setVisibility(View.GONE);
         }
 
+        // Documentos anexados ao cadastro: abrir, baixar, exportar
+        ListaAnexos.mostrar(holder.layoutAnexosItem, ListaAnexos.deValor(morador.opt("anexos")));
+
         carregarFoto(holder.imageMoradorItem, imagePath);
 
         holder.btnEditarMorador.setOnClickListener(v -> {
@@ -214,6 +217,7 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         TextView tvQuadraMorador;
         TextView tvLoteMorador;
         TextView tvEmailMorador;
+        LinearLayout layoutAnexosItem;
         Button btnEditarMorador;
         Button btnExcluirMorador;
 
@@ -229,6 +233,7 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
             tvQuadraMorador = itemView.findViewById(R.id.tvQuadraMorador);
             tvLoteMorador = itemView.findViewById(R.id.tvLoteMorador);
             tvEmailMorador = itemView.findViewById(R.id.tvEmailMorador);
+            layoutAnexosItem = itemView.findViewById(R.id.layoutAnexosItem);
             btnEditarMorador = itemView.findViewById(R.id.btnEditarMorador);
             btnExcluirMorador = itemView.findViewById(R.id.btnExcluirMorador);
         }

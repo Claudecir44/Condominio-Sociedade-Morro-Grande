@@ -5,6 +5,13 @@
   "storage": {
     "rules": "storage.rules"
   },
+  "hosting": {
+    "public": "painel-web",
+    "ignore": ["firebase.json", "**/.*"],
+    "headers": [
+      { "source": "**/*.@(js|css|html)", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    ]
+  },
   "emulators": {
     "firestore": { "port": 8085 },
     "auth": { "port": 9099 },

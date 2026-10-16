@@ -189,22 +189,11 @@ public class ListaOcorrenciasActivity extends AppCompatActivity {
                         textEnvolvidos.setVisibility(View.GONE);
                     }
 
-                    layoutAnexos.removeAllViews();
-                    JSONArray anexosArray = new JSONArray(ocorrencia.optString("anexos", "[]"));
-                    if (anexosArray.length() > 0 && isExpanded) {
+                    // Fotos, PDF, Word, Excel... (abrir, baixar, exportar)
+                    java.util.List<String> anexos = ListaAnexos.deValor(ocorrencia.opt("anexos"));
+                    if (!anexos.isEmpty() && isExpanded) {
                         textAnexosTitulo.setVisibility(View.VISIBLE);
-                        layoutAnexos.setVisibility(View.VISIBLE);
-
-                        for (int i = 0; i < anexosArray.length(); i++) {
-                            String caminho = anexosArray.getString(i);
-                            TextView anexItem = new TextView(context);
-                            anexItem.setText("- Anexo " + (i + 1));
-                            anexItem.setTextSize(14);
-                            anexItem.setTextColor(0xFF0000FF);
-                            anexItem.setPadding(8, 4, 8, 4);
-                            anexItem.setOnClickListener(v -> ArquivosStorage.abrir(context, caminho));
-                            layoutAnexos.addView(anexItem);
-                        }
+                        ListaAnexos.mostrar(layoutAnexos, anexos);
                     } else {
                         textAnexosTitulo.setVisibility(View.GONE);
                         layoutAnexos.setVisibility(View.GONE);

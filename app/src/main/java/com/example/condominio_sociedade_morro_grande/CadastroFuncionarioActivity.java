@@ -33,6 +33,7 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
     private Uri imagemSelecionadaUri;
     private String funcionarioId = null;
     private FuncionarioDAO funcionarioDAO;
+    private PainelAnexos painelAnexos;
 
     private final ActivityResultLauncher<String> selecionarImagemLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -76,6 +77,7 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
 
         btnSalvar = findViewById(R.id.buttonSalvarFuncionario);
         imageFuncionario = findViewById(R.id.imageFuncionario);
+        painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
 
         configurarCampos();
 
@@ -85,7 +87,10 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
             carregarFuncionario(funcionarioDAO.deJson(getIntent().getStringExtra("funcionarioJSON")));
         }
 
-        btnSalvar.setOnClickListener(v -> salvarFuncionario());
+        // Função: escolhida numa lista pronta (com "Outros" pra digitar) ao tocar no campo ou em Salvar
+        etCargo.setFocusable(false);
+        etCargo.setOnClickListener(v -> escolherFuncao(funcao -> etCargo.setText(funcao)));
+        btnSalvar.setOnClickListener(v -> pedirFuncaoESalvar());
     }
 
     private void configurarCampos() {
@@ -184,20 +189,11 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
 
         etCPF.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                etCargo.requestFocus();
-                return true;
-            }
-            return false;
-        });
-
-        etCargo.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 etCargaHoraria.requestFocus();
                 return true;
             }
             return false;
         });
-
         etCargaHoraria.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 etTurno.requestFocus();
@@ -224,7 +220,7 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
 
         etHoraSaida.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                salvarFuncionario();
+                pedirFuncaoESalvar();
                 return true;
             }
             return false;
@@ -251,6 +247,7 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
             etHoraEntrada.setText(f.getHoraEntrada());
             etHoraSaida.setText(f.getHoraSaida());
             etCargo.setText(f.getCargo());
+            painelAnexos.definir(f.getAnexos());
 
             if (f.getImagemUri() != null && !f.getImagemUri().isEmpty()) {
                 try {
@@ -262,6 +259,90 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    /** Funções já prontas; "Outros" (sempre a última) abre um campo para digitar uma nova. */
+    private static final String[] FUNCOES = {
+            "Síndico", "Subsíndico", "Administrador(a)", "Gerente predial",
+            "Porteiro", "Segurança", "Vigia noturno", "Controlador de acesso",
+            "Zelador", "Serviços gerais", "Auxiliar de limpeza", "Jardineiro",
+            "Piscineiro", "Manutenção", "Eletricista", "Encanador",
+            "Recepcionista", "Contador", "Financeiro", "Outros"
+    };
+
+    interface AoEscolherFuncao { void funcao(String funcao); }
+
+    private void pedirFuncaoESalvar() {
+        if (etNome.getText().toString().trim().isEmpty()) {
+            Toast.makeText(this, "Preencha o nome do funcionário!", Toast.LENGTH_SHORT).show();
+            etNome.requestFocus();
+            return;
+        }
+        escolherFuncao(funcao -> {
+            etCargo.setText(funcao);
+            salvarFuncionario();
+        });
+    }
+
+    private void escolherFuncao(AoEscolherFuncao aoEscolher) {
+        hideKeyboard();
+        String atual = etCargo.getText().toString().trim();
+        int marcada = -1;
+        for (int i = 0; i < FUNCOES.length - 1; i++) {
+            if (FUNCOES[i].equalsIgnoreCase(atual)) marcada = i;
+        }
+        if (marcada == -1 && !atual.isEmpty()) marcada = FUNCOES.length - 1; // função digitada antes = "Outros"
+        final int[] escolha = {marcada};
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Selecione a função")
+                .setSingleChoiceItems(FUNCOES, marcada, (d, qual) -> escolha[0] = qual)
+                .setPositiveButton("Salvar", (d, w) -> {
+                    if (escolha[0] < 0) {
+                        Toast.makeText(this, "Selecione a função do funcionário.", Toast.LENGTH_SHORT).show();
+                        escolherFuncao(aoEscolher);
+                    } else if (escolha[0] == FUNCOES.length - 1) {
+                        digitarOutraFuncao(atual, aoEscolher);
+                    } else {
+                        aoEscolher.funcao(FUNCOES[escolha[0]]);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void digitarOutraFuncao(String atual, AoEscolherFuncao aoEscolher) {
+        EditText campo = new EditText(this);
+        campo.setHint("Digite a nova função");
+        campo.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        campo.setSingleLine(true);
+        boolean eraOutra = true;
+        for (String f : FUNCOES) if (f.equalsIgnoreCase(atual)) eraOutra = false;
+        if (eraOutra) campo.setText(atual);
+        android.widget.FrameLayout moldura = new android.widget.FrameLayout(this);
+        int margem = (int) (20 * getResources().getDisplayMetrics().density);
+        moldura.setPadding(margem, margem / 2, margem, 0);
+        moldura.addView(campo);
+
+        androidx.appcompat.app.AlertDialog dialogo = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Outra função")
+                .setView(moldura)
+                .setPositiveButton("Salvar", null)
+                .setNegativeButton("Voltar", (d, w) -> escolherFuncao(aoEscolher))
+                .create();
+        dialogo.setOnShowListener(d -> dialogo.getButton(android.content.DialogInterface.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    String nova = campo.getText().toString().trim();
+                    if (nova.isEmpty()) {
+                        campo.setError("Digite a função");
+                        return;
+                    }
+                    dialogo.dismiss();
+                    aoEscolher.funcao(nova);
+                }));
+        dialogo.show();
+        campo.requestFocus();
+        dialogo.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     private void salvarFuncionario() {
@@ -300,7 +381,19 @@ public class CadastroFuncionarioActivity extends AppCompatActivity {
             @Override
             public void onSucesso(String link) {
                 funcionario.setImagemUri(link);
-                gravarFuncionario(funcionario);
+                // Depois da foto, os anexos (documentos, contratos...)
+                painelAnexos.enviar("funcionarios", new ColecaoFirestore.Callback<java.util.List<String>>() {
+                    @Override
+                    public void onSucesso(java.util.List<String> links) {
+                        funcionario.setAnexos(links);
+                        gravarFuncionario(funcionario);
+                    }
+
+                    @Override
+                    public void onErro(Exception e) {
+                        aoFalhar(new Exception("não foi possível enviar os anexos (" + e.getMessage() + ")"));
+                    }
+                });
             }
 
             @Override

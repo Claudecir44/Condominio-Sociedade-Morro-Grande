@@ -25,6 +25,25 @@ service firebase.storage {
       allow delete: if ehAdmin();
     }
 
+    // Foto do próprio morador (primeiro login) e fotos do hidrômetro: o morador envia só na pasta dele.
+    // Sem consulta ao Firestore aqui (ela dá 403 sem a permissão entre serviços); quem prende a
+    // gravação ao cadastro de morador é a regra do Firestore (moradores/{uid} e leituras_agua).
+    function fotoDoProprioMorador(uid) {
+      return request.auth != null
+          && request.auth.uid == uid
+          && request.resource.contentType.matches('image/.*')
+          && request.resource.size < 10 * 1024 * 1024;
+    }
+
+    match /moradores/{uid}/{arquivo} {
+      allow create, update: if fotoDoProprioMorador(uid);
+    }
+
+    match /leituras/{uid}/{arquivo} {
+      allow read: if ehAdmin() || (request.auth != null && request.auth.uid == uid);
+      allow create: if fotoDoProprioMorador(uid);
+    }
+
     match /{caminho=**} {
       allow read, write: if false;
     }

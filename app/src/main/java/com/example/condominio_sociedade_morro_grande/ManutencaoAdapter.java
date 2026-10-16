@@ -78,25 +78,10 @@ public class ManutencaoAdapter extends RecyclerView.Adapter<ManutencaoAdapter.Ma
             holder.tvNotasManutencao.setVisibility(View.GONE);
         }
 
-        holder.layoutAnexos.removeAllViews();
-
+        // Fotos, PDF, Word, Excel... (abrir, baixar, exportar)
         if (m.getAnexos() != null && !m.getAnexos().isEmpty()) {
             holder.tvAnexosLabel.setVisibility(View.VISIBLE);
-            holder.layoutAnexos.setVisibility(View.VISIBLE);
-
-            for (String anexoUri : m.getAnexos()) {
-                TextView tvAnexo = new TextView(context);
-                String fileName = getFileNameFromUri(Uri.parse(anexoUri));
-                String icone = getIconeArquivo(fileName);
-                tvAnexo.setText(icone + " " + fileName);
-                tvAnexo.setTextSize(13);
-                tvAnexo.setTextColor(0xFF2196F3);
-                tvAnexo.setPadding(8, 8, 8, 8);
-                tvAnexo.setBackgroundResource(android.R.drawable.list_selector_background);
-
-                tvAnexo.setOnClickListener(v -> abrirAnexo(Uri.parse(anexoUri)));
-                holder.layoutAnexos.addView(tvAnexo);
-            }
+            ListaAnexos.mostrar(holder.layoutAnexos, m.getAnexos());
         } else {
             holder.tvAnexosLabel.setVisibility(View.GONE);
             holder.layoutAnexos.setVisibility(View.GONE);

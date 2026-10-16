@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F2F8"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Leitura d'Água"
+            android:textColor="#1A1A2E"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Digite o número que aparece no hidrômetro e tire uma foto dele."
+            android:textColor="#4B5563"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Leitura:"
+            android:textColor="#1A1A2E"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editLeitura"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/edittext_background"
+            android:hint="Ex.: 01234"
+            android:inputType="number"
+            android:maxLength="12"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="#1A1A2E"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnFotoHidrometro"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:layout_marginTop="20dp"
+            android:text="Tirar foto do hidrômetro"
+            app:backgroundTint="@color/painelAgua"
+            app:cornerRadius="20dp"
+            app:icon="@drawable/ic_camera_grande"
+            app:iconGravity="top"
+            app:iconSize="36dp" />
+
+        <ImageView
+            android:id="@+id/imagePreviaHidrometro"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/image_border"
+            android:contentDescription="Foto do hidrômetro"
+            android:padding="4dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textDicaFoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="Confira se os números aparecem bem. Se não, toque no botão de novo para tirar outra."
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnEnviarLeitura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Enviar"
+            app:backgroundTint="@color/botaoSucesso" />
+
+        <!-- Empurra o "Sua Leitura" pro fim da tela -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="24dp" />
+
+        <Button
+            android:id="@+id/btnSuasLeituras"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sua Leitura"
+            app:backgroundTint="@color/painelAgua"
+            app:icon="@drawable/ic_painel_agua"
+            app:iconGravity="textStart"
+            app:iconSize="22dp" />
+    </LinearLayout>
+</ScrollView>

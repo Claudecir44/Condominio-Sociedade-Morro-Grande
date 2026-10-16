@@ -19,6 +19,7 @@ public class Funcionario {
     private String horaEntrada;
     private String horaSaida;
     private String imagemUri;
+    private java.util.List<String> anexos;
     private String cargo;
 
     public Funcionario() {}
@@ -42,6 +43,8 @@ public class Funcionario {
     public String getHoraEntrada() { return horaEntrada; }
     public String getHoraSaida() { return horaSaida; }
     public String getImagemUri() { return imagemUri; }
+    public java.util.List<String> getAnexos() { return anexos; }
+    public void setAnexos(java.util.List<String> anexos) { this.anexos = anexos; }
     public String getCargo() { return cargo; }
 
     // Setters

@@ -34,26 +34,12 @@ import java.util.List;
 public class RegistroAssembleiasActivity extends AppCompatActivity {
 
     private EditText editDataHora, editAssunto, editLocal, editDescricao;
-    private Button buttonAnexarArquivos, buttonSalvar, buttonListaAssembleias;
-    private RecyclerView recyclerAnexos;
-    private LinearLayout layoutAnexosContainer;
-
-    private List<Uri> anexos = new ArrayList<>();
-    private RecyclerView.Adapter anexosAdapter;
+    private Button buttonSalvar, buttonListaAssembleias;
+    private PainelAnexos painelAnexos;
 
     private AssembleiaDAO assembleiaDAO;
     private String editarId = null;
     private boolean modoVisualizacao = false;
-
-    private final ActivityResultLauncher<String[]> selecionarArquivosLauncher =
-            registerForActivityResult(new ActivityResultContracts.OpenMultipleDocuments(), uris -> {
-                if (uris != null && !uris.isEmpty()) {
-                    anexos.addAll(uris);
-                    anexosAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(this, "Nenhum arquivo selecionado.", Toast.LENGTH_SHORT).show();
-                }
-            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,32 +50,13 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
         editAssunto = findViewById(R.id.editAssunto);
         editLocal = findViewById(R.id.editLocal);
         editDescricao = findViewById(R.id.editDescricao);
-        buttonAnexarArquivos = findViewById(R.id.buttonAnexarArquivos);
         buttonSalvar = findViewById(R.id.buttonSalvar);
         buttonListaAssembleias = findViewById(R.id.buttonListaAssembleias);
-        recyclerAnexos = findViewById(R.id.recyclerAnexos);
-        layoutAnexosContainer = findViewById(R.id.layoutAnexosContainer);
+        painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
 
         assembleiaDAO = new AssembleiaDAO();
 
-        anexosAdapter = new AnexosAdapter(anexos);
-        recyclerAnexos.setLayoutManager(new LinearLayoutManager(this));
-        recyclerAnexos.setAdapter(anexosAdapter);
-
         editDataHora.setOnClickListener(v -> mostrarDateTimePicker());
-
-        buttonAnexarArquivos.setOnClickListener(v -> {
-            if (!modoVisualizacao) {
-                String[] tipos = {
-                        "application/pdf",
-                        "application/msword",
-                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        "application/vnd.ms-excel",
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                };
-                selecionarArquivosLauncher.launch(tipos);
-            }
-        });
 
         buttonSalvar.setOnClickListener(v -> {
             if (!modoVisualizacao) salvarAssembleia();
@@ -117,36 +84,9 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
             editLocal.setEnabled(false);
             editDescricao.setEnabled(false);
             buttonSalvar.setEnabled(false);
-            buttonAnexarArquivos.setEnabled(false);
+            painelAnexos.somenteLeitura();
         }
     }
-
-    // ==================== MÉTODO LOCAL PARA COPIAR URI ====================
-    private File copiarUriParaArquivo(Uri uri) {
-        try {
-            String fileName = "anexo_" + System.currentTimeMillis();
-            String mimeType = getContentResolver().getType(uri);
-            if (mimeType != null) {
-                String ext = mimeType.split("/")[1];
-                fileName += "." + ext;
-            }
-            File destFile = new File(getFilesDir(), fileName);
-            try (InputStream in = getContentResolver().openInputStream(uri);
-                 FileOutputStream out = new FileOutputStream(destFile)) {
-                if (in == null) return null;
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-                return destFile;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    // ==================== FIM ====================
 
     private void salvarAssembleia() {
         String dataHora = editDataHora.getText().toString().trim();
@@ -168,9 +108,7 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
 
             buttonSalvar.setEnabled(false);
             // Anexos vão pro Firebase Storage; o registro guarda os links
-            List<String> caminhos = new ArrayList<>();
-            for (Uri uri : anexos) caminhos.add(uri.toString());
-            ArquivosStorage.enviar(this, "assembleias", caminhos, new ColecaoFirestore.Callback<List<String>>() {
+            painelAnexos.enviar("assembleias", new ColecaoFirestore.Callback<List<String>>() {
                 @Override
                 public void onSucesso(List<String> links) {
                     try {
@@ -240,8 +178,7 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
         editAssunto.setText("");
         editLocal.setText("");
         editDescricao.setText("");
-        anexos.clear();
-        anexosAdapter.notifyDataSetChanged();
+        painelAnexos.limpar();
     }
 
     private void mostrarDateTimePicker() {
@@ -267,12 +204,7 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
             editLocal.setText(assembleia.optString("local", ""));
             editDescricao.setText(assembleia.optString("descricao", ""));
 
-            anexos.clear();
-            JSONArray jsonAnexos = new JSONArray(assembleia.optString("anexos", "[]"));
-            for (int i = 0; i < jsonAnexos.length(); i++) {
-                anexos.add(Uri.parse(jsonAnexos.getString(i)));
-            }
-            anexosAdapter.notifyDataSetChanged();
+            painelAnexos.definir(ListaAnexos.deValor(assembleia.opt("anexos")));
 
         } catch (Exception e) {
             e.printStackTrace();

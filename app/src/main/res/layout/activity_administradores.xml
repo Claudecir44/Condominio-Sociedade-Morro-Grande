@@ -68,7 +68,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="#6E747E"
+        android:backgroundTint="@color/botaoPrimario"
         android:text="Cadastrar administrador"
         android:textColor="#FFFFFF"
         android:textStyle="bold"

@@ -32,11 +32,10 @@ public class AnexosAdapter extends RecyclerView.Adapter<AnexosAdapter.AnexoViewH
     @Override
     public void onBindViewHolder(@NonNull AnexoViewHolder holder, int position) {
         Uri anexo = anexos.get(position);
-        String nome = anexo.getLastPathSegment();
-        if (nome != null && nome.contains("/")) nome = nome.substring(nome.lastIndexOf('/') + 1);
-        holder.textView.setText(nome != null ? nome : "Anexo " + (position + 1));
-        holder.itemView.setOnClickListener(v ->
-                ArquivosStorage.abrir(v.getContext(), anexo.toString()));
+        String caminho = anexo.toString();
+        holder.textView.setText("📎 " + ArquivosStorage.nomeDoAnexo(holder.itemView.getContext(), caminho));
+        // Mesmo menu das outras listas: abrir, baixar, exportar
+        holder.itemView.setOnClickListener(v -> ListaAnexos.opcoes(v.getContext(), caminho));
     }
 
     @Override

@@ -31,25 +31,13 @@ import java.util.List;
 public class RegistroOcorrenciasActivity extends AppCompatActivity {
 
     private EditText editTipo, editDescricao, editDataHora;
-    private Button buttonAnexarArquivos, buttonSalvar, buttonListaOcorrencias;
-    private RecyclerView recyclerAnexos;
+    private Button buttonSalvar, buttonListaOcorrencias;
+    private PainelAnexos painelAnexos;
     private LinearLayout layoutEnvolvidos;
 
-    private List<Uri> anexos = new ArrayList<>();
-    private AnexosAdapter anexosAdapter;  // tipo corrigido (era RecyclerView.Adapter)
 
     private OcorrenciaDAO ocorrenciaDAO;
     private String editarId = null;
-
-    private final ActivityResultLauncher<String[]> selecionarArquivosLauncher =
-            registerForActivityResult(new ActivityResultContracts.OpenMultipleDocuments(), uris -> {
-                if (uris != null && !uris.isEmpty()) {
-                    anexos.addAll(uris);
-                    anexosAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(this, "Nenhum arquivo selecionado.", Toast.LENGTH_SHORT).show();
-                }
-            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,30 +47,14 @@ public class RegistroOcorrenciasActivity extends AppCompatActivity {
         editTipo = findViewById(R.id.editTipo);
         editDescricao = findViewById(R.id.editDescricao);
         editDataHora = findViewById(R.id.editDataHora);
-        buttonAnexarArquivos = findViewById(R.id.buttonAnexarArquivos);
         buttonSalvar = findViewById(R.id.buttonSalvar);
         buttonListaOcorrencias = findViewById(R.id.buttonListaOcorrencias);
-        recyclerAnexos = findViewById(R.id.recyclerAnexos);
+        painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
         layoutEnvolvidos = findViewById(R.id.layoutEnvolvidos);
 
         ocorrenciaDAO = new OcorrenciaDAO();
 
-        anexosAdapter = new AnexosAdapter(anexos);
-        recyclerAnexos.setLayoutManager(new LinearLayoutManager(this));
-        recyclerAnexos.setAdapter(anexosAdapter);
-
         editDataHora.setOnClickListener(v -> mostrarDateTimePicker());
-
-        buttonAnexarArquivos.setOnClickListener(v -> {
-            String[] tipos = {
-                    "application/pdf",
-                    "application/msword",
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    "application/vnd.ms-excel",
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            };
-            selecionarArquivosLauncher.launch(tipos);
-        });
 
         buttonSalvar.setOnClickListener(v -> salvarOcorrencia());
 
@@ -131,9 +103,7 @@ public class RegistroOcorrenciasActivity extends AppCompatActivity {
 
             buttonSalvar.setEnabled(false);
             // Anexos vão pro Firebase Storage; o registro guarda os links
-            List<String> caminhos = new ArrayList<>();
-            for (Uri uri : anexos) caminhos.add(uri.toString());
-            ArquivosStorage.enviar(this, "ocorrencias", caminhos, new ColecaoFirestore.Callback<List<String>>() {
+            painelAnexos.enviar("ocorrencias", new ColecaoFirestore.Callback<List<String>>() {
                 @Override
                 public void onSucesso(List<String> links) {
                     try {
@@ -202,8 +172,7 @@ public class RegistroOcorrenciasActivity extends AppCompatActivity {
         editTipo.setText("");
         editDescricao.setText("");
         editDataHora.setText("");
-        anexos.clear();
-        anexosAdapter.notifyDataSetChanged();
+        painelAnexos.limpar();
         for (int i = 0; i < layoutEnvolvidos.getChildCount(); i++) {
             if (layoutEnvolvidos.getChildAt(i) instanceof EditText) {
                 ((EditText) layoutEnvolvidos.getChildAt(i)).setText("");
@@ -231,12 +200,7 @@ public class RegistroOcorrenciasActivity extends AppCompatActivity {
             editDescricao.setText(ocorrencia.optString("descricao", ""));
             editDataHora.setText(ocorrencia.optString("datahora", ""));
 
-            anexos.clear();
-            JSONArray jsonAnexos = new JSONArray(ocorrencia.optString("anexos", "[]"));
-            for (int i = 0; i < jsonAnexos.length(); i++) {
-                anexos.add(Uri.parse(jsonAnexos.getString(i)));
-            }
-            anexosAdapter.notifyDataSetChanged();
+            painelAnexos.definir(ListaAnexos.deValor(ocorrencia.opt("anexos")));
 
             JSONArray jsonEnvolvidos = new JSONArray(ocorrencia.optString("envolvidos", "[]"));
             for (int i = 0; i < layoutEnvolvidos.getChildCount() && i < jsonEnvolvidos.length(); i++) {

@@ -189,8 +189,8 @@
                     android:textStyle="bold"
                     android:letterSpacing="0.03"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#6E747E"
-                    app:cornerRadius="8dp" />
+                    android:backgroundTint="@color/botaoPrimario"
+                    app:cornerRadius="14dp" />
 
                 <Button
                     android:id="@+id/btnEditarVisualizacao"
@@ -202,8 +202,8 @@
                     android:textStyle="bold"
                     android:letterSpacing="0.03"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#3B82F6"
-                    app:cornerRadius="8dp"
+                    android:backgroundTint="@color/botaoPrimario"
+                    app:cornerRadius="14dp"
                     android:layout_marginStart="8dp" />
 
                 <Button
@@ -216,8 +216,8 @@
                     android:textStyle="bold"
                     android:letterSpacing="0.03"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#EF4444"
-                    app:cornerRadius="8dp"
+                    android:backgroundTint="@color/botaoPerigo"
+                    app:cornerRadius="14dp"
                     android:layout_marginStart="8dp" />
             </LinearLayout>
 

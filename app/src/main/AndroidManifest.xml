@@ -130,6 +130,17 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".FotoMoradorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LeituraAguaActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaLeiturasAguaActivity"
+            android:exported="false" />
+
         <!-- Visualizador -->
         <activity
             android:name=".ImageViewerActivity"

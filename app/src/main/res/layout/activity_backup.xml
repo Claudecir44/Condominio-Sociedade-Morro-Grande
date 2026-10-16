@@ -25,7 +25,7 @@
         android:layout_height="48dp"
         android:text="Exportar"
         android:textSize="18sp"
-        android:backgroundTint="@color/botaoCameras"
+        android:backgroundTint="@color/botaoSucesso"
         android:layout_marginBottom="16dp"/>
 
     <!-- Botão Importar -->
@@ -35,6 +35,6 @@
         android:layout_height="48dp"
         android:text="Importar"
         android:textSize="18sp"
-        android:backgroundTint="@color/botaoCameras"/>
+        android:backgroundTint="@color/botaoSucesso"/>
 
 </LinearLayout>

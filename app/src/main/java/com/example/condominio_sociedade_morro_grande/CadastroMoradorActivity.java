@@ -33,6 +33,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
     private Button btnSalvar;
 
     private MoradorFirestoreRepository repository;
+    private PainelAnexos painelAnexos;
     private String editarCod = null;
     private Uri fotoUri = null;
     private String savedImagePath = null;
@@ -61,6 +62,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
         editQuadra = findViewById(R.id.editQuadra);
         editLote = findViewById(R.id.editLote);
         btnSalvar = findViewById(R.id.btnSalvar);
+        painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
 
         repository = new MoradorFirestoreRepository();
 
@@ -132,6 +134,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                             editTelefone.setText(morador.optString("telefone"));
                             editQuadra.setText(morador.optString("quadra"));
                             editLote.setText(morador.optString("lote"));
+                            painelAnexos.definir(ListaAnexos.deValor(morador.opt("anexos")));
 
                             String imagePath = morador.optString("foto");
                             if (!imagePath.isEmpty()) {
@@ -164,10 +167,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
         String quadra = editQuadra.getText().toString().trim().toUpperCase();
         String lote = editLote.getText().toString().trim();
 
-        if (fotoUri == null) {
-            Toast.makeText(this, "Selecione uma foto!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Foto é opcional aqui: se o admin não colocar, o morador cadastra a dele no primeiro login
 
         if (nome.isEmpty()) {
             Toast.makeText(this, "Preencha o nome!", Toast.LENGTH_SHORT).show();
@@ -218,14 +218,32 @@ public class CadastroMoradorActivity extends AppCompatActivity {
 
         btnSalvar.setEnabled(false);
         // Foto vai pro Firebase Storage; o cadastro guarda o link
-        ArquivosStorage.enviarUm(this, "moradores", fotoUri.toString(), new ColecaoFirestore.Callback<String>() {
+        String foto = fotoUri != null ? fotoUri.toString() : null;
+        ArquivosStorage.enviarUm(this, "moradores", foto, new ColecaoFirestore.Callback<String>() {
             @Override
             public void onSucesso(String link) {
                 try {
-                    morador.put("foto", link);
+                    morador.put("foto", link != null ? link : "");
                 } catch (Exception ignored) {
                 }
-                gravarMorador(morador, usuario, senha);
+                // Depois da foto, os anexos (documentos, contratos, comprovantes...)
+                painelAnexos.enviar("moradores", new ColecaoFirestore.Callback<List<String>>() {
+                    @Override
+                    public void onSucesso(List<String> links) {
+                        try {
+                            morador.put("anexos", new org.json.JSONArray(links));
+                        } catch (Exception ignored) {
+                        }
+                        gravarMorador(morador, usuario, senha);
+                    }
+
+                    @Override
+                    public void onErro(Exception e) {
+                        btnSalvar.setEnabled(true);
+                        Toast.makeText(CadastroMoradorActivity.this,
+                                "Erro ao enviar os anexos: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @Override

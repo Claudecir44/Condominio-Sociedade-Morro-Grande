@@ -8,248 +8,179 @@
     android:fillViewport="true"
     android:background="#F0F2F8">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F0F2F8"
-        android:paddingBottom="16dp"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
         tools:context=".DashBoardActivity">
 
-        <TextView
-            android:id="@+id/textTitulo"
-            android:layout_width="0dp"
+        <!-- Cabeçalho -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Administração"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#1A1A2E"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="4dp"/>
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@drawable/fundo_cabecalho_painel"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            android:paddingStart="24dp"
+            android:paddingTop="22dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="26dp">
 
-        <!-- ========== BOTÕES ADMIN ========== -->
-        <Button
-            android:id="@+id/buttonAdministradores"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Administradores"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/textTitulo" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonAssembleias"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Assembleias"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textTitulo" />
+                <TextView
+                    android:id="@+id/textTitulo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Administração"
+                    android:textColor="#FFFFFF"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/buttonDespesas"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Despesas"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/buttonAdministradores" />
+                <!-- Único jeito de sair: desloga e volta pro login -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonSair"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:minWidth="0dp"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="Sair"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    app:cornerRadius="22dp"
+                    app:icon="@drawable/ic_sair"
+                    app:iconSize="18dp"
+                    app:iconTint="#FFFFFF"
+                    app:strokeColor="#FFFFFF"
+                    app:strokeWidth="1.5dp" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/buttonAvisos"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Avisos"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonAssembleias" />
+            <TextView
+                android:id="@+id/textSubtitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/nome_condominio"
+                android:textColor="#DBEAFE"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/buttonCadastroMoradores"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Moradores"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/buttonDespesas" />
+        <!-- Cartões (os que não são do perfil ficam GONE e a grade se reorganiza) -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="13dp"
+            android:columnCount="2"
+            android:useDefaultMargins="false">
 
-        <Button
-            android:id="@+id/buttonRegistroOcorrencias"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Ocorrências"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonAvisos" />
+            <!-- ========== ADMIN ========== -->
+            <Button
+                android:id="@+id/buttonAdministradores"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Administradores"
+                app:backgroundTint="@color/painelAdministradores"
+                app:icon="@drawable/ic_painel_administradores" />
 
-        <Button
-            android:id="@+id/buttonManutencao"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Manutenção"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/buttonCadastroMoradores" />
+            <Button
+                android:id="@+id/buttonAssembleias"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Assembleias"
+                app:backgroundTint="@color/painelAssembleias"
+                app:icon="@drawable/ic_painel_assembleias" />
 
-        <Button
-            android:id="@+id/buttonFuncionarios"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Funcionários"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonRegistroOcorrencias" />
+            <Button
+                android:id="@+id/buttonDespesas"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Despesas"
+                app:backgroundTint="@color/painelDespesas"
+                app:icon="@drawable/ic_painel_despesas" />
 
-        <View
-            android:id="@+id/espacoMorador"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            app:layout_constraintTop_toBottomOf="@id/buttonFuncionarios"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <Button
+                android:id="@+id/buttonAvisos"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Avisos"
+                app:backgroundTint="@color/painelAvisos"
+                app:icon="@drawable/ic_painel_avisos" />
 
-        <!-- ========== BOTÕES DO MORADOR (apenas os que ficam na Dashboard) ========== -->
-        <!-- Prestação de Contas (esquerda) -->
-        <Button
-            android:id="@+id/buttonListaDespesas"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Prestação de Contas"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/espacoMorador" />
+            <Button
+                android:id="@+id/buttonCadastroMoradores"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Moradores"
+                app:backgroundTint="@color/painelMoradores"
+                app:icon="@drawable/ic_painel_moradores" />
 
-        <!-- Avisos (direita) -->
-        <Button
-            android:id="@+id/buttonAvisosMorador"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Avisos"
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toEndOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/espacoMorador" />
+            <Button
+                android:id="@+id/buttonRegistroOcorrencias"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Ocorrências"
+                app:backgroundTint="@color/painelOcorrencias"
+                app:icon="@drawable/ic_painel_ocorrencias" />
 
-        <!-- ========== BOTÃO "LISTAS" (ADMIN E MORADOR) ========== -->
-        <!-- Agora ocupa a largura total e fica abaixo dos botões acima -->
-        <Button
-            android:id="@+id/buttonListas"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#6E747E"
-            android:text="Listas"
-            android:textSize="14sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:letterSpacing="0.03"
-            app:cornerRadius="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonAvisosMorador"
-            android:layout_marginBottom="0dp"/>
+            <Button
+                android:id="@+id/buttonManutencao"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Manutenção"
+                app:backgroundTint="@color/painelManutencao"
+                app:icon="@drawable/ic_painel_manutencao" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/buttonFuncionarios"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Funcionários"
+                app:backgroundTint="@color/painelFuncionarios"
+                app:icon="@drawable/ic_painel_funcionarios" />
+
+            <Button
+                android:id="@+id/buttonLeiturasAgua"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Leitura d'Água"
+                app:backgroundTint="@color/painelAgua"
+                app:icon="@drawable/ic_painel_agua" />
+
+            <!-- ========== MORADOR ========== -->
+            <Button
+                android:id="@+id/buttonListaDespesas"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Prestação de Contas"
+                app:backgroundTint="@color/painelDespesas"
+                app:icon="@drawable/ic_painel_contas" />
+
+            <Button
+                android:id="@+id/buttonAvisosMorador"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Avisos"
+                app:backgroundTint="@color/painelAvisos"
+                app:icon="@drawable/ic_painel_avisos" />
+
+            <Button
+                android:id="@+id/buttonLeituraAgua"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Leitura d'Água"
+                app:backgroundTint="@color/painelAgua"
+                app:icon="@drawable/ic_painel_agua" />
+
+            <!-- ========== LISTAS (admin e morador): linha inteira ========== -->
+            <Button
+                android:id="@+id/buttonListas"
+                style="@style/Widget.Condominio.Painel"
+                android:layout_height="84dp"
+                android:layout_columnSpan="2"
+                android:text="Listas"
+                app:backgroundTint="@color/painelListas"
+                app:icon="@drawable/ic_painel_listas"
+                app:iconGravity="textStart"
+                app:iconSize="28dp" />
+        </GridLayout>
+    </LinearLayout>
 </ScrollView>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#062AF2</color>
+    <color name="colorPrimary">#1E3A8A</color>
     <color name="colorPrimaryDark">#BB86FC</color>
     <color name="colorAccent">#FF0000</color>
     <color name="botaoCameras">#35D13B</color>
@@ -14,5 +14,23 @@
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>
     <color name="black">#000000</color>
+
+    <!-- Botões do app -->
+    <color name="botaoPrimario">#2563EB</color>
+    <color name="botaoPerigo">#DC2626</color>
+    <color name="botaoSucesso">#16A34A</color>
+    <color name="botaoSecundario">#475569</color>
+
+    <!-- Cartões do painel (uma cor por seção) -->
+    <color name="painelAdministradores">#3949AB</color>
+    <color name="painelAssembleias">#8E24AA</color>
+    <color name="painelDespesas">#2E7D32</color>
+    <color name="painelAvisos">#EF6C00</color>
+    <color name="painelMoradores">#1E88E5</color>
+    <color name="painelOcorrencias">#D32F2F</color>
+    <color name="painelManutencao">#6D4C41</color>
+    <color name="painelFuncionarios">#00897B</color>
+    <color name="painelListas">#455A64</color>
+    <color name="painelAgua">#0284C7</color>
     <color name="white">#FFFFFF</color>
 </resources>
