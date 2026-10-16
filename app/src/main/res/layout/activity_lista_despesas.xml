@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F8">
+
+    <TextView
+        android:id="@+id/tituloLista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lista de Despesas"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDespesas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:scrollbars="vertical" />
+
+</LinearLayout>

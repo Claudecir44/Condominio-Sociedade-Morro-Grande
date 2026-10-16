@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Linha superior: Foto + Nome e Código -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageMoradorItem"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@android:drawable/ic_menu_camera"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagem do morador"
+                android:background="#E0E0E0"
+                android:padding="2dp"
+                app:cornerRadius="40dp"
+                android:clipToOutline="true"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvNomeMorador"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nome do Morador"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E" />
+
+                <TextView
+                    android:id="@+id/tvCodigoMorador"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Código: "
+                    android:textSize="13sp"
+                    android:textColor="#6B7280"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tvTelefoneMorador"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Telefone: "
+                    android:textSize="13sp"
+                    android:textColor="#6B7280"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Linha divisória -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- CPF -->
+        <TextView
+            android:id="@+id/tvCpfMorador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📄 CPF: "
+            android:textSize="13sp"
+            android:textColor="#6B7280"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
+        <!-- Endereço Completo -->
+        <TextView
+            android:id="@+id/tvEnderecoMorador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📍 Endereço: "
+            android:textSize="13sp"
+            android:textColor="#6B7280"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
+        <!-- Quadra e Lote -->
+        <LinearLayout
+            android:id="@+id/layoutQuadraLote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvQuadraMorador"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📐 Quadra: "
+                android:textSize="13sp"
+                android:textColor="#6B7280" />
+
+            <TextView
+                android:id="@+id/tvLoteMorador"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🏷️ Lote: "
+                android:textSize="13sp"
+                android:textColor="#6B7280" />
+
+        </LinearLayout>
+
+        <!-- Email -->
+        <TextView
+            android:id="@+id/tvEmailMorador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📧 Email: "
+            android:textSize="13sp"
+            android:textColor="#6B7280"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
+
+        <!-- Botões -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="end"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/btnEditarMorador"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Editar"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="8dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_marginEnd="12dp" />
+
+            <Button
+                android:id="@+id/btnExcluirMorador"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Excluir"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:backgroundTint="#F44336"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="8dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

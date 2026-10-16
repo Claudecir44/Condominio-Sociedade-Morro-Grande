@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutBackup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/textTituloControles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Controles"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Botão Exportar -->
+    <Button
+        android:id="@+id/buttonExportar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Exportar"
+        android:textSize="18sp"
+        android:backgroundTint="@color/botaoCameras"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Botão Importar -->
+    <Button
+        android:id="@+id/buttonImportar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Importar"
+        android:textSize="18sp"
+        android:backgroundTint="@color/botaoCameras"/>
+
+</LinearLayout>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F0F2F8">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp">
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tituloRegistro"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Registro de Despesas"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A2E"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Data e Hora -->
+        <EditText
+            android:id="@+id/editDataHoraDespesa"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="24dp"
+            android:hint="Data e Hora"
+            android:background="@drawable/edittext_background"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:textColor="#1A1A2E"
+            android:textColorHint="#9CA3AF"
+            android:focusable="false"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/tituloRegistro"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Nome da Despesa -->
+        <EditText
+            android:id="@+id/editNomeDespesa"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="2dp"
+            android:hint="Nome da Despesa"
+            android:background="@drawable/edittext_background"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:textColor="#1A1A2E"
+            android:textColorHint="#9CA3AF"
+            app:layout_constraintTop_toBottomOf="@id/editDataHoraDespesa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Descrição -->
+        <EditText
+            android:id="@+id/editDescricaoDespesa"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="2dp"
+            android:hint="Descrição"
+            android:background="@drawable/edittext_background"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:textColor="#1A1A2E"
+            android:textColorHint="#9CA3AF"
+            app:layout_constraintTop_toBottomOf="@id/editNomeDespesa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Valor -->
+        <EditText
+            android:id="@+id/editValorDespesa"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="2dp"
+            android:hint="Valor"
+            android:background="@drawable/edittext_background"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:textColor="#1A1A2E"
+            android:textColorHint="#9CA3AF"
+            android:inputType="numberDecimal"
+            app:layout_constraintTop_toBottomOf="@id/editDescricaoDespesa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botão Anexar Nota -->
+        <Button
+            android:id="@+id/btnAnexarNota"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#6E747E"
+            android:elevation="2dp"
+            android:letterSpacing="0.03"
+            android:text="Anexar Nota"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/editValorDespesa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botão Salvar -->
+        <Button
+            android:id="@+id/btnSalvarDespesa"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#6E747E"
+            android:elevation="2dp"
+            android:letterSpacing="0.03"
+            android:text="Salvar"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/btnAnexarNota"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botão Lista de Despesas -->
+        <Button
+            android:id="@+id/btnListaDespesas"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="2dp"
+            android:backgroundTint="#6E747E"
+            android:elevation="2dp"
+            android:letterSpacing="0.03"
+            android:text="Lista de Despesas"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/btnSalvarDespesa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

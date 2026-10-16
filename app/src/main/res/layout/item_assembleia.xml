@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/containerCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF">
+
+        <!-- Data e Hora e Indicador de Expandir -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvDataHora"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Data e Hora"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#6B7280"/>
+
+            <TextView
+                android:id="@+id/tvExpandir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▼"
+                android:textSize="14sp"
+                android:textColor="#6B7280"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Assunto -->
+        <TextView
+            android:id="@+id/tvAssunto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Assunto"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:textColor="#1A1A2E"/>
+
+        <!-- Linha divisória -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Conteúdo expandido -->
+        <LinearLayout
+            android:id="@+id/layoutExpandido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Local -->
+            <TextView
+                android:id="@+id/tvLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📍 Local: "
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Descrição -->
+            <TextView
+                android:id="@+id/tvDescricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📝 Descrição: "
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Anexos -->
+            <TextView
+                android:id="@+id/tvAnexosLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📎 Anexos:"
+                android:textSize="13sp"
+                android:textColor="#6B7280"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/layoutAnexos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"/>
+
+            <!-- Botões de ação -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/btnEditar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Editar"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#2196F3"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="8dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <Button
+                    android:id="@+id/btnExcluir"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Excluir"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#F44336"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="8dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

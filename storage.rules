@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// Anexos e fotos do app Condomínio Sociedade Morro Grande.
+// Caminho: {modulo}/{idDoRegistro}/{arquivo}. Mesmas permissões do Firestore:
+// avisos, assembleias e despesas os moradores podem ver; o resto é só do administrador.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function ehAdmin() {
+      return request.auth != null
+          && firestore.exists(/databases/(default)/documents/administradores/$(request.auth.uid))
+          && firestore.get(/databases/(default)/documents/administradores/$(request.auth.uid)).data.tipo == 'admin';
+    }
+
+    function ehMorador() {
+      return request.auth != null
+          && firestore.exists(/databases/(default)/documents/moradores/$(request.auth.uid));
+    }
+
+    match /{modulo}/{id}/{arquivo} {
+      allow read: if ehAdmin()
+                  || (modulo in ['avisos', 'assembleias', 'despesas'] && ehMorador())
+                  || (modulo == 'moradores' && request.auth != null && request.auth.uid == id);
+      allow create, update: if ehAdmin() && request.resource.size < 20 * 1024 * 1024;
+      allow delete: if ehAdmin();
+    }
+
+    match /{caminho=**} {
+      allow read, write: if false;
+    }
+  }
+}

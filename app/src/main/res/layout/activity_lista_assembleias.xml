@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F2F8">
+
+    <!-- Título Lista das Assembleias -->
+    <TextView
+        android:id="@+id/tituloListaAssembleias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lista das Assembleias"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="16dp"
+        android:background="#F0F2F8" />
+
+    <!-- RecyclerView para lista de assembleias -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerAssembleias"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        android:layout_below="@id/tituloListaAssembleias" />
+
+    <!-- Painel de visualização (inicialmente invisível) -->
+    <ScrollView
+        android:id="@+id/panelVisualizacao"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#F0F2F8">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:id="@+id/labelDataHora"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Data e Hora:"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#1A1A2E"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvDataHoraVisualizacao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                app:layout_constraintTop_toBottomOf="@id/labelDataHora"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/labelAssunto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Assunto:"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#1A1A2E"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tvDataHoraVisualizacao"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvAssuntoVisualizacao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                app:layout_constraintTop_toBottomOf="@id/labelAssunto"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/labelLocal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Local:"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#1A1A2E"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tvAssuntoVisualizacao"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvLocalVisualizacao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                app:layout_constraintTop_toBottomOf="@id/labelLocal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/labelDescricao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Descrição:"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#1A1A2E"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tvLocalVisualizacao"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvDescricaoVisualizacao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                app:layout_constraintTop_toBottomOf="@id/labelDescricao"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/labelAnexos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Anexos:"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#1A1A2E"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/tvDescricaoVisualizacao"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerAnexos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/labelAnexos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Botões do painel -->
+            <LinearLayout
+                android:id="@+id/buttonsPanel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/recyclerAnexos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <Button
+                    android:id="@+id/btnFecharVisualizacao"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Fechar"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#6E747E"
+                    app:cornerRadius="8dp" />
+
+                <Button
+                    android:id="@+id/btnEditarVisualizacao"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Editar"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#3B82F6"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="8dp" />
+
+                <Button
+                    android:id="@+id/btnExcluirVisualizacao"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Excluir"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.03"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#EF4444"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</RelativeLayout>

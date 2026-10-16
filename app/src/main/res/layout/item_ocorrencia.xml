@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/layoutOcorrenciaItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Tipo e Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textTipoOcorrencia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tipo"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A2E"/>
+
+            <TextView
+                android:id="@+id/textStatusOcorrencia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/bg_status"
+                android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
+
+        <!-- Data/Hora -->
+        <TextView
+            android:id="@+id/textDataHoraOcorrencia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Data/Hora"
+            android:textSize="12sp"
+            android:textColor="#6B7280"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Linha divisória -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Layout Expandido -->
+        <LinearLayout
+            android:id="@+id/layoutExpandido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Descrição -->
+            <TextView
+                android:id="@+id/textDescricaoTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📝 Descrição"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="#1A1A2E"/>
+
+            <TextView
+                android:id="@+id/textDescricaoExpandida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição completa"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Envolvidos -->
+            <TextView
+                android:id="@+id/textEnvolvidosTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👥 Envolvidos"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="#1A1A2E"/>
+
+            <TextView
+                android:id="@+id/textEnvolvidos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Anexos -->
+            <TextView
+                android:id="@+id/textAnexosTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📎 Anexos"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="#1A1A2E"/>
+
+            <LinearLayout
+                android:id="@+id/layoutAnexos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Botões Editar / Excluir -->
+            <LinearLayout
+                android:id="@+id/layoutBotoes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/buttonEditar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Editar"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#2196F3"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="8dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <Button
+                    android:id="@+id/buttonExcluir"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Excluir"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#F44336"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="8dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

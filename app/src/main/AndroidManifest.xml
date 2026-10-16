@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissões -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        tools:ignore="UnusedAttribute" />
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"
+        tools:ignore="UnusedAttribute" />
+    <uses-permission
+        android:name="android.permission.CAMERA"
+        tools:ignore="UnusedAttribute" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/logo_azul"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/logo_azul"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:icon, android:roundIcon"
+        tools:targetApi="31">
+
+        <!-- ListasActivity (corrigido: pacote correto) -->
+        <activity
+            android:name=".ListasActivity"
+            android:exported="false" />
+
+        <!-- Cadastro Admin -->
+        <activity
+            android:name=".CadastroAdminActivity"
+            android:exported="false" />
+
+        <!-- Main Activity (Launcher) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="sensor"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Login -->
+        <activity
+            android:name=".presentation.loginmorador.LoginMoradorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".presentation.loginadmin.LoginAdminActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Administração -->
+        <activity
+            android:name=".AdministradoresActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.dashboard.DashBoardActivity"
+            android:exported="false" />
+
+        <!-- Gestão de Conteúdo -->
+        <activity
+            android:name=".ListaAvisosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CadastroAvisosActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaDespesasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroDespesasActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaAssembleiasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroAssembleiasActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaManutencaoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CadastroManutencaoActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaFuncionariosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CadastroFuncionarioActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".FuncionariosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListaOcorrenciasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroOcorrenciasActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaMoradoresActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CadastroMoradorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Visualizador -->
+        <activity
+            android:name=".ImageViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- Service e Provider -->
+        <service
+            android:name=".sync.SyncService"
+            android:enabled="true"
+            android:exported="false"
+            tools:ignore="ExportedService" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+</manifest>
