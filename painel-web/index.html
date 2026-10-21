@@ -5,19 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Painel Condomínio Sociedade Morro Grande</title>
   <meta name="description" content="Painel administrativo do Condomínio Sociedade Morro Grande">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%231E3A8A' d='M12 3 2 12h3v8h5v-6h4v6h5v-8h3z'/></svg>">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icone.png">
   <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
   <!-- Login -->
   <section id="telaLogin" class="login" hidden>
     <form id="formLogin" class="cartao-login">
-      <div class="marca">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
-        <div>
-          <h1>Painel Condomínio</h1>
-          <p>Sociedade Morro Grande</p>
-        </div>
+      <div class="marca marca-login">
+        <img src="logo.png" alt="Condomínio Sociedade Morro Grande" width="220" height="220">
+        <p>Painel administrativo</p>
       </div>
       <label>E-mail<input id="loginEmail" type="email" autocomplete="username" required></label>
       <label>Senha<input id="loginSenha" type="password" autocomplete="current-password" required></label>
@@ -31,7 +29,7 @@
   <div id="telaPainel" class="painel" hidden>
     <aside id="menu" class="menu">
       <div class="marca menu-marca">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
+        <img src="icone.png" alt="" width="44" height="44">
         <div><strong>Morro Grande</strong><small>Painel do condomínio</small></div>
       </div>
       <nav id="navSecoes"></nav>

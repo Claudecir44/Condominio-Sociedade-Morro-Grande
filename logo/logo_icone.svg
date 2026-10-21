@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Ícone do app (emblema + Condomínio Sociedade Morro Grande), gerado do logo_morro_grande.svg. As fontes vêm do
+       Google Fonts: Cinzel (MORRO GRANDE, SOCIEDADE), Playfair Display
+       (Condomínio) e Montserrat (slogan). -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&amp;family=Playfair+Display:wght@700&amp;family=Montserrat:wght@600;700&amp;display=block');
+    .condominio { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; }
+    .cinzel { font-family: 'Cinzel', 'Times New Roman', serif; }
+    .mont { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; }
+  </style>
+  <defs>
+    <radialGradient id="fundo" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e9edf4"/>
+    </radialGradient>
+    <linearGradient id="azul" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2748a8"/>
+      <stop offset="1" stop-color="#0c1f5c"/>
+    </linearGradient>
+    <linearGradient id="azulClaro" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3f63c8"/>
+      <stop offset="1" stop-color="#1d3a8f"/>
+    </linearGradient>
+    <linearGradient id="ouro" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1d58a"/>
+      <stop offset="0.45" stop-color="#c9a046"/>
+      <stop offset="1" stop-color="#8f6a1f"/>
+    </linearGradient>
+    <linearGradient id="ouroLinha" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c9a046" stop-opacity="0"/>
+      <stop offset="0.2" stop-color="#c9a046"/>
+      <stop offset="0.8" stop-color="#c9a046"/>
+      <stop offset="1" stop-color="#c9a046" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="sombra" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0c1f5c" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#fundo)"/>
+
+  <!-- ===== Emblema: arco, montanhas, prédios, casa, árvore e faixa dourada ===== -->
+  <g transform="translate(0,38)"><g id="emblema" filter="url(#sombra)">
+    <path d="M292,430 A220,220 0 0 1 732,430" fill="none" stroke="url(#azul)" stroke-width="11" stroke-linecap="round"/>
+
+    <!-- Montanhas douradas com a estrada -->
+    <path d="M318,418 C334,384 352,352 378,330 C392,318 404,326 416,342 C430,326 446,312 464,322 C480,332 492,360 506,392 L506,418 Z" fill="url(#ouro)"/>
+    <path d="M372,418 C396,396 384,382 410,368 C432,356 420,344 446,334" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- Prédio do meio (mais baixo, atrás) -->
+    <rect x="474" y="262" width="58" height="156" fill="url(#azulClaro)"/>
+    <g fill="#dfe8ff" opacity="0.9">
+      <rect x="484" y="276" width="38" height="5"/><rect x="484" y="292" width="38" height="5"/>
+      <rect x="484" y="308" width="38" height="5"/><rect x="484" y="324" width="38" height="5"/>
+    </g>
+
+    <!-- Torre principal (passa do arco, como no logo original) -->
+    <rect x="532" y="168" width="84" height="250" fill="url(#azul)"/>
+    <polygon points="616,182 640,198 640,418 616,418" fill="#3b5fc4"/>
+    <g fill="#ffffff" opacity="0.92">
+      <rect x="544" y="186" width="60" height="6"/><rect x="544" y="204" width="60" height="6"/>
+      <rect x="544" y="222" width="60" height="6"/><rect x="544" y="240" width="60" height="6"/>
+      <rect x="544" y="258" width="60" height="6"/><rect x="544" y="276" width="60" height="6"/>
+      <rect x="544" y="294" width="60" height="6"/><rect x="544" y="312" width="60" height="6"/>
+      <rect x="544" y="330" width="60" height="6"/>
+    </g>
+    <g fill="#c8d6ff" opacity="0.85">
+      <rect x="622" y="210" width="12" height="5"/><rect x="622" y="234" width="12" height="5"/>
+      <rect x="622" y="258" width="12" height="5"/><rect x="622" y="282" width="12" height="5"/>
+      <rect x="622" y="306" width="12" height="5"/><rect x="622" y="330" width="12" height="5"/>
+    </g>
+
+    <!-- Prédio da direita -->
+    <rect x="644" y="300" width="44" height="118" fill="url(#azulClaro)"/>
+    <g fill="#ffffff" opacity="0.85">
+      <rect x="652" y="314" width="8" height="10"/><rect x="672" y="314" width="8" height="10"/>
+      <rect x="652" y="336" width="8" height="10"/><rect x="672" y="336" width="8" height="10"/>
+      <rect x="652" y="358" width="8" height="10"/><rect x="672" y="358" width="8" height="10"/>
+    </g>
+
+    <!-- Casa na frente -->
+    <polygon points="454,418 454,360 508,324 562,360 562,418" fill="#ffffff" stroke="url(#azul)" stroke-width="7" stroke-linejoin="round"/>
+    <rect x="496" y="378" width="24" height="40" fill="url(#azul)"/>
+
+    <!-- Árvore -->
+    <rect x="711" y="352" width="8" height="66" fill="#0c1f5c"/>
+    <circle cx="715" cy="340" r="24" fill="url(#azul)"/>
+    <circle cx="698" cy="352" r="15" fill="url(#azul)"/>
+    <circle cx="732" cy="352" r="15" fill="url(#azul)"/>
+
+    <!-- Faixa dourada e linha azul da base -->
+    <path d="M246,438 Q512,380 790,440 Q512,404 246,438 Z" fill="url(#ouro)"/>
+    <path d="M300,444 Q512,414 724,446" fill="none" stroke="url(#azul)" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  </g>
+  <text x="512" y="608" text-anchor="middle" class="condominio" font-size="124" fill="url(#azul)" filter="url(#sombra)">Condomínio</text>
+  <rect x="222" y="655" width="140" height="4" rx="2" fill="url(#ouroLinha)"/>
+  <rect x="662" y="655" width="140" height="4" rx="2" fill="url(#ouroLinha)"/>
+  <text x="512" y="670" text-anchor="middle" class="cinzel" font-weight="700" font-size="40" letter-spacing="10" fill="#1d3a8f">SOCIEDADE</text>
+  <text x="512" y="778" text-anchor="middle" class="cinzel" font-weight="800" font-size="96" fill="url(#azul)" filter="url(#sombra)" textLength="660" lengthAdjust="spacingAndGlyphs">MORRO GRANDE</text>
+  <rect x="300" y="806" width="424" height="5" rx="2.5" fill="url(#ouroLinha)"/>
+</svg>

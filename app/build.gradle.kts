@@ -49,7 +49,7 @@ android {
             dimension = "version"
             applicationIdSuffix = ".admin"
             versionNameSuffix = "-admin"
-            resValue("string", "app_name", "Administradores")
+            resValue("string", "app_name", "Admins")
             buildConfigField("String", "PERFIL", "\"admin\"")
         }
         create("morador") {

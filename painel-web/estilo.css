@@ -65,6 +65,9 @@ label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
 .marca svg { width: 44px; height: 44px; fill: var(--primario); flex: none; }
 .marca h1 { font-size: 22px; }
 .marca p { margin: 0; color: var(--texto-suave); }
+/* Login: logo do condomínio grande e centralizado. */
+.marca-login { flex-direction: column; gap: 4px; text-align: center; }
+.marca-login img { width: 220px; height: 220px; border-radius: 16px; }
 .erro { color: var(--perigo); min-height: 1em; margin: 0; font-weight: 600; }
 .dica { color: var(--texto-suave); font-size: 13px; margin: 0; }
 
@@ -72,7 +75,7 @@ label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
 .painel { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
 .menu { background: var(--menu); color: var(--menu-texto); padding: 18px 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .menu-marca { padding: 4px 8px 18px; }
-.menu-marca svg { fill: #fff; width: 36px; height: 36px; }
+.menu-marca img { width: 44px; height: 44px; border-radius: 10px; flex: none; }
 .menu-marca strong { display: block; color: #fff; }
 .menu-marca small { color: var(--menu-texto); }
 .menu nav { display: grid; gap: 4px; }
