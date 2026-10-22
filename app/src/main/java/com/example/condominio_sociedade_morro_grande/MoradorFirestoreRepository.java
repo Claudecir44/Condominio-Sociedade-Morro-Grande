@@ -127,6 +127,8 @@ public class MoradorFirestoreRepository {
                 .addOnSuccessListener(query -> {
                     List<JSONObject> lista = new ArrayList<>();
                     for (DocumentSnapshot doc : query.getDocuments()) {
+                        // A conta de visualização dos admins não é um morador de verdade
+                        if (Boolean.TRUE.equals(doc.getBoolean("verTodos"))) continue;
                         Map<String, Object> data = doc.getData();
                         JSONObject obj = new JSONObject(data);
                         if (!obj.has("cod")) {

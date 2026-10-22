@@ -71,6 +71,7 @@ public class ListaMoradoresActivity extends AppCompatActivity {
             }
         });
 
+        adapter.setSomenteLeitura(getIntent().getBooleanExtra("somenteLeitura", false));
         recyclerMoradores.setAdapter(adapter);
 
         carregarLista();

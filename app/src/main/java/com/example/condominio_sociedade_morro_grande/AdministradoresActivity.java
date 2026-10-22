@@ -200,7 +200,8 @@ public class AdministradoresActivity extends AppCompatActivity {
                         TextView tv = criarTextViewAdmin(
                                 loggedAdminInfo.nome + " (" + loggedAdminInfo.email + ")",
                                 true,
-                                loggedAdminInfo.uid
+                                loggedAdminInfo.uid,
+                                loggedAdminInfo.master
                         );
                         listaAdmins.addView(tv);
                     }
@@ -210,7 +211,8 @@ public class AdministradoresActivity extends AppCompatActivity {
                         TextView tv = criarTextViewAdmin(
                                 admin.nome + " (" + admin.email + ")",
                                 false,
-                                admin.uid
+                                admin.uid,
+                                admin.master
                         );
                         listaAdmins.addView(tv);
                     }
@@ -238,7 +240,7 @@ public class AdministradoresActivity extends AppCompatActivity {
      * @param logado true se for o admin logado
      * @param uid UID do administrador (armazenado como tag)
      */
-    private TextView criarTextViewAdmin(String nome, boolean logado, String uid) {
+    private TextView criarTextViewAdmin(String nome, boolean logado, String uid, boolean master) {
         TextView tv = new TextView(this);
         tv.setText(nome);
         tv.setTextSize(16);
@@ -256,6 +258,10 @@ public class AdministradoresActivity extends AppCompatActivity {
         tv.setOnClickListener(v -> {
             if (logado) {
                 Toast.makeText(this, "Você não pode remover seu próprio usuário!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (master) {
+                Toast.makeText(this, "O admin master não pode ser removido.", Toast.LENGTH_SHORT).show();
                 return;
             }
 

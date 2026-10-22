@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
                     } else if (!admin && doc.exists() && doc.getData() != null) {
                         JSONObject morador = new JSONObject(doc.getData());
                         try { morador.put("cod", doc.getId()); } catch (Exception ignored) {}
-                        boolean semFoto = morador.optString("foto", "").trim().isEmpty();
+                        boolean semFoto = morador.optString("foto", "").trim().isEmpty()
+                                && !morador.optBoolean("verTodos"); // conta de visualização dos admins
                         Intent intent = new Intent(this, semFoto ? FotoMoradorActivity.class : DashBoardActivity.class);
                         intent.putExtra("tipo_usuario", "morador");
                         intent.putExtra("morador_nome", morador.optString("nome"));

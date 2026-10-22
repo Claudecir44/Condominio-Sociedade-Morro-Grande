@@ -29,6 +29,7 @@ public class LoginMoradorActivity extends AppCompatActivity {
 
         editUsuario = findViewById(R.id.editUsuario);
         editSenha = findViewById(R.id.editSenha);
+        com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ContaHelper.liberarSenhaDoMaster(editUsuario, editSenha);
         btnEntrar = findViewById(R.id.btnEntrar);
         tvLembrete = findViewById(R.id.tvLembrete);
 
@@ -89,7 +90,8 @@ public class LoginMoradorActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
         // Primeiro acesso sem foto: a foto é obrigatória antes de entrar no painel
-        boolean semFoto = data.getMoradorData().optString("foto", "").trim().isEmpty();
+        boolean semFoto = data.getMoradorData().optString("foto", "").trim().isEmpty()
+                && !data.getMoradorData().optBoolean("verTodos"); // conta de visualização dos admins não precisa de foto
         Intent intent = new Intent(this, semFoto
                 ? com.cjstudio.condominio_sociedade_morro_grande.FotoMoradorActivity.class
                 : DashBoardActivity.class);

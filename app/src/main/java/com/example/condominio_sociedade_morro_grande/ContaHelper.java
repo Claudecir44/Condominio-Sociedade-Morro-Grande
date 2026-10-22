@@ -1,6 +1,10 @@
 package com.cjstudio.condominio_sociedade_morro_grande.data.firestore;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.widget.EditText;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -20,15 +24,56 @@ public final class ContaHelper {
 
     private static final String APP_CADASTRO = "cadastro-contas";
     private static final String DOMINIO_MORADOR = "@moradores.morrogrande.app";
+    private static final String DOMINIO_ADMIN = "@admins.morrogrande.app";
+    private static final String USUARIO_MASTER = "condominiosociedademorrogrande";
 
     private ContaHelper() { }
 
     /** Login do morador (quadra+lote, ex.: A10) convertido no e-mail interno usado no Firebase Auth. */
     public static String emailDoMorador(String usuario) {
-        String limpo = Normalizer.normalize(usuario.trim(), Normalizer.Form.NFD)
+        return limpar(usuario) + DOMINIO_MORADOR;
+    }
+
+    /**
+     * Login do admin: e-mail normal, ou um nome de usuário sem @ (ex.: o admin master
+     * "Condominio sociedade Morro grande") convertido no e-mail interno do Firebase Auth.
+     */
+    public static String emailDoAdmin(String usuario) {
+        String texto = usuario.trim();
+        return texto.contains("@") ? texto : limpar(texto) + DOMINIO_ADMIN;
+    }
+
+    /** Usuário "Condominio sociedade Morro grande" (admin master e morador de visualização). */
+    public static boolean ehUsuarioMaster(String usuario) {
+        return USUARIO_MASTER.equals(limpar(usuario));
+    }
+
+    /**
+     * A senha é só numérica pra todo mundo; só quando o usuário digitado é o master o campo
+     * passa a aceitar letras (a senha do master tem letras).
+     */
+    public static void liberarSenhaDoMaster(EditText usuario, EditText senha) {
+        int numerica = senha.getInputType();
+        int comLetras = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD;
+        usuario.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int tipo = ehUsuarioMaster(s.toString()) ? comLetras : numerica;
+                if (senha.getInputType() != tipo) {
+                    senha.setInputType(tipo);
+                    senha.setSelection(senha.length());
+                }
+            }
+        });
+    }
+
+    private static String limpar(String usuario) {
+        return Normalizer.normalize(usuario.trim(), Normalizer.Form.NFD)
                 .replaceAll("[^A-Za-z0-9]", "")
                 .toLowerCase(Locale.ROOT);
-        return limpo + DOMINIO_MORADOR;
     }
 
     /** Senha inicial do morador: 6 primeiros dígitos do CPF (o Firebase exige no mínimo 6). */

@@ -29,7 +29,8 @@ public class AdminFirestoreRepository {
                         if (nome == null || nome.isEmpty()) {
                             nome = doc.getString("primeiroNome");
                         }
-                        admins.add(new AdminInfo(uid, nome, email));
+                        boolean master = Boolean.TRUE.equals(doc.getBoolean("master"));
+                        admins.add(new AdminInfo(uid, nome, master ? "admin master" : email, master));
                     }
                     listener.onComplete(admins);
                 })
@@ -52,11 +53,14 @@ public class AdminFirestoreRepository {
         public final String uid;
         public final String nome;
         public final String email;
+        // Admin master: tem todos os poderes e nenhum outro admin pode remover
+        public final boolean master;
 
-        public AdminInfo(String uid, String nome, String email) {
+        public AdminInfo(String uid, String nome, String email, boolean master) {
             this.uid = uid;
             this.nome = nome;
             this.email = email;
+            this.master = master;
         }
     }
 }

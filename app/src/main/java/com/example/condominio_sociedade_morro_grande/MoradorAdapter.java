@@ -27,11 +27,17 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     private Context context;
     private List<JSONObject> moradores;
     private OnItemClickListener listener;
+    // Morador de visualização: só vê a lista, sem Editar/Excluir
+    private boolean somenteLeitura = false;
 
     public MoradorAdapter(Context context, List<JSONObject> moradores, OnItemClickListener listener) {
         this.context = context;
         this.moradores = moradores;
         this.listener = listener;
+    }
+
+    public void setSomenteLeitura(boolean somenteLeitura) {
+        this.somenteLeitura = somenteLeitura;
     }
 
     @NonNull
@@ -144,6 +150,10 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         ListaAnexos.mostrar(holder.layoutAnexosItem, ListaAnexos.deValor(morador.opt("anexos")));
 
         carregarFoto(holder.imageMoradorItem, imagePath);
+
+        int botoes = somenteLeitura ? View.GONE : View.VISIBLE;
+        holder.btnEditarMorador.setVisibility(botoes);
+        holder.btnExcluirMorador.setVisibility(botoes);
 
         holder.btnEditarMorador.setOnClickListener(v -> {
             if (listener != null) listener.onEditar(morador, position);

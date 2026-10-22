@@ -25,6 +25,14 @@ service cloud.firestore {
       return logado() && exists(caminho('moradores', request.auth.uid));
     }
 
+    // Morador de visualização (conta que os admins usam pra ver as telas do morador):
+    // vê a lista de todos os moradores. O campo verTodos só o admin grava.
+    function moradorVeTodos() {
+      return logado()
+          && exists(caminho('moradores', request.auth.uid))
+          && get(caminho('moradores', request.auth.uid)).data.get('verTodos', false) == true;
+    }
+
     function membro() {
       return ehAdmin() || ehMorador();
     }
@@ -43,14 +51,19 @@ service cloud.firestore {
     match /administradores/{uid} {
       allow read: if logado() && (request.auth.uid == uid || ehAdmin());
       // Novo admin: criado por um admin, ou o primeiro admin (junto com config/setup, uma vez só)
-      allow create: if ehAdmin()
-                    || (logado()
-                        && request.auth.uid == uid
-                        && request.resource.data.tipo == 'admin'
-                        && !exists(caminho('config', 'setup'))
-                        && existsAfter(caminho('config', 'setup')));
-      allow update: if ehAdmin();
-      allow delete: if ehAdmin() && request.auth.uid != uid;
+      // O campo master (admin master) nunca é gravado pelo app, só pelo script de criação
+      allow create: if request.resource.data.get('master', false) == false
+                    && (ehAdmin()
+                        || (logado()
+                            && request.auth.uid == uid
+                            && request.resource.data.tipo == 'admin'
+                            && !exists(caminho('config', 'setup'))
+                            && existsAfter(caminho('config', 'setup'))));
+      // Ninguém liga/desliga o master, e o cadastro do master só ele mesmo altera
+      allow update: if ehAdmin()
+                    && request.resource.data.get('master', false) == resource.data.get('master', false)
+                    && (resource.data.get('master', false) != true || request.auth.uid == uid);
+      allow delete: if ehAdmin() && request.auth.uid != uid && resource.data.get('master', false) != true;
     }
 
     // Pedido do "Cadastre-se" do login admin: a própria conta cria o pedido pendente;
@@ -65,7 +78,7 @@ service cloud.firestore {
     }
 
     match /moradores/{uid} {
-      allow read: if ehAdmin() || (logado() && request.auth.uid == uid);
+      allow read: if ehAdmin() || (logado() && request.auth.uid == uid) || moradorVeTodos();
       allow write: if ehAdmin();
       // No primeiro login o próprio morador cadastra a foto (só esse campo)
       allow update: if logado()

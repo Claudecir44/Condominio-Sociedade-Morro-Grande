@@ -39,6 +39,7 @@ if (location.hostname === "localhost" && new URLSearchParams(location.search).ha
 const $ = (id) => document.getElementById(id);
 const LIMITE_ARQUIVO = 20 * 1024 * 1024;
 const DOMINIO_MORADOR = "@moradores.morrogrande.app";
+const DOMINIO_ADMIN = "@admins.morrogrande.app";
 
 const FUNCOES = [
   "Síndico", "Subsíndico", "Administrador(a)", "Gerente predial", "Porteiro", "Segurança",
@@ -231,6 +232,10 @@ function tipoDoAnexo(nome) {
 function emailDoMorador(usuario) {
   return usuario.normalize("NFD").replace(/[^A-Za-z0-9]/g, "").toLowerCase() + DOMINIO_MORADOR;
 }
+// Login do admin: e-mail, ou nome de usuário sem @ (admin master) convertido no e-mail interno
+function emailDoAdmin(login) {
+  return login.includes("@") ? login : login.normalize("NFD").replace(/[^A-Za-z0-9]/g, "").toLowerCase() + DOMINIO_ADMIN;
+}
 
 // ---------------------------------------------------------------- arquivos (Storage)
 async function enviarArquivo(modulo, arquivo) {
@@ -340,7 +345,7 @@ $("formLogin").onsubmit = async (e) => {
   $("btnEntrar").disabled = true;
   $("erroLogin").textContent = "";
   try {
-    await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginSenha").value);
+    await signInWithEmailAndPassword(auth, emailDoAdmin($("loginEmail").value.trim()), $("loginSenha").value);
   } catch (err) {
     $("btnEntrar").disabled = false;
     $("erroLogin").textContent = /invalid|wrong|not-found/.test(err.code || "")
@@ -384,6 +389,8 @@ async function abrirSecao(id) {
 async function carregar(s) {
   const snap = await getDocs(collection(db, s.colecao));
   let lista = snap.docs.map((d) => ({ ...d.data(), _id: d.id }));
+  // A conta de visualização dos admins (morador com verTodos) não é um morador de verdade
+  if (s.colecao === "moradores") lista = lista.filter((r) => r.verTodos !== true);
   if (s.especial === "leituras") {
     lista.sort((a, b) => (b.criadoEm?.toMillis?.() || 0) - (a.criadoEm?.toMillis?.() || 0));
   } else if (s.especial === "admins") {
@@ -484,8 +491,8 @@ function renderizarAdmins(lista) {
     c.style.setProperty("--cor", s.cor);
     const euMesmo = a._id === adminAtual?.uid;
     c.innerHTML = `<h3>${esc(a.nome || "")}${euMesmo ? ' <span class="etiqueta">você</span>' : ""}</h3>
-      <div class="sub">${esc(a.email || "")}${a.telefone ? " · " + esc(a.telefone) : ""}</div>
-      ${euMesmo ? "" : `<div class="botoes"><button class="btn pequeno perigo" data-remover>Remover acesso</button></div>`}`;
+      <div class="sub">${a.master ? "admin master" : esc(a.email || "")}${a.telefone ? " · " + esc(a.telefone) : ""}</div>
+      ${euMesmo || a.master ? "" : `<div class="botoes"><button class="btn pequeno perigo" data-remover>Remover acesso</button></div>`}`;
     c.querySelector("[data-remover]")?.addEventListener("click", () => excluir(s, a,
       `Remover o acesso de administrador de ${a.nome || a.email}?`));
     el.appendChild(c);

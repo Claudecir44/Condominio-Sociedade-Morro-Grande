@@ -40,20 +40,22 @@ public class LoginAdminActivity extends AppCompatActivity {
 
         editLoginAdmin = findViewById(R.id.editLoginAdmin);
         editLoginSenha = findViewById(R.id.editLoginSenha);
+        com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ContaHelper.liberarSenhaDoMaster(editLoginAdmin, editLoginSenha);
         btnEntrar = findViewById(R.id.btnEntrar);
 
         btnEntrar.setOnClickListener(v -> {
-            String email = editLoginAdmin.getText().toString().trim();
+            String login = editLoginAdmin.getText().toString().trim();
             String senha = editLoginSenha.getText().toString().trim();
-            if (email.isEmpty() || senha.isEmpty()) {
+            if (login.isEmpty() || senha.isEmpty()) {
                 Toast.makeText(this, "Preencha e-mail e senha", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            // Sem @ é nome de usuário (admin master); com @ tem que ser um e-mail válido
+            if (login.contains("@") && !Patterns.EMAIL_ADDRESS.matcher(login).matches()) {
                 Toast.makeText(this, "Digite o e-mail do administrador", Toast.LENGTH_SHORT).show();
                 return;
             }
-            autenticarComEmail(email, senha);
+            autenticarComEmail(com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ContaHelper.emailDoAdmin(login), senha);
         });
 
         findViewById(R.id.textCadastreSe).setOnClickListener(v ->
