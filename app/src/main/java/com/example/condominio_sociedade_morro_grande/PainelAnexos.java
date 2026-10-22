@@ -141,6 +141,11 @@ public class PainelAnexos {
         atualizar();
     }
 
+    public void remover(String caminho) {
+        anexos.remove(caminho);
+        atualizar();
+    }
+
     public List<String> todos() {
         return new ArrayList<>(anexos);
     }

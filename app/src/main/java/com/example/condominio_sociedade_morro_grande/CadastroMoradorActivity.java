@@ -38,13 +38,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
     private Uri fotoUri = null;
     private String savedImagePath = null;
 
-    private final ActivityResultLauncher<String> selectImageLauncher =
-            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-                if (uri != null) {
-                    fotoUri = uri;
-                    imageMorador.setImageURI(uri);
-                }
-            });
+    private CapturaFoto capturaFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +60,13 @@ public class CadastroMoradorActivity extends AppCompatActivity {
 
         repository = new MoradorFirestoreRepository();
 
-        imageMorador.setOnClickListener(v -> selectImageLauncher.launch("image/*"));
+        // Foto do perfil (aparece ao lado do nome na lista); anexos são outra coisa, lá embaixo
+        capturaFoto = new CapturaFoto(this, uri -> {
+            fotoUri = uri;
+            imageMorador.setImageURI(uri);
+        });
+        imageMorador.setOnClickListener(v -> escolherFotoPerfil());
+        findViewById(R.id.textDicaFoto).setOnClickListener(v -> escolherFotoPerfil());
 
         if (getIntent().hasExtra("editarCod")) {
             editarCod = getIntent().getStringExtra("editarCod");
@@ -76,6 +76,40 @@ public class CadastroMoradorActivity extends AppCompatActivity {
         }
 
         btnSalvar.setOnClickListener(v -> salvarMorador());
+    }
+
+    private void escolherFotoPerfil() {
+        new AlertDialog.Builder(this)
+                .setTitle("Foto do morador")
+                .setItems(new String[]{"Tirar foto", "Escolher no celular"}, (d, qual) -> {
+                    if (qual == 0) capturaFoto.tirarFoto();
+                    else capturaFoto.escolherDaGaleria();
+                })
+                .show();
+    }
+
+    /**
+     * Cadastro sem foto de perfil mas com imagem nos anexos (foto colocada pelo botão errado):
+     * oferece passar a primeira imagem anexada para a foto do morador.
+     */
+    private void oferecerAnexoComoFoto() {
+        if (fotoUri != null) return;
+        for (String anexo : painelAnexos.todos()) {
+            if (!ArquivosStorage.ehImagem(this, anexo)) continue;
+            new AlertDialog.Builder(this)
+                    .setTitle("Usar como foto do morador?")
+                    .setMessage("Este morador não tem foto de perfil, mas tem uma imagem nos anexos. "
+                            + "Quer usá-la como foto do morador (ao lado do nome)?")
+                    .setPositiveButton("Usar como foto", (d, w) -> {
+                        fotoUri = ArquivosStorage.paraUri(anexo);
+                        ArquivosStorage.carregarImagem(imageMorador, anexo, android.R.drawable.ic_menu_camera);
+                        painelAnexos.remover(anexo);
+                        Toast.makeText(this, "Toque em Salvar Morador para confirmar.", Toast.LENGTH_LONG).show();
+                    })
+                    .setNegativeButton("Não", null)
+                    .show();
+            return;
+        }
     }
 
     // ==================== MÉTODOS LOCAIS PARA IMAGENS ====================
@@ -143,6 +177,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                             }
                             ArquivosStorage.carregarImagem(imageMorador, imagePath,
                                     android.R.drawable.ic_menu_camera);
+                            oferecerAnexoComoFoto();
                         });
                         break;
                     }

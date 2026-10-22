@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.List;
 
 public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorViewHolder> {
@@ -57,7 +56,7 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         String estado = morador.optString("estado", "");
         String quadra = morador.optString("quadra", "");
         String lote = morador.optString("lote", "");
-        String imagePath = morador.optString("imagem_uri", "");
+        String imagePath = morador.optString("foto", "");
 
         holder.tvNomeMorador.setText(nome != null && !nome.isEmpty() ? nome : "Nome não informado");
         holder.tvCodigoMorador.setText("📋 Código: " + codigo);
@@ -178,11 +177,6 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     public void removerItemPorCodigo(String codigo) {
         for (int i = 0; i < moradores.size(); i++) {
             if (moradores.get(i).optString("cod").equals(codigo)) {
-                JSONObject morador = moradores.get(i);
-                String imagePath = morador.optString("imagem_uri", "");
-                if (!imagePath.isEmpty()) {
-                    new File(imagePath).delete(); // Deleção direta
-                }
                 moradores.remove(i);
                 notifyItemRemoved(i);
                 break;
