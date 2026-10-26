@@ -69,14 +69,21 @@
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="#6B7280">
 
+                <!-- Padding vertical explícito: o TextInputEditText do Material
+                     vem com paddingTop grande por padrão, que com altura fixa
+                     empurrava o texto digitado pra baixo e cortava a senha. -->
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editLoginSenha"
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="44dp"
+                    android:gravity="center_vertical"
                     android:hint="Senha (6 dígitos)"
                     android:inputType="numberPassword"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:background="@drawable/edittext_background"
                     android:textSize="14sp"
                     android:textColor="#1A1A2E"
