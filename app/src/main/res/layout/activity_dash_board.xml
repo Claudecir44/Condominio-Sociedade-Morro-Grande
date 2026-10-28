@@ -194,6 +194,14 @@
                 app:backgroundTint="@color/painelAdministradores"
                 app:icon="@drawable/ic_painel_assinaturas" />
 
+            <!-- Morador e conta master: lista de assembleias (antes ficava em "Listas") -->
+            <Button
+                android:id="@+id/buttonAssembleiasMorador"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Assembleias"
+                app:backgroundTint="@color/painelAssembleias"
+                app:icon="@drawable/ic_painel_assembleias" />
+
             <!-- ========== LISTAS (admin e morador): linha inteira ========== -->
             <Button
                 android:id="@+id/buttonListas"

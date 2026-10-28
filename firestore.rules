@@ -99,9 +99,9 @@ service cloud.firestore {
     }
 
     // Leitura d'água: o morador envia a dele (com a quadra/lote do próprio cadastro);
-    // admin vê todas e pode excluir. Ninguém edita depois de enviada.
+    // admin vê todas e pode excluir; a conta master só vê todas. Ninguém edita depois de enviada.
     match /leituras_agua/{id} {
-      allow read: if ehAdmin() || (logado() && resource.data.moradorUid == request.auth.uid);
+      allow read: if ehAdmin() || moradorVeTodos() || (logado() && resource.data.moradorUid == request.auth.uid);
       allow create: if ehMorador()
                     && request.resource.data.keys().hasOnly(['moradorUid', 'nome', 'quadra', 'lote', 'leitura', 'foto', 'criadoEm'])
                     && request.resource.data.moradorUid == request.auth.uid
@@ -131,6 +131,43 @@ service cloud.firestore {
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['naoPago'])
                     && request.resource.data.naoPago is bool;
       allow delete: if ehAdmin() || moradorVeTodos();
+    }
+
+    // Chat morador x Administração: uma conversa por morador (conversas/{moradorUid}); qualquer
+    // admin, ou a conta master do app Moradores, responde como "Administração". O morador só mexe
+    // na própria conversa.
+    function ehAdministracao() {
+      return ehAdmin() || moradorVeTodos();
+    }
+    function ehMoradorDono(moradorUid) {
+      return logado() && request.auth.uid == moradorUid && ehMorador();
+    }
+    function soMudou(campos) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(campos);
+    }
+    match /conversas/{moradorUid} {
+      allow read: if ehAdministracao() || (logado() && request.auth.uid == moradorUid);
+      allow create, update: if (ehAdministracao() || ehMoradorDono(moradorUid))
+                            && request.resource.data.moradorUid == moradorUid
+                            && request.resource.data.keys().hasOnly(['moradorUid', 'ultimaMensagem', 'ultimoTimestamp',
+                                                                     'ultimoDeAdmin', 'naoLidasMorador', 'naoLidasAdmin']);
+      allow delete: if ehAdministracao();
+
+      match /mensagens/{id} {
+        allow read: if ehAdministracao() || (logado() && request.auth.uid == moradorUid);
+        allow create: if request.resource.data.remetenteId == request.auth.uid
+                      && request.resource.data.timestamp == request.time
+                      && ((ehAdministracao() && request.resource.data.deAdmin == true)
+                          || (ehMoradorDono(moradorUid) && request.resource.data.deAdmin == false));
+        // Marcar como lida / apagar só pra mim; "apagar pra todos" só quem mandou
+        allow update: if (ehAdministracao() && soMudou(['lida', 'deletadoParaAdmin']))
+                      || (ehMoradorDono(moradorUid) && soMudou(['lida', 'deletadoParaMorador']))
+                      || (ehAdministracao() && resource.data.deAdmin == true
+                          && soMudou(['deletadoParaTodos', 'conteudo', 'tipo', 'imagemUrl']))
+                      || (ehMoradorDono(moradorUid) && resource.data.deAdmin == false
+                          && soMudou(['deletadoParaTodos', 'conteudo', 'tipo', 'imagemUrl']));
+        allow delete: if ehAdministracao();
+      }
     }
 
     // Informações do condomínio: todos os membros leem, só admin grava

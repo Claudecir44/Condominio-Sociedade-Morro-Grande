@@ -54,15 +54,17 @@ public class DashBoardViewModel extends AndroidViewModel {
         visibility.setVisible("leiturasAgua", isAdmin);
 
         // Morador – apenas os que ficam na Dashboard (sem listaAssembleias)
-        visibility.setVisible("listaDespesas", isMorador);
+        // Conta master: sem Prestação de Contas e Assembleias
+        visibility.setVisible("listaDespesas", isMorador && !currentMaster);
         visibility.setVisible("avisosMorador", isMorador);
         visibility.setVisible("leituraAgua", isMorador);
         visibility.setVisible("pagamentos", isMorador && !currentMaster);
         visibility.setVisible("moradoresMaster", isMorador && currentMaster);
         visibility.setVisible("assinaturas", isMorador && currentMaster);
+        visibility.setVisible("assembleiasMorador", isMorador && !currentMaster);
 
-        // "Listas" – visível para ambos
-        visibility.setVisible("listas", isAdmin || isMorador);
+        // No app Moradores o "Listas" repetia o que já está no painel: fica só para o admin
+        visibility.setVisible("listas", isAdmin);
 
         // O botão "listaAssembleias" não está no layout, portanto não definimos visibilidade
 
@@ -96,6 +98,7 @@ public class DashBoardViewModel extends AndroidViewModel {
             case "pagamentos": return NavigationTarget.PAGAMENTOS;
             case "moradoresMaster": return NavigationTarget.LISTA_MORADORES;
             case "assinaturas": return NavigationTarget.ASSINATURAS;
+            case "assembleiasMorador": return NavigationTarget.LISTA_ASSEMBLEIAS;
             // O case "listaAssembleias" não é mais usado na Dashboard
             default: return null;
         }

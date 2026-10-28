@@ -80,6 +80,62 @@ public class DashBoardActivity extends AppCompatActivity {
                 .show());
     }
 
+    // ==================== CHAT (morador x Administração) ====================
+
+    private TextView seloChat;
+    private com.google.firebase.firestore.ListenerRegistration ouvinteChat;
+
+    /**
+     * Botão "Chat" no canto superior direito, na barra "Moradores"/"Admins". Admins e a conta
+     * master do app Moradores respondem como "Administração"; o morador conversa com ela.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_dashboard, menu);
+        View acao = menu.findItem(R.id.acaoChat).getActionView();
+        if (acao != null) {
+            seloChat = acao.findViewById(R.id.tvSeloChat);
+            acao.setOnClickListener(v -> abrirChat());
+        }
+        escutarSeloChat();
+        return true;
+    }
+
+    /** Admin ou conta master: fala como "Administração" (lista de conversas). */
+    private boolean falaComoAdministracao() {
+        return "admin".equals(getIntent().getStringExtra("tipo_usuario")) || ehMaster();
+    }
+
+    private void abrirChat() {
+        // Administração: lista de conversas; morador: direto na conversa com a Administração
+        startActivity(falaComoAdministracao()
+                ? new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.ConversasActivity.class)
+                : new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.ChatActivity.class));
+    }
+
+    private void escutarSeloChat() {
+        if (seloChat == null || ouvinteChat != null) return;
+        ouvinteChat = new com.cjstudio.condominio_sociedade_morro_grande.ChatRepository().escutarNaoLidas(falaComoAdministracao(), total -> {
+            seloChat.setVisibility(total > 0 ? View.VISIBLE : View.GONE);
+            seloChat.setText(total > 99 ? "99+" : String.valueOf(total));
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        escutarSeloChat();
+    }
+
+    @Override
+    protected void onStop() {
+        if (ouvinteChat != null) {
+            ouvinteChat.remove();
+            ouvinteChat = null;
+        }
+        super.onStop();
+    }
+
     private void sair() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, MainActivity.class);
@@ -107,6 +163,7 @@ public class DashBoardActivity extends AppCompatActivity {
         buttons.put("pagamentos", findViewById(R.id.buttonPagamentos));
         buttons.put("moradoresMaster", findViewById(R.id.buttonMoradoresMaster));
         buttons.put("assinaturas", findViewById(R.id.buttonAssinaturas));
+        buttons.put("assembleiasMorador", findViewById(R.id.buttonAssembleiasMorador));
 
         // Botão "Listas" (admin e morador)
         buttons.put("listas", findViewById(R.id.buttonListas));
@@ -170,7 +227,7 @@ public class DashBoardActivity extends AppCompatActivity {
                 intent = new Intent(this, CadastroAvisosActivity.class);
                 break;
             case LISTA_ASSEMBLEIAS:
-                // Este case ainda é mantido, mas não será chamado pela Dashboard (só pela ListasActivity)
+                // Quadro "Assembleias" do painel do morador (no app Moradores não há mais "Listas")
                 intent = new Intent(this, ListaAssembleiasActivity.class);
                 intent.putExtra("tipo_usuario", event.getTipoUsuario());
                 break;
@@ -186,7 +243,11 @@ public class DashBoardActivity extends AppCompatActivity {
                 intent = new Intent(this, ListasActivity.class);
                 break;
             case LEITURA_AGUA:
-                intent = new Intent(this, LeituraAguaActivity.class);
+                // Conta master: em vez de enviar leitura, vê as leituras enviadas pelos moradores
+                intent = ehMaster()
+                        ? new Intent(this, ListaLeiturasAguaActivity.class)
+                                .putExtra(ListaLeiturasAguaActivity.EXTRA_SO_VER, true)
+                        : new Intent(this, LeituraAguaActivity.class);
                 break;
             case LISTA_LEITURAS_AGUA:
                 intent = new Intent(this, ListaLeiturasAguaActivity.class);

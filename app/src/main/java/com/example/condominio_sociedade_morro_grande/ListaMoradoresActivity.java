@@ -118,9 +118,11 @@ public class ListaMoradoresActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     moradores.clear();
                     moradores.addAll(lista);
-                    if (somenteLeitura) MoradorAdapter.ordenarPorQuadraELote(moradores);
+                    // Nas duas listas (Admins e conta master): quadra em ordem alfabética, depois lote
+                    MoradorAdapter.ordenarPorQuadraELote(moradores);
                     adapter.notifyDataSetChanged();
-                    carregarBoletos();
+                    // Boletos só na lista da conta master (app Moradores)
+                    if (somenteLeitura) carregarBoletos();
                 });
             }
 

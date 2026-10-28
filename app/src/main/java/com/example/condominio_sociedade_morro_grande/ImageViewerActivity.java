@@ -22,7 +22,11 @@ public class ImageViewerActivity extends AppCompatActivity {
         ImageView btnClose = findViewById(R.id.btnClose);
 
         String imagePath = getIntent().getStringExtra("imagePath");
-        if (imagePath != null) {
+        if (imagePath != null && imagePath.startsWith("http")) {
+            // Foto do Storage (ex.: imagem enviada no chat)
+            com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ArquivosStorage.carregarImagem(
+                    imageView, imagePath, android.R.drawable.ic_menu_gallery);
+        } else if (imagePath != null) {
             File imageFile = new File(imagePath);
             if (imageFile.exists()) {
                 Glide.with(this)

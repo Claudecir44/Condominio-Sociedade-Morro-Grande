@@ -77,7 +77,6 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         String imagePath = morador.optString("foto", "");
 
         holder.tvNomeMorador.setText(nome != null && !nome.isEmpty() ? nome : "Nome não informado");
-        holder.tvCodigoMorador.setText("📋 Código: " + codigo);
 
         if (telefone != null && !telefone.isEmpty()) {
             holder.tvTelefoneMorador.setText("📞 Telefone: " + telefone);
@@ -163,8 +162,15 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
 
         carregarFoto(holder.imageMoradorItem, imagePath);
 
-        // Boletos: o admin e a conta master postam PDF, marcam "não pago" e excluem
-        ListaBoletos.mostrar(holder.layoutBoletosMorador, boletos.get(codigo), new ListaBoletos.AcoesAdmin() {
+        // Lista do app Admins: quadra/lote pequeno por cima da foto (na do master já está no resumo)
+        boolean mostrarEtiqueta = !somenteLeitura && (!quadra.trim().isEmpty() || !lote.trim().isEmpty());
+        holder.tvQuadraLoteFoto.setVisibility(mostrarEtiqueta ? View.VISIBLE : View.GONE);
+        if (mostrarEtiqueta) holder.tvQuadraLoteFoto.setText(etiquetaQuadraLote(quadra, lote));
+
+        // Boletos: só na lista da conta master (app Moradores), que posta PDF, marca "não pago" e exclui.
+        // Na lista do app Admins o card fica como antes, sem boletos.
+        holder.layoutSecaoBoletos.setVisibility(somenteLeitura ? View.VISIBLE : View.GONE);
+        if (somenteLeitura) ListaBoletos.mostrar(holder.layoutBoletosMorador, boletos.get(codigo), new ListaBoletos.AcoesAdmin() {
                     @Override
                     public void marcarNaoPago(Boleto boleto, boolean naoPago) {
                         if (listener != null) listener.onMarcarBoletoNaoPago(boleto, naoPago);
@@ -209,10 +215,22 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     }
 
     private static String tituloQuadraLote(String quadra, String lote) {
-        String q = quadra == null || quadra.trim().isEmpty() ? "-" : quadra.trim().toUpperCase();
+        return "Quadra " + quadraTexto(quadra) + " · Lote " + loteTexto(lote);
+    }
+
+    /** Versão curta pra caber em cima da foto: "Q A · L 01". */
+    private static String etiquetaQuadraLote(String quadra, String lote) {
+        return "Q " + quadraTexto(quadra) + " · L " + loteTexto(lote);
+    }
+
+    private static String quadraTexto(String quadra) {
+        return quadra == null || quadra.trim().isEmpty() ? "-" : quadra.trim().toUpperCase();
+    }
+
+    private static String loteTexto(String lote) {
         String l = lote == null ? "" : lote.trim();
-        if (l.matches("\\d+")) l = String.format(java.util.Locale.ROOT, "%02d", Integer.parseInt(l));
-        return "Quadra " + q + " · Lote " + (l.isEmpty() ? "-" : l);
+        if (l.matches("\\d{1,9}")) l = String.format(java.util.Locale.ROOT, "%02d", Integer.parseInt(l));
+        return l.isEmpty() ? "-" : l;
     }
 
     /** Ordem da lista do master: quadra em ordem alfabética e, dentro dela, lote em ordem numérica. */
@@ -285,7 +303,6 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     public static class MoradorViewHolder extends RecyclerView.ViewHolder {
         ImageView imageMoradorItem;
         TextView tvNomeMorador;
-        TextView tvCodigoMorador;
         TextView tvTelefoneMorador;
         TextView tvCpfMorador;
         TextView tvEnderecoMorador;
@@ -304,9 +321,13 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         TextView tvResumoSeta;
         LinearLayout layoutBoletosMorador;
         Button btnAdicionarBoleto;
+        LinearLayout layoutSecaoBoletos;
+        TextView tvQuadraLoteFoto;
 
         public MoradorViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvQuadraLoteFoto = itemView.findViewById(R.id.tvQuadraLoteFoto);
+            layoutSecaoBoletos = itemView.findViewById(R.id.layoutSecaoBoletos);
             layoutBoletosMorador = itemView.findViewById(R.id.layoutBoletosMorador);
             btnAdicionarBoleto = itemView.findViewById(R.id.btnAdicionarBoleto);
             layoutBotoesMorador = itemView.findViewById(R.id.layoutBotoesMorador);
@@ -317,7 +338,6 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
             tvResumoSeta = itemView.findViewById(R.id.tvResumoSeta);
             imageMoradorItem = itemView.findViewById(R.id.imageMoradorItem);
             tvNomeMorador = itemView.findViewById(R.id.tvNomeMorador);
-            tvCodigoMorador = itemView.findViewById(R.id.tvCodigoMorador);
             tvTelefoneMorador = itemView.findViewById(R.id.tvTelefoneMorador);
             tvCpfMorador = itemView.findViewById(R.id.tvCpfMorador);
             tvEnderecoMorador = itemView.findViewById(R.id.tvEnderecoMorador);

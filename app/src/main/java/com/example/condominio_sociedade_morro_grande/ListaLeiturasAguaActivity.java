@@ -30,13 +30,16 @@ import java.util.Locale;
 
 /**
  * Leituras d'água, mais recentes primeiro, um cartão por envio.
- * Admin: todas, com Excluir. Morador (EXTRA_SO_MINHAS): só as dele, sem Excluir.
+ * Admin: todas, com Excluir. Conta master do app Moradores (EXTRA_SO_VER): todas, sem Excluir.
+ * Morador (EXTRA_SO_MINHAS): só as dele, sem Excluir.
  */
 public class ListaLeiturasAguaActivity extends AppCompatActivity {
 
     public static final String EXTRA_SO_MINHAS = "so_minhas";
+    public static final String EXTRA_SO_VER = "so_ver";
 
     private boolean soMinhas;
+    private boolean soVer;
     private LinearLayout lista;
     private TextView textResumo;
     private final SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", new Locale("pt", "BR"));
@@ -48,6 +51,7 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
         lista = findViewById(R.id.listaLeituras);
         textResumo = findViewById(R.id.textResumoLeituras);
         soMinhas = getIntent().getBooleanExtra(EXTRA_SO_MINHAS, false);
+        soVer = getIntent().getBooleanExtra(EXTRA_SO_VER, false);
         if (soMinhas) ((TextView) findViewById(R.id.textTituloLeituras)).setText("Sua Leitura");
     }
 
@@ -142,7 +146,7 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
             foto.setOnClickListener(v -> ArquivosStorage.abrir(this, linkFoto));
             cartao.addView(foto);
         }
-        if (soMinhas) return cartao; // morador só consulta
+        if (soMinhas || soVer) return cartao; // morador e conta master só consultam
 
         Button excluir = new Button(this);
         excluir.setText("Excluir");

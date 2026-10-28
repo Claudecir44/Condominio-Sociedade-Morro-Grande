@@ -20,7 +20,7 @@ service firebase.storage {
     match /{modulo}/{id}/{arquivo} {
       allow read: if ehAdmin()
                   || (modulo in ['avisos', 'assembleias', 'despesas'] && ehMorador())
-                  || (modulo in ['moradores', 'boletos'] && request.auth != null && request.auth.uid == id);
+                  || (modulo in ['moradores', 'boletos', 'chat'] && request.auth != null && request.auth.uid == id);
       allow create, update: if ehAdmin() && request.resource.size < 20 * 1024 * 1024;
       allow delete: if ehAdmin();
     }
@@ -55,8 +55,18 @@ service firebase.storage {
                     && request.resource.size < 20 * 1024 * 1024;
     }
 
+    // Fotos do chat com a Administração: o morador envia só na pasta dele; o admin pela regra
+    // geral; a conta master (que responde como Administração) em qualquer conversa
+    match /chat/{uid}/{arquivo} {
+      allow read: if ehContaMaster();
+      allow create: if fotoDoProprioMorador(uid)
+                    || (ehContaMaster()
+                        && request.resource.contentType.matches('image/.*')
+                        && request.resource.size < 10 * 1024 * 1024);
+    }
+
     match /leituras/{uid}/{arquivo} {
-      allow read: if ehAdmin() || (request.auth != null && request.auth.uid == uid);
+      allow read: if ehAdmin() || ehContaMaster() || (request.auth != null && request.auth.uid == uid);
       allow create: if fotoDoProprioMorador(uid);
     }
 

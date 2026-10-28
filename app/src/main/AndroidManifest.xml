@@ -149,6 +149,13 @@
         <activity
             android:name=".BloqueioAssinaturaActivity"
             android:exported="false" />
+        <activity
+            android:name=".ConversasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- Visualizador -->
         <activity
