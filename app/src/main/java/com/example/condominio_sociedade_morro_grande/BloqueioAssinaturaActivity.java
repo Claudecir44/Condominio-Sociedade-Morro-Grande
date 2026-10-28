@@ -47,6 +47,7 @@ public class BloqueioAssinaturaActivity extends AppCompatActivity {
 
         findViewById(R.id.btnTentarNovamente).setOnClickListener(v -> verificar(true));
         findViewById(R.id.btnSairBloqueio).setOnClickListener(v -> {
+            CondominioMessagingService.esquecerAparelho();
             FirebaseAuth.getInstance().signOut();
             voltarAoInicio();
         });

@@ -2,7 +2,9 @@ package com.cjstudio.condominio_sociedade_morro_grande;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +42,14 @@ public class CadastroMoradorActivity extends AppCompatActivity {
 
     private CapturaFoto capturaFoto;
 
+    // Inquilino (responsável pelo app quando houver)
+    private CheckBox checkInquilino;
+    private View camposInquilino;
+    private EditText editInquilinoNome, editInquilinoCpf, editInquilinoTelefone;
+    // Como estava ao abrir a edição, pra saber se o responsável pelo app mudou
+    private String cpfResponsavelAntes;
+    private boolean fotoEscolhidaAgora = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +65,13 @@ public class CadastroMoradorActivity extends AppCompatActivity {
         editTelefone = findViewById(R.id.editTelefone);
         editQuadra = findViewById(R.id.editQuadra);
         editLote = findViewById(R.id.editLote);
+        checkInquilino = findViewById(R.id.checkInquilino);
+        camposInquilino = findViewById(R.id.camposInquilino);
+        editInquilinoNome = findViewById(R.id.editInquilinoNome);
+        editInquilinoCpf = findViewById(R.id.editInquilinoCpf);
+        editInquilinoTelefone = findViewById(R.id.editInquilinoTelefone);
+        checkInquilino.setOnCheckedChangeListener((b, marcado) ->
+                camposInquilino.setVisibility(marcado ? View.VISIBLE : View.GONE));
         btnSalvar = findViewById(R.id.btnSalvar);
         painelAnexos = new PainelAnexos(this, findViewById(R.id.painelAnexos));
 
@@ -63,6 +80,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
         // Foto do perfil (aparece ao lado do nome na lista); anexos são outra coisa, lá embaixo
         capturaFoto = new CapturaFoto(this, uri -> {
             fotoUri = uri;
+            fotoEscolhidaAgora = true;
             imageMorador.setImageURI(uri);
         });
         imageMorador.setOnClickListener(v -> escolherFotoPerfil());
@@ -102,6 +120,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                             + "Quer usá-la como foto do morador (ao lado do nome)?")
                     .setPositiveButton("Usar como foto", (d, w) -> {
                         fotoUri = ArquivosStorage.paraUri(anexo);
+                        fotoEscolhidaAgora = true;
                         ArquivosStorage.carregarImagem(imageMorador, anexo, android.R.drawable.ic_menu_camera);
                         painelAnexos.remover(anexo);
                         Toast.makeText(this, "Toque em Salvar Morador para confirmar.", Toast.LENGTH_LONG).show();
@@ -168,6 +187,11 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                             editTelefone.setText(morador.optString("telefone"));
                             editQuadra.setText(morador.optString("quadra"));
                             editLote.setText(morador.optString("lote"));
+                            checkInquilino.setChecked(morador.optBoolean("temInquilino"));
+                            editInquilinoNome.setText(morador.optString("inquilinoNome"));
+                            editInquilinoCpf.setText(morador.optString("inquilinoCpf"));
+                            editInquilinoTelefone.setText(morador.optString("inquilinoTelefone"));
+                            cpfResponsavelAntes = Inquilino.cpfResponsavel(morador);
                             painelAnexos.definir(ListaAnexos.deValor(morador.opt("anexos")));
 
                             String imagePath = morador.optString("foto");
@@ -224,15 +248,29 @@ public class CadastroMoradorActivity extends AppCompatActivity {
             return;
         }
 
-        // Gera usuario = quadra + lote (ex: A10)
-        String usuario = (quadra + lote).toUpperCase();
-        // Senha inicial = 6 primeiros dígitos do CPF (fica só no Firebase Auth, não no banco)
-        String senha = ContaHelper.senhaInicialMorador(cpf);
-        if (editarCod == null && senha == null) {
-            Toast.makeText(this, "Informe o CPF completo: a senha inicial são os 6 primeiros dígitos.",
-                    Toast.LENGTH_LONG).show();
+        boolean temInquilino = checkInquilino.isChecked();
+        String inquilinoNome = editInquilinoNome.getText().toString().trim();
+        String inquilinoCpf = editInquilinoCpf.getText().toString().trim();
+        String inquilinoTelefone = editInquilinoTelefone.getText().toString().trim();
+        if (temInquilino && (inquilinoNome.isEmpty() || inquilinoCpf.isEmpty())) {
+            Toast.makeText(this, "Preencha o nome e o CPF do inquilino!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Gera usuario = quadra + lote (ex: A10)
+        String usuario = (quadra + lote).toUpperCase();
+        // Senha inicial = 6 primeiros dígitos do CPF de quem usa o app: o inquilino, se houver
+        // (fica só no Firebase Auth, não no banco)
+        String cpfResponsavel = temInquilino ? inquilinoCpf : cpf;
+        String senha = ContaHelper.senhaInicialMorador(cpfResponsavel);
+        if (senha == null && (editarCod == null || temInquilino)) {
+            Toast.makeText(this, "Informe o CPF completo" + (temInquilino ? " do inquilino" : "")
+                    + ": a senha inicial são os 6 primeiros dígitos.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        // Na edição: mudou quem usa o app (entrou/saiu inquilino, ou outro CPF)?
+        boolean responsavelMudou = editarCod != null && cpfResponsavelAntes != null
+                && !cpfResponsavelAntes.replaceAll("[^0-9]", "").equals(cpfResponsavel.replaceAll("[^0-9]", ""));
 
         // Cria JSON com os dados
         JSONObject morador = new JSONObject();
@@ -245,6 +283,10 @@ public class CadastroMoradorActivity extends AppCompatActivity {
             morador.put("telefone", telefone);
             morador.put("quadra", quadra);
             morador.put("lote", lote);
+            morador.put("temInquilino", temInquilino);
+            morador.put("inquilinoNome", temInquilino ? inquilinoNome : "");
+            morador.put("inquilinoCpf", temInquilino ? inquilinoCpf : "");
+            morador.put("inquilinoTelefone", temInquilino ? inquilinoTelefone : "");
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Erro ao preparar dados: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -253,7 +295,10 @@ public class CadastroMoradorActivity extends AppCompatActivity {
 
         btnSalvar.setEnabled(false);
         // Foto vai pro Firebase Storage; o cadastro guarda o link
-        String foto = fotoUri != null ? fotoUri.toString() : null;
+        // Trocou quem usa o app e não escolheu foto nova: a foto sai, e o novo responsável cadastra
+        // a dele no primeiro acesso
+        String foto = responsavelMudou && !fotoEscolhidaAgora ? null
+                : fotoUri != null ? fotoUri.toString() : null;
         ArquivosStorage.enviarUm(this, "moradores", foto, new ColecaoFirestore.Callback<String>() {
             @Override
             public void onSucesso(String link) {
@@ -269,7 +314,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                             morador.put("anexos", new org.json.JSONArray(links));
                         } catch (Exception ignored) {
                         }
-                        gravarMorador(morador, usuario, senha);
+                        gravarMorador(morador, usuario, senha, temInquilino, responsavelMudou);
                     }
 
                     @Override
@@ -290,15 +335,21 @@ public class CadastroMoradorActivity extends AppCompatActivity {
         });
     }
 
-    private void gravarMorador(JSONObject morador, String usuario, String senha) {
+    private void gravarMorador(JSONObject morador, String usuario, String senha,
+                               boolean temInquilino, boolean responsavelMudou) {
+        String deQuem = temInquilino ? "do inquilino" : "do morador";
         if (editarCod != null) {
             // Atualiza
             repository.atualizarMorador(editarCod, morador, new MoradorFirestoreRepository.OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(Void result) {
                     runOnUiThread(() -> {
-                        Toast.makeText(CadastroMoradorActivity.this, "Morador atualizado!", Toast.LENGTH_SHORT).show();
-                        finish();
+                        if (responsavelMudou) {
+                            trocarSenhaDoResponsavel(usuario, senha, deQuem);
+                        } else {
+                            Toast.makeText(CadastroMoradorActivity.this, "Morador atualizado!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
                     });
                 }
 
@@ -316,8 +367,9 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                 public void onComplete(String newId) {
                     runOnUiThread(() -> new AlertDialog.Builder(CadastroMoradorActivity.this)
                             .setTitle("Morador cadastrado!")
-                            .setMessage("Passe os dados de acesso ao morador:\n\nUsuário: " + usuario
-                                    + "\nSenha: " + senha + " (6 primeiros dígitos do CPF)")
+                            .setMessage("Passe os dados de acesso " + (temInquilino ? "ao inquilino" : "ao morador")
+                                    + ":\n\nUsuário: " + usuario
+                                    + "\nSenha: " + senha + " (6 primeiros dígitos do CPF " + deQuem + ")")
                             .setCancelable(false)
                             .setPositiveButton("OK", (d, w) -> finish())
                             .show());
@@ -331,6 +383,34 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    /**
+     * Entrou/saiu inquilino ou mudou o CPF de quem usa o app: a senha passa a ser os 6 primeiros
+     * dígitos do CPF do novo responsável. Só o servidor troca a senha de outra conta
+     * (Cloud Function definirSenhaResponsavelMorador, que lê o CPF do próprio cadastro).
+     */
+    private void trocarSenhaDoResponsavel(String usuario, String senha, String deQuem) {
+        java.util.Map<String, Object> dados = new java.util.HashMap<>();
+        dados.put("moradorUid", editarCod);
+        com.google.firebase.functions.FirebaseFunctions.getInstance(AssinaturaRepository.REGIAO_FUNCOES)
+                .getHttpsCallable("definirSenhaResponsavelMorador").call(dados)
+                .addOnSuccessListener(r -> new AlertDialog.Builder(this)
+                        .setTitle("Morador atualizado!")
+                        .setMessage("Mudou quem usa o app. Passe os novos dados de acesso:\n\nUsuário: " + usuario
+                                + "\nSenha: " + senha + " (6 primeiros dígitos do CPF " + deQuem + ")"
+                                + "\n\nNo primeiro acesso ele cadastra a foto.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (d, w) -> finish())
+                        .show())
+                .addOnFailureListener(e -> new AlertDialog.Builder(this)
+                        .setTitle("Dados salvos, senha não trocada")
+                        .setMessage("O cadastro foi atualizado, mas não deu pra trocar a senha pelo CPF "
+                                + deQuem + ": " + e.getMessage()
+                                + "\n\nO acesso continua com a senha antiga até isso ser feito.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (d, w) -> finish())
+                        .show());
     }
 
     @Override

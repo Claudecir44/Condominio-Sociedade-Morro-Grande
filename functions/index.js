@@ -1,8 +1,9 @@
 // Cloud Functions do Condomínio Sociedade Morro Grande (projeto condominio-morro-grande).
-// Por enquanto só a assinatura mensal do app, paga pela conta master no app Moradores pelo
-// Google Play — mesmo fluxo do confirmarCompraGooglePlayMotorista do Caronas, sem o Mercado
-// Pago: o app compra, manda o token pra cá, conferimos no Google, consumimos e gravamos o mês
-// pago em config/assinatura. Regras no app em Assinatura.java (precisam bater com estas).
+// - Assinatura mensal do app, paga pela conta master no app Moradores pelo Google Play — mesmo
+//   fluxo do confirmarCompraGooglePlayMotorista do Caronas, sem o Mercado Pago (regras no app em
+//   Assinatura.java, precisam bater com estas).
+// - Notificação de mensagem nova no chat com a Administração (notificarMensagemChat).
+// - Senha do lote quando muda o responsável (inquilino): definirSenhaResponsavelMorador.
 require('dotenv').config();
 
 const functions = require('firebase-functions');
@@ -12,6 +13,14 @@ const { FieldValue } = require('firebase-admin/firestore');
 const { google } = require('googleapis');
 
 admin.initializeApp();
+
+// Mesma região do Firestore (southamerica-east1) e do app (FirebaseFunctions.getInstance(REGIAO)).
+// Conta de execução: a do SDK Admin do Firebase. As contas padrão do Compute e do App Engine
+// nascem SEM papéis neste projeto (mesmo caso do Manicure), e a do Firebase já tem
+// Firestore/Auth/Storage/Messaging.
+const REGIAO = 'southamerica-east1';
+const CONTA_EXECUCAO = 'firebase-adminsdk-fbsvc@condominio-morro-grande.iam.gserviceaccount.com';
+require('firebase-functions/v2').setGlobalOptions({ region: REGIAO, maxInstances: 10, serviceAccount: CONTA_EXECUCAO });
 
 // functions/.env (nunca no app nem no git):
 //   GOOGLE_PLAY_PACKAGE_NAME=com.cjstudio.condominio_sociedade_morro_grande.morador
@@ -150,4 +159,120 @@ exports.confirmarCompraAssinaturaCondominio = functions.https.onCall(async (requ
         return mes;
     });
     return { success: true, mes: mesPago };
+});
+
+
+// ============================================================
+// Chat morador x Administração: notificação de mensagem nova (mesmo desenho do
+// notificarMensagem do Manicure — só "data", quem monta a notificação é o
+// CondominioMessagingService no app). Token em dispositivos/{uid}: o morador recebe o
+// que a Administração manda; admins e a conta master (administracao == true) recebem
+// o que os moradores mandam.
+// ============================================================
+const functionsV1 = require('firebase-functions/v1');
+const crypto = require('crypto');
+
+// Mesma chave do ChatCrypto.java (o texto fica cifrado no Firestore).
+const CHAVE_CHAT = Buffer.from('NIYJ8BQYYrEbXaBbFWKG/AcgGY2IhZfmY3wQHCi2A8s=', 'base64');
+
+function decifrarChat(texto) {
+    if (!texto || !texto.startsWith('ENC1:')) return texto || '';
+    try {
+        const tudo = Buffer.from(texto.slice(5), 'base64');
+        const iv = tudo.subarray(0, 12);
+        const tag = tudo.subarray(tudo.length - 16);
+        const cifrado = tudo.subarray(12, tudo.length - 16);
+        const d = crypto.createDecipheriv('aes-256-gcm', CHAVE_CHAT, iv);
+        d.setAuthTag(tag);
+        return Buffer.concat([d.update(cifrado), d.final()]).toString('utf8');
+    } catch (e) {
+        return 'Nova mensagem';
+    }
+}
+
+// Quem usa o app no lote: o inquilino, se houver (Inquilino.java), senão o morador.
+function nomeResponsavel(m) {
+    const nome = m.temInquilino && m.inquilinoNome ? m.inquilinoNome : (m.nome || 'Morador');
+    return String(nome).trim().split(/\s+/)[0];
+}
+
+// "Q:A L:01" (igual ao ChatRepository.rotuloMorador).
+function rotuloMorador(m) {
+    const q = String(m.quadra || '-').trim().toUpperCase() || '-';
+    let l = String(m.lote || '-').trim() || '-';
+    if (/^\d{1,9}$/.test(l)) l = l.padStart(2, '0');
+    return `Q:${q} L:${l}`;
+}
+
+async function enviarPush(docs, dados) {
+    const db = admin.firestore();
+    await Promise.all(docs.map(async (doc) => {
+        const token = doc.get('token');
+        if (!token) return;
+        try {
+            await admin.messaging().send({ token, data: dados, android: { priority: 'high' } });
+        } catch (error) {
+            console.warn('Erro ao enviar push:', error.message);
+            if (error.code === 'messaging/registration-token-not-registered') {
+                await db.collection('dispositivos').doc(doc.id).delete();
+            }
+        }
+    }));
+}
+
+exports.notificarMensagemChat = functionsV1.region(REGIAO).runWith({ serviceAccount: CONTA_EXECUCAO }).firestore
+    .document('conversas/{moradorUid}/mensagens/{mensagemId}')
+    .onCreate(async (snap, context) => {
+        const msg = snap.data() || {};
+        const db = admin.firestore();
+        const moradorUid = context.params.moradorUid;
+        const texto = msg.tipo === 'imagem' ? '📷 Foto' : decifrarChat(msg.conteudo);
+        const corpo = texto.length > 120 ? texto.slice(0, 117) + '...' : texto;
+
+        if (msg.deAdmin) {
+            // Da Administração pro morador (só o aparelho dele)
+            const doc = await db.collection('dispositivos').doc(moradorUid).get();
+            if (doc.exists) await enviarPush([doc], { tipo: 'chat', moradorUid, titulo: 'Administração', corpo });
+            return;
+        }
+        // Do morador pra Administração (admins e conta master)
+        const morador = (await db.collection('moradores').doc(moradorUid).get()).data() || {};
+        const titulo = `${rotuloMorador(morador)} · ${nomeResponsavel(morador)}`;
+        const admins = await db.collection('dispositivos').where('administracao', '==', true).get();
+        await enviarPush(admins.docs, { tipo: 'chat', moradorUid, titulo, corpo });
+    });
+
+
+// ============================================================
+// Inquilino: quando o admin põe/tira o inquilino ou muda o CPF de quem usa o app, a senha do
+// login do lote passa a ser os 6 primeiros dígitos do CPF do novo responsável. Só o servidor
+// troca a senha de outra conta. O CPF vem do próprio cadastro (não do app), e a sessão antiga
+// é encerrada.
+// ============================================================
+exports.definirSenhaResponsavelMorador = functions.https.onCall(async (request) => {
+    if (!request.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'Usuário não autenticado.');
+    }
+    const db = admin.firestore();
+    const adminDoc = await db.collection('administradores').doc(request.auth.uid).get();
+    if (!adminDoc.exists || adminDoc.get('tipo') !== 'admin') {
+        throw new functions.https.HttpsError('permission-denied', 'Só administradores trocam a senha do morador.');
+    }
+    const { moradorUid } = request.data || {};
+    if (!moradorUid) throw new functions.https.HttpsError('invalid-argument', 'Morador não informado.');
+
+    const morador = (await db.collection('moradores').doc(moradorUid).get()).data();
+    if (!morador) throw new functions.https.HttpsError('not-found', 'Morador não encontrado.');
+    if (morador.verTodos === true) {
+        throw new functions.https.HttpsError('permission-denied', 'A senha da conta master não é trocada por aqui.');
+    }
+    const cpf = String(morador.temInquilino && morador.inquilinoCpf ? morador.inquilinoCpf : (morador.cpf || ''))
+        .replace(/\D/g, '');
+    if (cpf.length < 6) throw new functions.https.HttpsError('failed-precondition', 'CPF incompleto no cadastro.');
+
+    await admin.auth().updateUser(moradorUid, { password: cpf.slice(0, 6) });
+    // Quem estava logado (o responsável anterior) sai, e o aparelho dele para de receber o chat
+    await admin.auth().revokeRefreshTokens(moradorUid);
+    await db.collection('dispositivos').doc(moradorUid).delete();
+    return { success: true };
 });

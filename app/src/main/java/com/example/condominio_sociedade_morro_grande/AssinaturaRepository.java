@@ -15,6 +15,9 @@ import java.util.Map;
  */
 public class AssinaturaRepository {
 
+    /** Região das Cloud Functions (a mesma do Firestore, ver functions/index.js). */
+    public static final String REGIAO_FUNCOES = "southamerica-east1";
+
     public static final int RESULTADO_LIBERADO = 0;
     /** Pix/boleto ainda não compensou: o app confere de novo depois. */
     public static final int RESULTADO_PENDENTE = 1;
@@ -59,7 +62,7 @@ public class AssinaturaRepository {
         Map<String, Object> dados = new HashMap<>();
         dados.put("purchaseToken", purchaseToken);
         dados.put("productId", Assinatura.PRODUTO_GOOGLE_PLAY);
-        FirebaseFunctions.getInstance().getHttpsCallable("confirmarCompraAssinaturaCondominio").call(dados)
+        FirebaseFunctions.getInstance(REGIAO_FUNCOES).getHttpsCallable("confirmarCompraAssinaturaCondominio").call(dados)
                 .addOnSuccessListener(r -> {
                     Object resposta = r.getData();
                     boolean pendente = resposta instanceof Map && Boolean.TRUE.equals(((Map<?, ?>) resposta).get("pendente"));

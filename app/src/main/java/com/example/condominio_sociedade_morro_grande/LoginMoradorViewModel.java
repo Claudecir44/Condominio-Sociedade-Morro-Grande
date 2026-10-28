@@ -75,7 +75,8 @@ public class LoginMoradorViewModel extends AndroidViewModel {
         }
 
         public JSONObject getMoradorData() { return moradorData; }
-        public String getMoradorNome() { return moradorData.optString("nome"); }
+        // Quem usa o app: o inquilino, se houver
+        public String getMoradorNome() { return com.cjstudio.condominio_sociedade_morro_grande.Inquilino.nomeResponsavel(moradorData); }
         public String getMoradorCod() { return moradorData.optString("cod"); }
     }
 }

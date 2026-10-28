@@ -4,6 +4,8 @@
 
     <!-- Permissões -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Notificação de mensagem nova no chat (Android 13+ pede ao usuário) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
@@ -169,6 +171,15 @@
             android:enabled="true"
             android:exported="false"
             tools:ignore="ExportedService" />
+
+        <!-- Notificação de mensagem nova no chat -->
+        <service
+            android:name=".CondominioMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"

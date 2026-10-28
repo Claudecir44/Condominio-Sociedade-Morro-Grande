@@ -86,6 +86,19 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
             holder.tvTelefoneMorador.setVisibility(View.VISIBLE);
         }
 
+        // Inquilino: abaixo do telefone, com os dados dele
+        if (Inquilino.tem(morador)) {
+            StringBuilder inq = new StringBuilder("👤 " + morador.optString("inquilinoNome").trim());
+            String inqCpf = morador.optString("inquilinoCpf", "").trim();
+            String inqTel = morador.optString("inquilinoTelefone", "").trim();
+            if (!inqCpf.isEmpty()) inq.append("\n📄 CPF: ").append(inqCpf);
+            if (!inqTel.isEmpty()) inq.append("\n📞 Telefone: ").append(inqTel);
+            holder.tvInquilinoMorador.setText(inq.toString());
+            holder.layoutInquilinoMorador.setVisibility(View.VISIBLE);
+        } else {
+            holder.layoutInquilinoMorador.setVisibility(View.GONE);
+        }
+
         if (cpf != null && !cpf.isEmpty()) {
             holder.tvCpfMorador.setText("📄 CPF: " + cpf);
             holder.tvCpfMorador.setVisibility(View.VISIBLE);
@@ -323,9 +336,13 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         Button btnAdicionarBoleto;
         LinearLayout layoutSecaoBoletos;
         TextView tvQuadraLoteFoto;
+        LinearLayout layoutInquilinoMorador;
+        TextView tvInquilinoMorador;
 
         public MoradorViewHolder(@NonNull View itemView) {
             super(itemView);
+            layoutInquilinoMorador = itemView.findViewById(R.id.layoutInquilinoMorador);
+            tvInquilinoMorador = itemView.findViewById(R.id.tvInquilinoMorador);
             tvQuadraLoteFoto = itemView.findViewById(R.id.tvQuadraLoteFoto);
             layoutSecaoBoletos = itemView.findViewById(R.id.layoutSecaoBoletos);
             layoutBoletosMorador = itemView.findViewById(R.id.layoutBoletosMorador);

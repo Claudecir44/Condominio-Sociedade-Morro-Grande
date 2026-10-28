@@ -87,6 +87,82 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Inquilino: marcado, abre os campos; o inquilino passa a ser o responsável pelo app -->
+        <LinearLayout
+            android:id="@+id/layoutInquilino"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/editNome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <CheckBox
+                android:id="@+id/checkInquilino"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tem inquilino"
+                android:textSize="14sp"
+                android:textColor="#1A1A2E" />
+
+            <LinearLayout
+                android:id="@+id/camposInquilino"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="O inquilino é o responsável pelo app: entra com a quadra + lote e os 6 primeiros dígitos do CPF dele, e cadastra a foto no primeiro acesso."
+                    android:textSize="12sp"
+                    android:textColor="#6B7280" />
+
+                <EditText
+                    android:id="@+id/editInquilinoNome"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:hint="Inquilino: nome completo"
+                    android:background="@drawable/edittext_background"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textSize="14sp"
+                    android:inputType="textPersonName|textCapWords"
+                    android:imeOptions="actionNext" />
+
+                <EditText
+                    android:id="@+id/editInquilinoCpf"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="2dp"
+                    android:hint="Inquilino: CPF"
+                    android:background="@drawable/edittext_background"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textSize="14sp"
+                    android:inputType="number"
+                    android:digits="0123456789"
+                    android:imeOptions="actionNext" />
+
+                <EditText
+                    android:id="@+id/editInquilinoTelefone"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="2dp"
+                    android:hint="Inquilino: telefone"
+                    android:background="@drawable/edittext_background"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textSize="14sp"
+                    android:inputType="phone"
+                    android:imeOptions="actionNext" />
+            </LinearLayout>
+        </LinearLayout>
+
         <EditText
             android:id="@+id/editCPF"
             android:layout_width="0dp"
@@ -102,7 +178,7 @@
             android:inputType="number"
             android:digits="0123456789"
             android:imeOptions="actionNext"
-            app:layout_constraintTop_toBottomOf="@id/editNome"
+            app:layout_constraintTop_toBottomOf="@id/layoutInquilino"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

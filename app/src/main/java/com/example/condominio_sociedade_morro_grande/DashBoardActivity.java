@@ -72,6 +72,8 @@ public class DashBoardActivity extends AppCompatActivity {
                         "Para sair, toque em \"Sair\" no canto superior direito.", Toast.LENGTH_SHORT).show();
             }
         });
+        prepararNotificacoes();
+
         findViewById(R.id.buttonSair).setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle("Sair")
                 .setMessage("Deseja sair da sua conta?")
@@ -136,7 +138,19 @@ public class DashBoardActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    /** Notificação de mensagem nova no chat: registra o aparelho e pede a permissão (Android 13+). */
+    private void prepararNotificacoes() {
+        com.cjstudio.condominio_sociedade_morro_grande.CondominioMessagingService.registrarAparelho(falaComoAdministracao());
+        if (android.os.Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+        }
+    }
+
     private void sair() {
+        // Este aparelho para de receber as notificações da conta
+        com.cjstudio.condominio_sociedade_morro_grande.CondominioMessagingService.esquecerAparelho();
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

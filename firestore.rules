@@ -170,6 +170,18 @@ service cloud.firestore {
       }
     }
 
+    // Aparelho de cada conta pra notificação do chat (token do Firebase Messaging). Cada um só
+    // grava o próprio; quem lê e envia é a Cloud Function notificarMensagemChat (Admin SDK).
+    match /dispositivos/{uid} {
+      allow read, delete: if logado() && request.auth.uid == uid;
+      allow create, update: if logado() && request.auth.uid == uid && membro()
+                            && request.resource.data.keys().hasOnly(['token', 'app', 'administracao', 'atualizadoEm'])
+                            && request.resource.data.token is string
+                            // "administracao" (recebe as mensagens dos moradores) só pra admin ou conta master
+                            && (request.resource.data.get('administracao', false) == false
+                                || ehAdmin() || moradorVeTodos());
+    }
+
     // Informações do condomínio: todos os membros leem, só admin grava
     match /avisos/{id} {
       allow read: if membro();

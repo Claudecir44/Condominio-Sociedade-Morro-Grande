@@ -88,6 +88,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-functions")
+    // Notificação de mensagem nova no chat (CondominioMessagingService)
+    implementation("com.google.firebase:firebase-messaging")
 
     // Assinatura mensal pelo Google Play (sem Mercado Pago) — ver GooglePlayBillingManager.java
     implementation("com.android.billingclient:billing:8.0.0")

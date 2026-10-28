@@ -206,15 +206,14 @@ public class ChatRepository {
     }
 
     /**
-     * Como a Administração vê o morador na conversa: "Q:A L:01" e o primeiro nome do responsável
-     * (campo "responsavel", quando o cadastro tiver inquilino responsável) ou do morador.
+     * Como a Administração vê o morador na conversa: "Q:A L:01" e o primeiro nome de quem usa o
+     * app — o inquilino, se houver (Inquilino.nomeResponsavel), senão o morador.
      */
     public static String[] rotuloMorador(Map<String, Object> morador) {
         String quadra = texto(morador, "quadra").toUpperCase();
         String lote = texto(morador, "lote");
         if (lote.matches("\\d{1,9}")) lote = String.format(java.util.Locale.ROOT, "%02d", Integer.parseInt(lote));
-        String nome = texto(morador, "responsavel");
-        if (nome.isEmpty()) nome = texto(morador, "nome");
+        String nome = Inquilino.nomeResponsavel(morador);
         String primeiro = nome.isEmpty() ? "Morador" : nome.split("\\s+")[0];
         return new String[]{"Q:" + (quadra.isEmpty() ? "-" : quadra) + " L:" + (lote.isEmpty() ? "-" : lote), primeiro};
     }

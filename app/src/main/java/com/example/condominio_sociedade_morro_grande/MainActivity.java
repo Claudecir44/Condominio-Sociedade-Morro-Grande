@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                                 && !morador.optBoolean("verTodos"); // conta de visualização dos admins
                         Intent intent = new Intent(this, semFoto ? FotoMoradorActivity.class : DashBoardActivity.class);
                         intent.putExtra("tipo_usuario", "morador");
-                        intent.putExtra("morador_nome", morador.optString("nome"));
+                        intent.putExtra("morador_nome", Inquilino.nomeResponsavel(morador)); // o inquilino, se houver
                         intent.putExtra("morador_cod", doc.getId());
                         intent.putExtra("morador_json", morador.toString());
                         abrir(intent);
