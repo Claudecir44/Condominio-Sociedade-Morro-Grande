@@ -87,6 +87,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-functions")
+
+    // Assinatura mensal pelo Google Play (sem Mercado Pago) — ver GooglePlayBillingManager.java
+    implementation("com.android.billingclient:billing:8.0.0")
 
     // Test
     testImplementation("junit:junit:4.13.2")

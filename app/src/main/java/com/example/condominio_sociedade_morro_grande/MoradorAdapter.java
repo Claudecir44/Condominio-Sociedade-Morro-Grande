@@ -22,6 +22,9 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     public interface OnItemClickListener {
         void onEditar(JSONObject morador, int position);
         void onExcluir(JSONObject morador, int position);
+        void onAdicionarBoleto(JSONObject morador);
+        void onMarcarBoletoNaoPago(Boleto boleto, boolean naoPago);
+        void onExcluirBoleto(Boleto boleto);
     }
 
     private Context context;
@@ -29,6 +32,10 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     private OnItemClickListener listener;
     // Morador de visualização: só vê a lista, sem Editar/Excluir
     private boolean somenteLeitura = false;
+    // Códigos dos cards abertos na lista compacta
+    private final java.util.Set<String> expandidos = new java.util.HashSet<>();
+    // Boletos de cada morador, pelo UID (cod)
+    private java.util.Map<String, List<Boleto>> boletos = new java.util.HashMap<>();
 
     public MoradorAdapter(Context context, List<JSONObject> moradores, OnItemClickListener listener) {
         this.context = context;
@@ -38,6 +45,11 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
 
     public void setSomenteLeitura(boolean somenteLeitura) {
         this.somenteLeitura = somenteLeitura;
+    }
+
+    public void setBoletos(java.util.Map<String, List<Boleto>> boletos) {
+        this.boletos = boletos != null ? boletos : new java.util.HashMap<>();
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -151,9 +163,41 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
 
         carregarFoto(holder.imageMoradorItem, imagePath);
 
-        int botoes = somenteLeitura ? View.GONE : View.VISIBLE;
-        holder.btnEditarMorador.setVisibility(botoes);
-        holder.btnExcluirMorador.setVisibility(botoes);
+        // Boletos: o admin e a conta master postam PDF, marcam "não pago" e excluem
+        ListaBoletos.mostrar(holder.layoutBoletosMorador, boletos.get(codigo), new ListaBoletos.AcoesAdmin() {
+                    @Override
+                    public void marcarNaoPago(Boleto boleto, boolean naoPago) {
+                        if (listener != null) listener.onMarcarBoletoNaoPago(boleto, naoPago);
+                    }
+
+                    @Override
+                    public void excluir(Boleto boleto) {
+                        if (listener != null) listener.onExcluirBoleto(boleto);
+                    }
+                });
+        holder.btnAdicionarBoleto.setOnClickListener(v -> {
+            if (listener != null) listener.onAdicionarBoleto(morador);
+        });
+
+        holder.layoutBotoesMorador.setVisibility(somenteLeitura ? View.GONE : View.VISIBLE);
+
+        // Somente leitura (master): card pequeno "Quadra A · Lote 01" que expande com os dados
+        if (somenteLeitura) {
+            holder.layoutResumoMorador.setVisibility(View.VISIBLE);
+            holder.tvResumoQuadraLote.setText(tituloQuadraLote(quadra, lote));
+            holder.tvResumoNome.setText(nome != null && !nome.isEmpty() ? nome : "Nome não informado");
+            boolean aberto = expandidos.contains(codigo);
+            holder.layoutDetalhesMorador.setVisibility(aberto ? View.VISIBLE : View.GONE);
+            holder.tvResumoSeta.setText(aberto ? "▲" : "▼");
+            holder.layoutResumoMorador.setOnClickListener(v -> {
+                if (!expandidos.remove(codigo)) expandidos.add(codigo);
+                int pos = holder.getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) notifyItemChanged(pos);
+            });
+        } else {
+            holder.layoutResumoMorador.setVisibility(View.GONE);
+            holder.layoutDetalhesMorador.setVisibility(View.VISIBLE);
+        }
 
         holder.btnEditarMorador.setOnClickListener(v -> {
             if (listener != null) listener.onEditar(morador, position);
@@ -162,6 +206,34 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         holder.btnExcluirMorador.setOnClickListener(v -> {
             if (listener != null) listener.onExcluir(morador, position);
         });
+    }
+
+    private static String tituloQuadraLote(String quadra, String lote) {
+        String q = quadra == null || quadra.trim().isEmpty() ? "-" : quadra.trim().toUpperCase();
+        String l = lote == null ? "" : lote.trim();
+        if (l.matches("\\d+")) l = String.format(java.util.Locale.ROOT, "%02d", Integer.parseInt(l));
+        return "Quadra " + q + " · Lote " + (l.isEmpty() ? "-" : l);
+    }
+
+    /** Ordem da lista do master: quadra em ordem alfabética e, dentro dela, lote em ordem numérica. */
+    public static void ordenarPorQuadraELote(List<JSONObject> lista) {
+        java.util.Collections.sort(lista, (a, b) -> {
+            String qa = a.optString("quadra", "").trim().toUpperCase();
+            String qb = b.optString("quadra", "").trim().toUpperCase();
+            if (qa.isEmpty() != qb.isEmpty()) return qa.isEmpty() ? 1 : -1; // sem quadra vai pro fim
+            int c = qa.compareTo(qb);
+            if (c != 0) return c;
+            c = Long.compare(numeroDoLote(a), numeroDoLote(b));
+            if (c != 0) return c;
+            c = a.optString("lote", "").compareToIgnoreCase(b.optString("lote", ""));
+            return c != 0 ? c : a.optString("nome", "").compareToIgnoreCase(b.optString("nome", ""));
+        });
+    }
+
+    private static long numeroDoLote(JSONObject morador) {
+        String digitos = morador.optString("lote", "").replaceAll("[^0-9]", "");
+        if (digitos.isEmpty() || digitos.length() > 9) return Long.MAX_VALUE;
+        return Long.parseLong(digitos);
     }
 
     // ==================== MÉTODOS LOCAIS PARA IMAGENS (sem BackupUtil) ====================
@@ -224,9 +296,25 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         LinearLayout layoutAnexosItem;
         Button btnEditarMorador;
         Button btnExcluirMorador;
+        LinearLayout layoutBotoesMorador;
+        LinearLayout layoutResumoMorador;
+        LinearLayout layoutDetalhesMorador;
+        TextView tvResumoQuadraLote;
+        TextView tvResumoNome;
+        TextView tvResumoSeta;
+        LinearLayout layoutBoletosMorador;
+        Button btnAdicionarBoleto;
 
         public MoradorViewHolder(@NonNull View itemView) {
             super(itemView);
+            layoutBoletosMorador = itemView.findViewById(R.id.layoutBoletosMorador);
+            btnAdicionarBoleto = itemView.findViewById(R.id.btnAdicionarBoleto);
+            layoutBotoesMorador = itemView.findViewById(R.id.layoutBotoesMorador);
+            layoutResumoMorador = itemView.findViewById(R.id.layoutResumoMorador);
+            layoutDetalhesMorador = itemView.findViewById(R.id.layoutDetalhesMorador);
+            tvResumoQuadraLote = itemView.findViewById(R.id.tvResumoQuadraLote);
+            tvResumoNome = itemView.findViewById(R.id.tvResumoNome);
+            tvResumoSeta = itemView.findViewById(R.id.tvResumoSeta);
             imageMoradorItem = itemView.findViewById(R.id.imageMoradorItem);
             tvNomeMorador = itemView.findViewById(R.id.tvNomeMorador);
             tvCodigoMorador = itemView.findViewById(R.id.tvCodigoMorador);

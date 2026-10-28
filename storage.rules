@@ -20,7 +20,7 @@ service firebase.storage {
     match /{modulo}/{id}/{arquivo} {
       allow read: if ehAdmin()
                   || (modulo in ['avisos', 'assembleias', 'despesas'] && ehMorador())
-                  || (modulo == 'moradores' && request.auth != null && request.auth.uid == id);
+                  || (modulo in ['moradores', 'boletos'] && request.auth != null && request.auth.uid == id);
       allow create, update: if ehAdmin() && request.resource.size < 20 * 1024 * 1024;
       allow delete: if ehAdmin();
     }
@@ -37,6 +37,22 @@ service firebase.storage {
 
     match /moradores/{uid}/{arquivo} {
       allow create, update: if fotoDoProprioMorador(uid);
+    }
+
+    // Boletos em PDF: além do admin (regra geral acima), a conta master do app Moradores também
+    // posta. Confere pelo login da conta (sem consulta ao Firestore, que dá 403 aqui); quem prende
+    // o boleto ao morador é a regra do Firestore (boletos/{id}).
+    function ehContaMaster() {
+      return request.auth != null
+          && request.auth.token.email == 'condominiosociedademorrogrande@moradores.morrogrande.app';
+    }
+
+    match /boletos/{uid}/{arquivo} {
+      // Leitura também é necessária pra pegar o link de download logo depois do envio
+      allow read: if ehContaMaster();
+      allow create: if ehContaMaster()
+                    && request.resource.contentType == 'application/pdf'
+                    && request.resource.size < 20 * 1024 * 1024;
     }
 
     match /leituras/{uid}/{arquivo} {

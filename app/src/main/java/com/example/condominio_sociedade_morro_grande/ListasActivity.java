@@ -7,9 +7,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ListasActivity extends AppCompatActivity {
 
@@ -23,20 +20,11 @@ public class ListasActivity extends AppCompatActivity {
         Button btnListaDespesas = findViewById(R.id.btnListaDespesas);
         Button btnListaAvisos = findViewById(R.id.btnListaAvisos);
 
-        // Dados pessoais dos moradores (CPF, telefone) só para o administrador e para a conta de
-        // visualização dos admins (morador com verTodos), que vê a lista sem editar
+        // Dados pessoais dos moradores (CPF, telefone) só para o administrador. A conta master do
+        // app Moradores (verTodos) abre a lista pelo quadro "Moradores" do painel
         boolean admin = "admin".equals(BuildConfig.PERFIL);
         if (!admin) {
             btnListaMoradores.setVisibility(View.GONE);
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                FirebaseFirestore.getInstance().collection("moradores").document(user.getUid()).get()
-                        .addOnSuccessListener(doc -> {
-                            if (Boolean.TRUE.equals(doc.getBoolean("verTodos"))) {
-                                btnListaMoradores.setVisibility(View.VISIBLE);
-                            }
-                        });
-            }
         }
 
         btnListaMoradores.setOnClickListener(v -> startActivity(new Intent(this, ListaMoradoresActivity.class)

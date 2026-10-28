@@ -14,6 +14,63 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <!-- Resumo do card compacto (lista do master): "Quadra A · Lote 01" + nome; toque expande -->
+    <LinearLayout
+        android:id="@+id/layoutResumoMorador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvResumoQuadraLote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quadra A · Lote 01"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A2E" />
+
+            <TextView
+                android:id="@+id/tvResumoNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nome do Morador"
+                android:textSize="13sp"
+                android:textColor="#6B7280"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvResumoSeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▼"
+            android:textSize="14sp"
+            android:textColor="#6B7280"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutDetalhesMorador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -150,8 +207,45 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone" />
+
+        <!-- Boletos (PDF): o admin posta; vencimento sempre no dia 15 do mês vigente -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Boletos"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A2E"
+            android:layout_marginTop="10dp" />
+
+        <LinearLayout
+            android:id="@+id/layoutBoletosMorador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAdicionarBoleto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Adicionar boleto (PDF)"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:icon="@drawable/ic_anexar"
+            app:iconTint="#FFFFFF"
+            app:cornerRadius="14dp"
+            app:backgroundTint="@color/botaoSucesso" />
+
         <!-- Botões -->
         <LinearLayout
+            android:id="@+id/layoutBotoesMorador"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -189,5 +283,6 @@
                 android:paddingEnd="24dp" />
         </LinearLayout>
 
+    </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

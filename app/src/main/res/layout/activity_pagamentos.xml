@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F0F2F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pagamentos"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A2E"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="16dp" />
+
+        <!-- Lembrete em vermelho quando o admin marcou um boleto como não pago -->
+        <LinearLayout
+            android:id="@+id/layoutAvisoVencido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="#FEE2E2"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_boleto_vencido"
+                android:contentDescription="Boleto vencido" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="Boleto vencido! Regularize o pagamento com a administração."
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#DC2626" />
+        </LinearLayout>
+
+        <!-- Informação fixa: vencimento sempre no dia 15 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:background="#DCFCE7">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_boleto_em_dia"
+                android:contentDescription="Vencimento" />
+
+            <TextView
+                android:id="@+id/tvInfoVencimento"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="O boleto vence sempre no dia 15 do mês vigente."
+                android:textSize="14sp"
+                android:textColor="#166534" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Boletos (toque para abrir, baixar ou exportar)"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A2E" />
+
+        <LinearLayout
+            android:id="@+id/layoutBoletos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

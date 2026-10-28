@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.cjstudio.condominio_sociedade_morro_grande.AdministradoresActivity;
+import com.cjstudio.condominio_sociedade_morro_grande.Assinatura;
 import com.cjstudio.condominio_sociedade_morro_grande.CadastroAvisosActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.CadastroManutencaoActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.CadastroMoradorActivity;
@@ -30,6 +31,7 @@ import com.cjstudio.condominio_sociedade_morro_grande.RegistroAssembleiasActivit
 import com.cjstudio.condominio_sociedade_morro_grande.RegistroDespesasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.RegistroOcorrenciasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.domain.model.ButtonVisibility;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
@@ -53,7 +55,7 @@ public class DashBoardActivity extends AppCompatActivity {
 
         String tipoUsuario = getIntent().getStringExtra("tipo_usuario");
         String moradorNome = getIntent().getStringExtra("morador_nome");
-        viewModel.loadUserPermissions(tipoUsuario, moradorNome);
+        viewModel.loadUserPermissions(tipoUsuario, moradorNome, ehMaster());
 
         // Cabeçalho: "Administração" para admin, saudação para o morador
         TextView titulo = findViewById(R.id.textTitulo);
@@ -70,6 +72,10 @@ public class DashBoardActivity extends AppCompatActivity {
                         "Para sair, toque em \"Sair\" no canto superior direito.", Toast.LENGTH_SHORT).show();
             }
         });
+        // "Assinaturas" fica fora do mapa de botões: aparece depois de confirmar que é o admin master
+        findViewById(R.id.buttonAssinaturas).setOnClickListener(v ->
+                startActivity(new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.AssinaturasActivity.class)));
+
         findViewById(R.id.buttonSair).setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle("Sair")
                 .setMessage("Deseja sair da sua conta?")
@@ -102,6 +108,8 @@ public class DashBoardActivity extends AppCompatActivity {
         buttons.put("listaDespesas", findViewById(R.id.buttonListaDespesas));
         buttons.put("avisosMorador", findViewById(R.id.buttonAvisosMorador));
         buttons.put("leituraAgua", findViewById(R.id.buttonLeituraAgua));
+        buttons.put("pagamentos", findViewById(R.id.buttonPagamentos));
+        buttons.put("moradoresMaster", findViewById(R.id.buttonMoradoresMaster));
 
         // Botão "Listas" (admin e morador)
         buttons.put("listas", findViewById(R.id.buttonListas));
@@ -140,6 +148,8 @@ public class DashBoardActivity extends AppCompatActivity {
                 break;
             case LISTA_MORADORES:
                 intent = new Intent(this, ListaMoradoresActivity.class);
+                // Master no app Moradores: cards compactos, sem Editar/Excluir
+                intent.putExtra("somenteLeitura", "morador".equals(event.getTipoUsuario()));
                 break;
             case REGISTRO_OCORRENCIAS:
                 intent = new Intent(this, RegistroOcorrenciasActivity.class);
@@ -184,6 +194,9 @@ public class DashBoardActivity extends AppCompatActivity {
             case LISTA_LEITURAS_AGUA:
                 intent = new Intent(this, ListaLeiturasAguaActivity.class);
                 break;
+            case PAGAMENTOS:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.PagamentosActivity.class);
+                break;
             default:
                 break;
         }
@@ -197,6 +210,120 @@ public class DashBoardActivity extends AppCompatActivity {
         super.onResume();
         String tipoUsuario = getIntent().getStringExtra("tipo_usuario");
         String moradorNome = getIntent().getStringExtra("morador_nome");
-        viewModel.loadUserPermissions(tipoUsuario, moradorNome);
+        viewModel.loadUserPermissions(tipoUsuario, moradorNome, ehMaster());
+        if ("morador".equals(tipoUsuario) && !ehMaster()) atualizarAlertaDeBoleto();
+        conferirAssinatura();
+    }
+
+    /**
+     * Assinatura do app (Assinatura.java): a partir do dia 06 sem pagamento trava tudo; do dia 01
+     * ao 05 os admins recebem um lembrete por dia; o admin master vê o quadro "Assinaturas" com
+     * ícone vermelho do dia 25 em diante ou enquanto o mês não estiver pago.
+     * Sem conexão não trava (não dá pra saber se foi pago).
+     */
+    private void conferirAssinatura() {
+        com.cjstudio.condominio_sociedade_morro_grande.AssinaturaRepository repo =
+                new com.cjstudio.condominio_sociedade_morro_grande.AssinaturaRepository();
+        repo.estado(new com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ColecaoFirestore.Callback<Assinatura.Estado>() {
+            @Override
+            public void onSucesso(Assinatura.Estado estado) {
+                if (isFinishing()) return;
+                if (estado.situacao == Assinatura.Situacao.BLOQUEADA) {
+                    Intent intent = new Intent(DashBoardActivity.this,
+                            com.cjstudio.condominio_sociedade_morro_grande.BloqueioAssinaturaActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                    return;
+                }
+                boolean admin = "admin".equals(getIntent().getStringExtra("tipo_usuario"));
+                if (admin && estado.situacao == Assinatura.Situacao.AGUARDANDO_PAGAMENTO) lembreteDiario();
+                if (admin) mostrarQuadroAssinaturas(repo, estado);
+            }
+
+            @Override
+            public void onErro(Exception e) { }
+        });
+    }
+
+    private void mostrarQuadroAssinaturas(com.cjstudio.condominio_sociedade_morro_grande.AssinaturaRepository repo,
+                                          Assinatura.Estado estado) {
+        repo.ehAdminMaster(new com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ColecaoFirestore.Callback<Boolean>() {
+            @Override
+            public void onSucesso(Boolean master) {
+                MaterialButton quadro = findViewById(R.id.buttonAssinaturas);
+                quadro.setVisibility(Boolean.TRUE.equals(master) ? View.VISIBLE : View.GONE);
+                if (estado.mostrarIcone()) {
+                    // Sem tint: o ícone já tem o cartão branco e o alerta vermelho
+                    quadro.setIconTint(null);
+                    quadro.setIconResource(R.drawable.ic_painel_assinaturas_alerta);
+                    quadro.setContentDescription("Assinaturas: lembrete de vencimento");
+                } else {
+                    quadro.setIconTint(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
+                    quadro.setIconResource(R.drawable.ic_painel_assinaturas);
+                    quadro.setContentDescription("Assinaturas");
+                }
+            }
+
+            @Override
+            public void onErro(Exception e) { }
+        });
+    }
+
+    /** Dia 01 a 05 sem pagamento: um aviso por dia (por aparelho) para os admins. */
+    private void lembreteDiario() {
+        String hoje = Assinatura.mes(Assinatura.agora()) + "-" + Assinatura.agora().get(java.util.Calendar.DAY_OF_MONTH);
+        android.content.SharedPreferences prefs = getSharedPreferences("assinatura", MODE_PRIVATE);
+        if (hoje.equals(prefs.getString("ultimoLembrete", ""))) return;
+        prefs.edit().putString("ultimoLembrete", hoje).apply();
+        new AlertDialog.Builder(this)
+                .setTitle("Assinatura do app")
+                .setMessage("O vencimento da sua assinatura é até o dia 05 de cada mês ("
+                        + Assinatura.VALOR + "). Sem pagamento, no dia 06 o app trava para moradores e administradores.")
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    /** Alerta vermelho no quadro "Pagamentos" quando algum boleto foi marcado como não pago. */
+    private void atualizarAlertaDeBoleto() {
+        com.google.firebase.auth.FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+        new com.cjstudio.condominio_sociedade_morro_grande.BoletosRepository().listarDoMorador(user.getUid(),
+                new com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ColecaoFirestore.Callback<
+                        java.util.List<com.cjstudio.condominio_sociedade_morro_grande.Boleto>>() {
+                    @Override
+                    public void onSucesso(java.util.List<com.cjstudio.condominio_sociedade_morro_grande.Boleto> boletos) {
+                        boolean vencido = false;
+                        for (com.cjstudio.condominio_sociedade_morro_grande.Boleto b : boletos) {
+                            if (b.isNaoPago()) vencido = true;
+                        }
+                        MaterialButton pagamentos = (MaterialButton) buttons.get("pagamentos");
+                        if (pagamentos == null) return;
+                        if (vencido) {
+                            // Sem tint: o ícone já tem o recibo branco e o alerta vermelho
+                            pagamentos.setIconTint(null);
+                            pagamentos.setIconResource(R.drawable.ic_painel_pagamentos_vencido);
+                            pagamentos.setContentDescription("Pagamentos: boleto vencido");
+                        } else {
+                            pagamentos.setIconTint(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
+                            pagamentos.setIconResource(R.drawable.ic_painel_pagamentos);
+                            pagamentos.setContentDescription("Pagamentos");
+                        }
+                    }
+
+                    @Override
+                    public void onErro(Exception e) { }
+                });
+    }
+
+    /** Conta master no app Moradores: o cadastro dela tem verTodos = true. */
+    private boolean ehMaster() {
+        String json = getIntent().getStringExtra("morador_json");
+        if (json == null) return false;
+        try {
+            return new org.json.JSONObject(json).optBoolean("verTodos");
+        } catch (org.json.JSONException e) {
+            return false;
+        }
     }
 }

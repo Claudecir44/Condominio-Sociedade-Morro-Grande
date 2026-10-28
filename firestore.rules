@@ -48,6 +48,17 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Assinatura do app: todos os membros leem o último mês pago (pagoAteMes) pra saber se o
+    // app trava; só a Cloud Function confirmarCompraAssinaturaCondominio grava (Admin SDK).
+    match /config/assinatura {
+      allow read: if membro();
+      allow write: if false;
+    }
+    match /pagamentosAssinatura/{id} {
+      allow read: if ehAdmin();
+      allow write: if false;
+    }
+
     match /administradores/{uid} {
       allow read: if logado() && (request.auth.uid == uid || ehAdmin());
       // Novo admin: criado por um admin, ou o primeiro admin (junto com config/setup, uma vez só)
@@ -103,6 +114,23 @@ service cloud.firestore {
                     && request.resource.data.criadoEm == request.time;
       allow update: if false;
       allow delete: if ehAdmin();
+    }
+
+    // Boletos (PDF): o admin ou a conta master posta para um morador (data/hora do servidor),
+    // marca "não pago" e exclui. O morador vê só os dele.
+    match /boletos/{id} {
+      allow read: if ehAdmin() || moradorVeTodos()
+                  || (logado() && resource.data.moradorUid == request.auth.uid);
+      allow create: if (ehAdmin() || moradorVeTodos())
+                    && request.resource.data.keys().hasOnly(['moradorUid', 'arquivo', 'nomeArquivo', 'postadoEm', 'naoPago'])
+                    && request.resource.data.moradorUid is string
+                    && request.resource.data.arquivo is string
+                    && request.resource.data.postadoEm == request.time
+                    && request.resource.data.naoPago == false;
+      allow update: if (ehAdmin() || moradorVeTodos())
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['naoPago'])
+                    && request.resource.data.naoPago is bool;
+      allow delete: if ehAdmin() || moradorVeTodos();
     }
 
     // Informações do condomínio: todos os membros leem, só admin grava

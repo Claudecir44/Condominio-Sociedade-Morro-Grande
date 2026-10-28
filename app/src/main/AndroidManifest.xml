@@ -140,6 +140,15 @@
         <activity
             android:name=".ListaLeiturasAguaActivity"
             android:exported="false" />
+        <activity
+            android:name=".PagamentosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AssinaturasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BloqueioAssinaturaActivity"
+            android:exported="false" />
 
         <!-- Visualizador -->
         <activity

@@ -14,6 +14,8 @@ public class DashBoardViewModel extends AndroidViewModel {
     private final MutableLiveData<NavigationEvent> navigationEvent = new MutableLiveData<>();
     private String currentTipoUsuario;
     private String currentMoradorNome;
+    // Conta master no app Moradores (morador com verTodos)
+    private boolean currentMaster;
 
     public DashBoardViewModel(Application application) {
         super(application);
@@ -24,8 +26,13 @@ public class DashBoardViewModel extends AndroidViewModel {
     public LiveData<NavigationEvent> getNavigationEvent() { return navigationEvent; }
 
     public void loadUserPermissions(String tipoUsuario, String moradorNome) {
+        loadUserPermissions(tipoUsuario, moradorNome, false);
+    }
+
+    public void loadUserPermissions(String tipoUsuario, String moradorNome, boolean master) {
         this.currentTipoUsuario = tipoUsuario;
         this.currentMoradorNome = moradorNome;
+        this.currentMaster = master;
         ButtonVisibility visibility = getButtonVisibility();
         uiState.setValue(com.cjstudio.condominio_sociedade_morro_grande.presentation.dashboard.DashBoardUiState.ready(visibility, tipoUsuario, moradorNome));
     }
@@ -50,6 +57,8 @@ public class DashBoardViewModel extends AndroidViewModel {
         visibility.setVisible("listaDespesas", isMorador);
         visibility.setVisible("avisosMorador", isMorador);
         visibility.setVisible("leituraAgua", isMorador);
+        visibility.setVisible("pagamentos", isMorador && !currentMaster);
+        visibility.setVisible("moradoresMaster", isMorador && currentMaster);
 
         // "Listas" – visível para ambos
         visibility.setVisible("listas", isAdmin || isMorador);
@@ -83,6 +92,8 @@ public class DashBoardViewModel extends AndroidViewModel {
             case "listaDespesas": return NavigationTarget.LISTA_DESPESAS;
             case "avisosMorador": return NavigationTarget.LISTA_AVISOS;
             case "leituraAgua": return NavigationTarget.LEITURA_AGUA;
+            case "pagamentos": return NavigationTarget.PAGAMENTOS;
+            case "moradoresMaster": return NavigationTarget.LISTA_MORADORES;
             // O case "listaAssembleias" não é mais usado na Dashboard
             default: return null;
         }
@@ -103,7 +114,8 @@ public class DashBoardViewModel extends AndroidViewModel {
         LISTA_AVISOS,
         LISTA_MORADORES,
         LEITURA_AGUA,
-        LISTA_LEITURAS_AGUA
+        LISTA_LEITURAS_AGUA,
+        PAGAMENTOS
     }
 
     public static class NavigationEvent {
