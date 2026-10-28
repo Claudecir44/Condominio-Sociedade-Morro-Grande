@@ -72,10 +72,6 @@ public class DashBoardActivity extends AppCompatActivity {
                         "Para sair, toque em \"Sair\" no canto superior direito.", Toast.LENGTH_SHORT).show();
             }
         });
-        // "Assinaturas" fica fora do mapa de botões: aparece depois de confirmar que é o admin master
-        findViewById(R.id.buttonAssinaturas).setOnClickListener(v ->
-                startActivity(new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.AssinaturasActivity.class)));
-
         findViewById(R.id.buttonSair).setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle("Sair")
                 .setMessage("Deseja sair da sua conta?")
@@ -110,6 +106,7 @@ public class DashBoardActivity extends AppCompatActivity {
         buttons.put("leituraAgua", findViewById(R.id.buttonLeituraAgua));
         buttons.put("pagamentos", findViewById(R.id.buttonPagamentos));
         buttons.put("moradoresMaster", findViewById(R.id.buttonMoradoresMaster));
+        buttons.put("assinaturas", findViewById(R.id.buttonAssinaturas));
 
         // Botão "Listas" (admin e morador)
         buttons.put("listas", findViewById(R.id.buttonListas));
@@ -197,6 +194,9 @@ public class DashBoardActivity extends AppCompatActivity {
             case PAGAMENTOS:
                 intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.PagamentosActivity.class);
                 break;
+            case ASSINATURAS:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.AssinaturasActivity.class);
+                break;
             default:
                 break;
         }
@@ -217,8 +217,9 @@ public class DashBoardActivity extends AppCompatActivity {
 
     /**
      * Assinatura do app (Assinatura.java): a partir do dia 06 sem pagamento trava tudo; do dia 01
-     * ao 05 os admins recebem um lembrete por dia; o admin master vê o quadro "Assinaturas" com
-     * ícone vermelho do dia 25 em diante ou enquanto o mês não estiver pago.
+     * ao 05 os admins e a conta master recebem um lembrete por dia; a conta master (app Moradores)
+     * vê o quadro "Assinaturas" com ícone vermelho do dia 25 em diante ou enquanto o mês não
+     * estiver pago.
      * Sem conexão não trava (não dá pra saber se foi pago).
      */
     private void conferirAssinatura() {
@@ -237,8 +238,8 @@ public class DashBoardActivity extends AppCompatActivity {
                     return;
                 }
                 boolean admin = "admin".equals(getIntent().getStringExtra("tipo_usuario"));
-                if (admin && estado.situacao == Assinatura.Situacao.AGUARDANDO_PAGAMENTO) lembreteDiario();
-                if (admin) mostrarQuadroAssinaturas(repo, estado);
+                if ((admin || ehMaster()) && estado.situacao == Assinatura.Situacao.AGUARDANDO_PAGAMENTO) lembreteDiario();
+                if (ehMaster()) mostrarIconeAssinaturas(estado);
             }
 
             @Override
@@ -246,28 +247,19 @@ public class DashBoardActivity extends AppCompatActivity {
         });
     }
 
-    private void mostrarQuadroAssinaturas(com.cjstudio.condominio_sociedade_morro_grande.AssinaturaRepository repo,
-                                          Assinatura.Estado estado) {
-        repo.ehAdminMaster(new com.cjstudio.condominio_sociedade_morro_grande.data.firestore.ColecaoFirestore.Callback<Boolean>() {
-            @Override
-            public void onSucesso(Boolean master) {
-                MaterialButton quadro = findViewById(R.id.buttonAssinaturas);
-                quadro.setVisibility(Boolean.TRUE.equals(master) ? View.VISIBLE : View.GONE);
-                if (estado.mostrarIcone()) {
-                    // Sem tint: o ícone já tem o cartão branco e o alerta vermelho
-                    quadro.setIconTint(null);
-                    quadro.setIconResource(R.drawable.ic_painel_assinaturas_alerta);
-                    quadro.setContentDescription("Assinaturas: lembrete de vencimento");
-                } else {
-                    quadro.setIconTint(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
-                    quadro.setIconResource(R.drawable.ic_painel_assinaturas);
-                    quadro.setContentDescription("Assinaturas");
-                }
-            }
-
-            @Override
-            public void onErro(Exception e) { }
-        });
+    private void mostrarIconeAssinaturas(Assinatura.Estado estado) {
+        MaterialButton quadro = (MaterialButton) buttons.get("assinaturas");
+        if (quadro == null) return;
+        if (estado.mostrarIcone()) {
+            // Sem tint: o ícone já tem o cartão branco e o alerta vermelho
+            quadro.setIconTint(null);
+            quadro.setIconResource(R.drawable.ic_painel_assinaturas_alerta);
+            quadro.setContentDescription("Assinaturas: lembrete de vencimento");
+        } else {
+            quadro.setIconTint(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
+            quadro.setIconResource(R.drawable.ic_painel_assinaturas);
+            quadro.setContentDescription("Assinaturas");
+        }
     }
 
     /** Dia 01 a 05 sem pagamento: um aviso por dia (por aparelho) para os admins. */

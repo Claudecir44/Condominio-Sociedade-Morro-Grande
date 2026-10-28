@@ -40,15 +40,18 @@ public class AssinaturaRepository {
         });
     }
 
-    /** O quadro "Assinaturas" e o pagamento são só do admin master (administradores/{uid}.master). */
-    public void ehAdminMaster(ColecaoFirestore.Callback<Boolean> callback) {
+    /**
+     * O quadro "Assinaturas" e o pagamento são só da conta master no app Moradores
+     * ("Condominio sociedade Morro grande", moradores/{uid}.verTodos).
+     */
+    public void ehContaMaster(ColecaoFirestore.Callback<Boolean> callback) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null || !"admin".equals(BuildConfig.PERFIL)) {
+        if (user == null || !"morador".equals(BuildConfig.PERFIL)) {
             callback.onSucesso(false);
             return;
         }
-        FirebaseFirestore.getInstance().collection("administradores").document(user.getUid()).get()
-                .addOnSuccessListener(doc -> callback.onSucesso(Boolean.TRUE.equals(doc.getBoolean("master"))))
+        FirebaseFirestore.getInstance().collection("moradores").document(user.getUid()).get()
+                .addOnSuccessListener(doc -> callback.onSucesso(Boolean.TRUE.equals(doc.getBoolean("verTodos"))))
                 .addOnFailureListener(callback::onErro);
     }
 

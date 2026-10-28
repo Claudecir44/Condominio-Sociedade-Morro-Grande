@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Assinatura mensal do app (paga pelo admin master no app Admins, pelo Google Play). Regras:
+ * Assinatura mensal do app (paga pela conta master no app Moradores, pelo Google Play). Regras:
  * - R$ 460,00 por mês; o pagamento vale o mês vigente inteiro;
  * - vence no dia 01; pode ser paga do dia 01 ao dia 05 sem travar o app (lembrete diário);
  * - a partir do dia 06 sem pagamento, o app trava para todos (moradores e admins);

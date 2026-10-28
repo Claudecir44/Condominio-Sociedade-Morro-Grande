@@ -186,6 +186,14 @@
                 app:backgroundTint="@color/painelMoradores"
                 app:icon="@drawable/ic_painel_moradores" />
 
+            <!-- Só o master: assinatura do app; fica embaixo de "Leitura d'Água" -->
+            <Button
+                android:id="@+id/buttonAssinaturas"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Assinaturas"
+                app:backgroundTint="@color/painelAdministradores"
+                app:icon="@drawable/ic_painel_assinaturas" />
+
             <!-- ========== LISTAS (admin e morador): linha inteira ========== -->
             <Button
                 android:id="@+id/buttonListas"
@@ -197,20 +205,6 @@
                 app:icon="@drawable/ic_painel_listas"
                 app:iconGravity="textStart"
                 app:iconSize="28dp" />
-
-            <!-- ========== ASSINATURAS (só admin master): linha inteira, a última da grade,
-                 então ficar GONE não deixa buraco ========== -->
-            <Button
-                android:id="@+id/buttonAssinaturas"
-                style="@style/Widget.Condominio.Painel"
-                android:layout_height="84dp"
-                android:layout_columnSpan="2"
-                android:text="Assinaturas"
-                android:visibility="gone"
-                app:backgroundTint="@color/painelAdministradores"
-                app:icon="@drawable/ic_painel_assinaturas"
-                app:iconGravity="textStart"
-                app:iconSize="30dp" />
         </GridLayout>
     </LinearLayout>
 </ScrollView>

@@ -1,5 +1,5 @@
 // Cloud Functions do Condomínio Sociedade Morro Grande (projeto condominio-morro-grande).
-// Por enquanto só a assinatura mensal do app, paga pelo admin master no app Admins pelo
+// Por enquanto só a assinatura mensal do app, paga pela conta master no app Moradores pelo
 // Google Play — mesmo fluxo do confirmarCompraGooglePlayMotorista do Caronas, sem o Mercado
 // Pago: o app compra, manda o token pra cá, conferimos no Google, consumimos e gravamos o mês
 // pago em config/assinatura. Regras no app em Assinatura.java (precisam bater com estas).
@@ -14,9 +14,9 @@ const { google } = require('googleapis');
 admin.initializeApp();
 
 // functions/.env (nunca no app nem no git):
-//   GOOGLE_PLAY_PACKAGE_NAME=com.cjstudio.condominio_sociedade_morro_grande.admin
+//   GOOGLE_PLAY_PACKAGE_NAME=com.cjstudio.condominio_sociedade_morro_grande.morador
 //   GOOGLE_PLAY_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}' (a chave JSON inteira, numa linha só)
-const GOOGLE_PLAY_PACKAGE_NAME = process.env.GOOGLE_PLAY_PACKAGE_NAME || 'com.cjstudio.condominio_sociedade_morro_grande.admin';
+const GOOGLE_PLAY_PACKAGE_NAME = process.env.GOOGLE_PLAY_PACKAGE_NAME || 'com.cjstudio.condominio_sociedade_morro_grande.morador';
 const GOOGLE_PLAY_SERVICE_ACCOUNT_JSON = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON || '';
 
 if (!GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) {
@@ -25,7 +25,7 @@ if (!GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) {
     console.error('   Enquanto isso, compras da assinatura não são confirmadas.');
 }
 
-// Produto avulso (consumível) cadastrado no Play Console do app Admins — id igual a
+// Produto avulso (consumível) cadastrado no Play Console do app Moradores — id igual a
 // Assinatura.PRODUTO_GOOGLE_PLAY; o preço lá precisa ser R$ 460,00.
 const PRODUTO_ASSINATURA = 'condominio_assinatura_mensal';
 const VALOR_ASSINATURA = 460;
@@ -69,10 +69,10 @@ exports.confirmarCompraAssinaturaCondominio = functions.https.onCall(async (requ
     }
 
     const db = admin.firestore();
-    // Só o admin master paga a assinatura
-    const adminDoc = await db.collection('administradores').doc(uid).get();
-    if (!adminDoc.exists || adminDoc.get('tipo') !== 'admin' || adminDoc.get('master') !== true) {
-        throw new functions.https.HttpsError('permission-denied', 'Só o admin master paga a assinatura.');
+    // Só a conta master do app Moradores ("Condominio sociedade Morro grande", verTodos) paga
+    const masterDoc = await db.collection('moradores').doc(uid).get();
+    if (!masterDoc.exists || masterDoc.get('verTodos') !== true) {
+        throw new functions.https.HttpsError('permission-denied', 'Só a conta master paga a assinatura.');
     }
 
     const androidpublisher = obterAndroidPublisher();
@@ -140,7 +140,7 @@ exports.confirmarCompraAssinaturaCondominio = functions.https.onCall(async (requ
         tx.set(configRef, { pagoAteMes: mes, atualizadoEm: FieldValue.serverTimestamp() }, { merge: true });
         tx.set(db.collection('pagamentosAssinatura').doc(), {
             uid,
-            nome: adminDoc.get('nome') || '',
+            nome: masterDoc.get('nome') || '',
             mes,
             valor: VALOR_ASSINATURA,
             produto: productId,

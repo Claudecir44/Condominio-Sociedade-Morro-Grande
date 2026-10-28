@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Quadro "Assinaturas" do admin master: situação do mês e "Pagamentos", que abre a tela de
+ * Quadro "Assinaturas" da conta master (app Moradores): situação do mês e "Pagamentos", que abre a tela de
  * pagamento do Google Play (só Google Play, sem Mercado Pago). A compra paga é confirmada no
  * servidor (confirmarCompraAssinaturaCondominio), que grava o mês como pago — quem libera o app
  * é sempre o servidor, nunca o retorno da tela do Google.

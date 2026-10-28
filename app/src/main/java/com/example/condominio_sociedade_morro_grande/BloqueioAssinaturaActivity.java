@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * App travado: assinatura do mês sem pagamento a partir do dia 06 (Assinatura.Situacao.BLOQUEADA).
- * Vale para moradores e admins; só o admin master tem o botão de pagar. Quando o mês fica pago,
+ * Vale para moradores e admins; só a conta master (app Moradores) tem o botão de pagar. Quando o mês fica pago,
  * volta para o início do app.
  */
 public class BloqueioAssinaturaActivity extends AppCompatActivity {
@@ -26,17 +26,19 @@ public class BloqueioAssinaturaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bloqueio_assinatura);
 
-        boolean admin = "admin".equals(BuildConfig.PERFIL);
-        ((TextView) findViewById(R.id.tvMensagemBloqueio)).setText(admin
-                ? "A assinatura do aplicativo não foi paga até o dia 05.\nO admin master precisa pagar em Assinaturas para liberar o app."
+        TextView mensagem = findViewById(R.id.tvMensagemBloqueio);
+        mensagem.setText("admin".equals(BuildConfig.PERFIL)
+                ? "A assinatura do aplicativo não foi paga até o dia 05.\nPara liberar, pague em Assinaturas com a conta master no app Moradores."
                 : "O aplicativo do condomínio está temporariamente indisponível.\nProcure a administração do condomínio.");
 
         View pagar = findViewById(R.id.btnPagarAssinatura);
         pagar.setOnClickListener(v -> startActivity(new Intent(this, AssinaturasActivity.class)));
-        repository.ehAdminMaster(new ColecaoFirestore.Callback<Boolean>() {
+        repository.ehContaMaster(new ColecaoFirestore.Callback<Boolean>() {
             @Override
             public void onSucesso(Boolean master) {
-                pagar.setVisibility(Boolean.TRUE.equals(master) ? View.VISIBLE : View.GONE);
+                boolean ehMaster = Boolean.TRUE.equals(master);
+                pagar.setVisibility(ehMaster ? View.VISIBLE : View.GONE);
+                if (ehMaster) mensagem.setText("A assinatura do aplicativo não foi paga até o dia 05.\nPague agora para liberar o app para todos.");
             }
 
             @Override
