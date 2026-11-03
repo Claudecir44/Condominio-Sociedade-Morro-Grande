@@ -110,6 +110,13 @@ public class DashBoardActivity extends AppCompatActivity {
         return true;
     }
 
+    /** Meses de um módulo só para consulta (sem Adicionar nem Criar mês). */
+    private Intent mesesSoParaVer(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.Modulo modulo) {
+        return new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.class)
+                .putExtra(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.EXTRA_MODULO, modulo.name())
+                .putExtra(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.EXTRA_SO_VER, true);
+    }
+
     @Override
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -278,19 +285,18 @@ public class DashBoardActivity extends AppCompatActivity {
                 intent.putExtra("somenteLeitura", true);
                 break;
             case LISTA_ASSEMBLEIAS:
-                // Quadro "Assembleias" do painel do morador (no app Moradores não há mais "Listas")
-                intent = new Intent(this, ListaAssembleiasActivity.class);
+                // Quadro "Assembleias" do painel do morador (no app Moradores não há mais "Listas"):
+                // mês a mês, como a prestação de contas, só para consulta
+                intent = mesesSoParaVer(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.Modulo.ASSEMBLEIAS);
                 intent.putExtra("tipo_usuario", event.getTipoUsuario());
                 break;
             case LISTA_DESPESAS:
                 // Mês a mês, como o admin vê em Cadastro, mas só para consulta
-                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.class);
-                intent.putExtra(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.EXTRA_MODULO,
-                        com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.Modulo.DESPESAS.name());
-                intent.putExtra(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.EXTRA_SO_VER, true);
+                intent = mesesSoParaVer(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.Modulo.DESPESAS);
                 break;
             case LISTA_AVISOS:
-                intent = new Intent(this, ListaAvisosActivity.class);
+                // Mês a mês, como a prestação de contas, só para consulta
+                intent = mesesSoParaVer(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.Modulo.AVISOS);
                 intent.putExtra("tipo_usuario", event.getTipoUsuario());
                 break;
             case LISTAS:

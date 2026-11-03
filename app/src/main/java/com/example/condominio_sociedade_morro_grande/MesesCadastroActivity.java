@@ -171,7 +171,11 @@ public class MesesCadastroActivity extends AppCompatActivity {
     }
 
     private void abrirLista(String mes) {
-        startActivity(new Intent(this, modulo.lista).putExtra(MesCadastro.EXTRA_MES, mes));
+        Intent lista = new Intent(this, modulo.lista).putExtra(MesCadastro.EXTRA_MES, mes);
+        // Repassa o perfil (o morador só visualiza: sem editar, excluir nem baixar)
+        String tipoUsuario = getIntent().getStringExtra("tipo_usuario");
+        if (tipoUsuario != null) lista.putExtra("tipo_usuario", tipoUsuario);
+        startActivity(lista);
     }
 
     private void adicionar(String mes) {
