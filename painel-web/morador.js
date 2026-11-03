@@ -136,6 +136,48 @@ function verImagem(src) {
   v.onclick = () => v.remove();
   document.body.appendChild(v);
 }
+// PDF dentro da página, só para ver (igual ao VisualizarPdfActivity do app): as páginas viram imagens
+// pelo pdf.js, sem o leitor do navegador e o botão de baixar dele
+let pdfjs = null;
+async function carregarPdfJs() {
+  if (pdfjs) return pdfjs;
+  const base = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  await new Promise((ok, falha) => {
+    const s = Object.assign(document.createElement("script"), { src: base + "pdf.min.js", onload: ok, onerror: falha });
+    document.head.appendChild(s);
+  });
+  pdfjs = window.pdfjsLib;
+  pdfjs.GlobalWorkerOptions.workerSrc = base + "pdf.worker.min.js";
+  return pdfjs;
+}
+async function verPdf(link) {
+  const v = document.createElement("div");
+  v.className = "visualizador visualizador-pdf";
+  v.innerHTML = `<div class="pdf-topo"><span>${esc(nomeDoAnexo(link))}</span>
+      <button type="button" class="btn contorno pequeno">Fechar</button></div>
+    <div class="pdf-paginas"><p class="vazio">Carregando…</p></div>`;
+  v.querySelector("button").onclick = () => v.remove();
+  v.oncontextmenu = (e) => e.preventDefault();
+  document.body.appendChild(v);
+  const paginas = v.querySelector(".pdf-paginas");
+  try {
+    const lib = await carregarPdfJs();
+    const dados = await (await fetch(link)).arrayBuffer();
+    const pdf = await lib.getDocument({ data: dados }).promise;
+    paginas.innerHTML = "";
+    const largura = Math.min(paginas.clientWidth || 800, 900);
+    for (let n = 1; n <= pdf.numPages; n++) {
+      const pagina = await pdf.getPage(n);
+      const escala = (largura / pagina.getViewport({ scale: 1 }).width) * (window.devicePixelRatio || 1);
+      const vp = pagina.getViewport({ scale: escala });
+      const canvas = Object.assign(document.createElement("canvas"), { width: vp.width, height: vp.height });
+      await pagina.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+      paginas.appendChild(canvas);
+    }
+  } catch (e) {
+    paginas.innerHTML = `<p class="vazio">Não foi possível abrir o PDF: ${esc(e.message || String(e))}</p>`;
+  }
+}
 async function baixar(link) {
   const nome = nomeDoAnexo(link);
   try {
@@ -151,7 +193,8 @@ async function baixar(link) {
     window.open(link, "_blank", "noopener");
   }
 }
-// Só os anexos que já estão na nuvem; os que ficaram só no celular de origem não abrem aqui
+// Só os anexos que já estão na nuvem; os que ficaram só no celular de origem não abrem aqui.
+// Prestação de contas, avisos e assembleias: o morador só abre e visualiza (sem baixar)
 function htmlAnexos(itens) {
   return itens.filter(ehLink).map((link, i) => {
     const nome = nomeDoAnexo(link);
@@ -160,19 +203,19 @@ function htmlAnexos(itens) {
       ? `<img class="miniatura" data-ver="${i}" alt="" src="${esc(link)}">`
       : `<span class="tipo" data-abrir="${i}" style="background:${tipo.cor}">${tipo.rot}</span>`;
     return `<div class="anexo">${icone}<span class="nome" title="${esc(nome)}">${esc(nome)}</span>
-      <span class="mini-acoes"><button type="button" class="btn pequeno" data-abrir="${i}">Abrir</button>
-      <button type="button" class="btn pequeno" data-baixar="${i}">Baixar</button></span></div>`;
+      <span class="mini-acoes"><button type="button" class="btn pequeno" data-abrir="${i}">Abrir</button></span></div>`;
   }).join("");
 }
 function ligarAnexos(container, itens) {
   const links = itens.filter(ehLink);
   container.onclick = (e) => {
-    const b = e.target.closest("[data-abrir],[data-baixar],[data-ver]");
+    const b = e.target.closest("[data-abrir],[data-ver]");
     if (!b) return;
-    const link = links[+(b.dataset.abrir ?? b.dataset.baixar ?? b.dataset.ver)];
-    if (b.dataset.ver !== undefined) verImagem(link);
-    else if (b.dataset.baixar !== undefined) baixar(link);
-    else window.open(link, "_blank", "noopener");
+    const link = links[+(b.dataset.abrir ?? b.dataset.ver)];
+    const tipo = tipoDoAnexo(nomeDoAnexo(link));
+    if (b.dataset.ver !== undefined || tipo.img) verImagem(link);
+    else if (tipo.rot === "PDF") verPdf(link);
+    else aviso("Este arquivo não pode ser visualizado aqui. Peça à administração a versão em PDF.");
   };
 }
 

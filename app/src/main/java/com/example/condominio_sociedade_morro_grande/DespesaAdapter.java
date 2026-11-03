@@ -99,7 +99,7 @@ public class DespesaAdapter extends RecyclerView.Adapter<DespesaAdapter.DespesaV
             // Notas e comprovantes: fotos, PDF, Word, Excel... (abrir, baixar, exportar)
             java.util.List<String> anexos = despesa.getAnexos() != null ? despesa.getAnexos() : new java.util.ArrayList<>();
             tvAnexosLabel.setVisibility(anexos.isEmpty() ? View.GONE : View.VISIBLE);
-            ListaAnexos.mostrar(layoutAnexos, anexos);
+            ListaAnexos.mostrar(layoutAnexos, anexos, "morador".equalsIgnoreCase(tipoUsuario)); // morador só visualiza
 
             btnEditar.setOnClickListener(v -> {
                 if (listener != null) listener.onEditar(despesa, position);

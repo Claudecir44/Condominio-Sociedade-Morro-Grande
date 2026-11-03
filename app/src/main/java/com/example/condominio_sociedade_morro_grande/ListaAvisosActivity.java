@@ -216,7 +216,8 @@ public class ListaAvisosActivity extends AppCompatActivity {
         LinearLayout layoutAnexos = new LinearLayout(this);
         layoutAnexos.setOrientation(LinearLayout.VERTICAL);
         layoutAnexos.setPadding(0, 0, 0, 16);
-        ListaAnexos.mostrar(layoutAnexos, ListaAnexos.deValor(aviso.optString("anexos", "[]")));
+        ListaAnexos.mostrar(layoutAnexos, ListaAnexos.deValor(aviso.optString("anexos", "[]")),
+                "morador".equalsIgnoreCase(tipoUsuario)); // morador só visualiza
         cardAviso.addView(layoutAnexos);
 
         View separador = new View(this);

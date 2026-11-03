@@ -74,7 +74,7 @@ public class ListaAssembleiasActivity extends AppCompatActivity implements
         }
 
         recyclerAnexos.setLayoutManager(new LinearLayoutManager(this));
-        anexosAdapter = new AnexosAdapter(listaAnexos);
+        anexosAdapter = new AnexosAdapter(listaAnexos, "morador".equalsIgnoreCase(tipoUsuario));
         recyclerAnexos.setAdapter(anexosAdapter);
 
         assembleiaDAO = new AssembleiaDAO();

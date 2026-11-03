@@ -38,20 +38,33 @@ public final class ListaAnexos {
         mostrar(container, anexos, null);
     }
 
+    /**
+     * Morador em prestação de contas, avisos e assembleias: só abre e visualiza, sem o menu de
+     * baixar/exportar.
+     */
+    public static void mostrar(LinearLayout container, List<String> anexos, boolean soVisualizar) {
+        mostrar(container, anexos, null, soVisualizar);
+    }
+
     public static void mostrar(LinearLayout container, List<String> anexos, AoRemover aoRemover) {
+        mostrar(container, anexos, aoRemover, false);
+    }
+
+    private static void mostrar(LinearLayout container, List<String> anexos, AoRemover aoRemover, boolean soVisualizar) {
         container.removeAllViews();
         List<String> lista = anexos != null ? anexos : new ArrayList<>();
         container.setVisibility(lista.isEmpty() && aoRemover == null ? View.GONE : View.VISIBLE);
         if (!lista.isEmpty() && aoRemover == null) {
             TextView titulo = new TextView(container.getContext());
-            titulo.setText("Toque no arquivo para abrir, baixar ou exportar");
+            titulo.setText(soVisualizar ? "Toque no arquivo para visualizar"
+                    : "Toque no arquivo para abrir, baixar ou exportar");
             titulo.setTextSize(13);
             titulo.setTextColor(Color.parseColor("#4B5563"));
             titulo.setPadding(0, dp(container.getContext(), 6), 0, dp(container.getContext(), 2));
             container.addView(titulo);
         }
         for (String caminho : lista) {
-            container.addView(linha(container.getContext(), caminho, aoRemover));
+            container.addView(linha(container.getContext(), caminho, aoRemover, soVisualizar));
         }
     }
 
@@ -77,7 +90,7 @@ public final class ListaAnexos {
         return lista;
     }
 
-    private static View linha(Context context, String caminho, AoRemover aoRemover) {
+    private static View linha(Context context, String caminho, AoRemover aoRemover, boolean soVisualizar) {
         LinearLayout linha = new LinearLayout(context);
         linha.setOrientation(LinearLayout.HORIZONTAL);
         linha.setGravity(Gravity.CENTER_VERTICAL);
@@ -129,8 +142,30 @@ public final class ListaAnexos {
             linha.addView(remover);
         }
 
-        linha.setOnClickListener(v -> opcoes(context, caminho));
+        linha.setOnClickListener(v -> {
+            if (soVisualizar) visualizar(context, caminho);
+            else opcoes(context, caminho);
+        });
         return linha;
+    }
+
+    /**
+     * Só visualizar, dentro do próprio app (sem baixar, exportar nem abrir em outro aplicativo):
+     * foto no visualizador de imagem, PDF no VisualizarPdfActivity.
+     */
+    public static void visualizar(Context context, String caminho) {
+        String tipo = ArquivosStorage.tipoDoNome(ArquivosStorage.nomeDoAnexo(context, caminho));
+        if (tipo.startsWith("image/")) {
+            context.startActivity(new android.content.Intent(context, ImageViewerActivity.class)
+                    .putExtra("imagePath", caminho));
+        } else if ("application/pdf".equals(tipo)) {
+            context.startActivity(new android.content.Intent(context, VisualizarPdfActivity.class)
+                    .putExtra(VisualizarPdfActivity.EXTRA_CAMINHO, caminho));
+        } else {
+            android.widget.Toast.makeText(context,
+                    "Este arquivo não pode ser visualizado no app. Peça à administração a versão em PDF.",
+                    android.widget.Toast.LENGTH_LONG).show();
+        }
     }
 
     /** Menu do anexo: abrir, baixar, exportar. */

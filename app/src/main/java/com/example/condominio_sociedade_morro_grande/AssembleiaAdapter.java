@@ -129,7 +129,7 @@ public class AssembleiaAdapter extends RecyclerView.Adapter<AssembleiaAdapter.As
                 // Fotos, PDF, Word, Excel... (abrir, baixar, exportar)
                 java.util.List<String> anexos = ListaAnexos.deValor(assembleia.opt("anexos"));
                 tvAnexosLabel.setVisibility(anexos.isEmpty() ? View.GONE : View.VISIBLE);
-                ListaAnexos.mostrar(layoutAnexos, anexos);
+                ListaAnexos.mostrar(layoutAnexos, anexos, "morador".equalsIgnoreCase(tipoUsuario)); // morador só visualiza
             } else {
                 tvAnexosLabel.setVisibility(View.GONE);
                 layoutAnexos.setVisibility(View.GONE);

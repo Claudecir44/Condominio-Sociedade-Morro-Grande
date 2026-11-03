@@ -60,6 +60,9 @@
         <activity
             android:name=".ConfiguracoesActivity"
             android:exported="false" />
+        <activity
+            android:name=".VisualizarPdfActivity"
+            android:exported="false" />
 
         <!-- ListasActivity (corrigido: pacote correto) -->
         <activity

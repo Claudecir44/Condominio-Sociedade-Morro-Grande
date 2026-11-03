@@ -16,9 +16,16 @@ import java.util.List;
 public class AnexosAdapter extends RecyclerView.Adapter<AnexosAdapter.AnexoViewHolder> {
 
     private final List<Uri> anexos;
+    /** Morador: tocar só abre para visualizar, sem baixar/exportar. */
+    private final boolean soVisualizar;
 
     public AnexosAdapter(List<Uri> anexos) {
+        this(anexos, false);
+    }
+
+    public AnexosAdapter(List<Uri> anexos, boolean soVisualizar) {
         this.anexos = anexos;
+        this.soVisualizar = soVisualizar;
     }
 
     @NonNull
@@ -34,8 +41,11 @@ public class AnexosAdapter extends RecyclerView.Adapter<AnexosAdapter.AnexoViewH
         Uri anexo = anexos.get(position);
         String caminho = anexo.toString();
         holder.textView.setText("📎 " + ArquivosStorage.nomeDoAnexo(holder.itemView.getContext(), caminho));
-        // Mesmo menu das outras listas: abrir, baixar, exportar
-        holder.itemView.setOnClickListener(v -> ListaAnexos.opcoes(v.getContext(), caminho));
+        // Mesmo menu das outras listas: abrir, baixar, exportar (o morador só visualiza)
+        holder.itemView.setOnClickListener(v -> {
+            if (soVisualizar) ListaAnexos.visualizar(v.getContext(), caminho);
+            else ListaAnexos.opcoes(v.getContext(), caminho);
+        });
     }
 
     @Override
