@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f53192ae-819a-433f-9a38-dc7c13aef964" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AnexosAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AnexosAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AssembleiaAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AssembleiaAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/DespesaAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/DespesaAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAnexos.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAnexos.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAssembleiasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAssembleiasActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAvisosActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAvisosActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/painel-web/morador.js" beforeDir="false" afterPath="$PROJECT_DIR$/painel-web/morador.js" afterDir="false" />
-    </list>
+    <list default="true" id="f53192ae-819a-433f-9a38-dc7c13aef964" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
