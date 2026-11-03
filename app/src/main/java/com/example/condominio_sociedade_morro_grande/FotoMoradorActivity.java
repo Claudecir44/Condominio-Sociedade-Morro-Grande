@@ -50,6 +50,17 @@ public class FotoMoradorActivity extends AppCompatActivity {
         findViewById(R.id.btnTirarFoto).setOnClickListener(v -> captura.tirarFoto());
         findViewById(R.id.btnGaleria).setOnClickListener(v -> captura.escolherDaGaleria());
         btnSalvar.setOnClickListener(v -> salvar());
+        findViewById(R.id.btnVoltarLogin).setOnClickListener(v -> voltarAoLogin());
+    }
+
+    /** Sai desta conta e volta à tela de login (outro morador pode entrar). */
+    private void voltarAoLogin() {
+        CondominioMessagingService.esquecerAparelho();
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void salvar() {
@@ -95,7 +106,7 @@ public class FotoMoradorActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Sem foto não entra, e voltar não desloga (só o botão Sair do painel desloga)
-        android.widget.Toast.makeText(this, "Cadastre sua foto para entrar.", android.widget.Toast.LENGTH_SHORT).show();
+        // Sem foto não entra; para sair desta conta, o botão "Voltar" no canto inferior direito
+        android.widget.Toast.makeText(this, "Cadastre sua foto para entrar, ou toque em \"Voltar\" para sair.", android.widget.Toast.LENGTH_SHORT).show();
     }
 }
