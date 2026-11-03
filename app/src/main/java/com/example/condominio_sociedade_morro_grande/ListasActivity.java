@@ -20,8 +20,7 @@ public class ListasActivity extends AppCompatActivity {
         Button btnListaDespesas = findViewById(R.id.btnListaDespesas);
         Button btnListaAvisos = findViewById(R.id.btnListaAvisos);
 
-        // Dados pessoais dos moradores (CPF, telefone) só para o administrador. A conta master do
-        // app Moradores (verTodos) abre a lista pelo quadro "Moradores" do painel
+        // Dados pessoais dos moradores (CPF, telefone) só para o administrador
         boolean admin = "admin".equals(BuildConfig.PERFIL);
         if (!admin) {
             btnListaMoradores.setVisibility(View.GONE);
@@ -29,8 +28,14 @@ public class ListasActivity extends AppCompatActivity {
 
         btnListaMoradores.setOnClickListener(v -> startActivity(new Intent(this, ListaMoradoresActivity.class)
                 .putExtra("somenteLeitura", !admin)));
-        btnListaAssembleias.setOnClickListener(v -> startActivity(new Intent(this, ListaAssembleiasActivity.class)));
-        btnListaDespesas.setOnClickListener(v -> startActivity(new Intent(this, ListaDespesasActivity.class)));
-        btnListaAvisos.setOnClickListener(v -> startActivity(new Intent(this, ListaAvisosActivity.class)));
+        btnListaAssembleias.setOnClickListener(v -> verMeses(MesesCadastroActivity.Modulo.ASSEMBLEIAS));
+        btnListaDespesas.setOnClickListener(v -> verMeses(MesesCadastroActivity.Modulo.DESPESAS));
+        btnListaAvisos.setOnClickListener(v -> verMeses(MesesCadastroActivity.Modulo.AVISOS));
+    }
+
+    private void verMeses(MesesCadastroActivity.Modulo modulo) {
+        startActivity(new Intent(this, MesesCadastroActivity.class)
+                .putExtra(MesesCadastroActivity.EXTRA_MODULO, modulo.name())
+                .putExtra(MesesCadastroActivity.EXTRA_SO_VER, true));
     }
 }

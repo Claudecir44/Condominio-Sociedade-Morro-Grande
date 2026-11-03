@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F0F2F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="20dp"
+            android:text="Ver como morador"
+            android:textColor="#1A1A2E"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Mesmos quadros e mesma ordem do painel do morador -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:layout_marginEnd="13dp"
+            android:columnCount="2"
+            android:useDefaultMargins="false">
+
+            <Button
+                android:id="@+id/buttonListaDespesas"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Prestação de Contas"
+                app:backgroundTint="@color/painelDespesas"
+                app:icon="@drawable/ic_painel_contas" />
+
+            <Button
+                android:id="@+id/buttonAvisosMorador"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Avisos"
+                app:backgroundTint="@color/painelAvisos"
+                app:icon="@drawable/ic_painel_avisos" />
+
+            <Button
+                android:id="@+id/buttonLeituraAgua"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Leitura d'Água"
+                app:backgroundTint="@color/painelAgua"
+                app:icon="@drawable/ic_painel_agua" />
+
+            <Button
+                android:id="@+id/buttonPagamentos"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Pagamentos"
+                app:backgroundTint="@color/painelPagamentos"
+                app:icon="@drawable/ic_painel_pagamentos" />
+
+            <Button
+                android:id="@+id/buttonAssembleiasMorador"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Assembleias"
+                app:backgroundTint="@color/painelAssembleias"
+                app:icon="@drawable/ic_painel_assembleias" />
+        </GridLayout>
+    </LinearLayout>
+</ScrollView>

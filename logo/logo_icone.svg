@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <!-- Ícone do app (emblema + Condomínio Sociedade Morro Grande), gerado do logo_morro_grande.svg. As fontes vêm do
-       Google Fonts: Cinzel (MORRO GRANDE, SOCIEDADE), Playfair Display
+  <!-- Ícone do app (emblema + Condomínio Morro Grande), gerado do logo_morro_grande.svg. As fontes vêm do
+       Google Fonts: Cinzel (MORRO GRANDE), Playfair Display
        (Condomínio) e Montserrat (slogan). -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&amp;family=Playfair+Display:wght@700&amp;family=Montserrat:wght@600;700&amp;display=block');
@@ -95,9 +95,7 @@
 
   </g>
   <text x="512" y="608" text-anchor="middle" class="condominio" font-size="124" fill="url(#azul)" filter="url(#sombra)">Condomínio</text>
-  <rect x="222" y="655" width="140" height="4" rx="2" fill="url(#ouroLinha)"/>
-  <rect x="662" y="655" width="140" height="4" rx="2" fill="url(#ouroLinha)"/>
-  <text x="512" y="670" text-anchor="middle" class="cinzel" font-weight="700" font-size="40" letter-spacing="10" fill="#1d3a8f">SOCIEDADE</text>
-  <text x="512" y="778" text-anchor="middle" class="cinzel" font-weight="800" font-size="96" fill="url(#azul)" filter="url(#sombra)" textLength="660" lengthAdjust="spacingAndGlyphs">MORRO GRANDE</text>
-  <rect x="300" y="806" width="424" height="5" rx="2.5" fill="url(#ouroLinha)"/>
+  <rect x="262" y="644" width="500" height="4" rx="2" fill="url(#ouroLinha)"/>
+  <text x="512" y="762" text-anchor="middle" class="cinzel" font-weight="800" font-size="106" fill="url(#azul)" filter="url(#sombra)" textLength="720" lengthAdjust="spacingAndGlyphs">MORRO GRANDE</text>
+  <rect x="290" y="792" width="444" height="5" rx="2.5" fill="url(#ouroLinha)"/>
 </svg>

@@ -28,6 +28,7 @@ public class ListaDespesasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_despesas);
+        TempoReal.observar(this, this::carregarLista, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("despesas"));
 
         tipoUsuario = getIntent().getStringExtra("tipo_usuario");
         if (tipoUsuario == null) {
@@ -44,6 +45,10 @@ public class ListaDespesasActivity extends AppCompatActivity {
         despesaDAO.listarTodos(new ColecaoFirestore.Callback<List<Despesa>>() {
             @Override
             public void onSucesso(List<Despesa> lista) {
+                String filtro = getIntent().getStringExtra(MesCadastro.EXTRA_MES);
+                lista.removeIf(d -> !MesCadastro.pertence(filtro, d.getMes(), d.getDataHora()));
+                lista.sort((a, b) -> MesCadastro.chaveDeOrdem(a.getDataHora())
+                        .compareTo(MesCadastro.chaveDeOrdem(b.getDataHora())));
                 listaDespesas = lista;
                 mostrarLista();
             }

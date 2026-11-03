@@ -25,6 +25,7 @@ public class BloqueioAssinaturaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bloqueio_assinatura);
+        TempoReal.observar(this, () -> verificar(false), com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("config").document("assinatura"));
 
         TextView mensagem = findViewById(R.id.tvMensagemBloqueio);
         mensagem.setText("admin".equals(BuildConfig.PERFIL)

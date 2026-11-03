@@ -54,6 +54,7 @@ public class CadastroAvisosActivity extends AppCompatActivity {
             finish();
         });
 
+        mesDoRegistro = getIntent().getStringExtra(com.cjstudio.condominio_sociedade_morro_grande.MesCadastro.EXTRA_MES);
         // Verifica se é edição
         if (getIntent().hasExtra("avisoJSON")) {
             try {
@@ -95,6 +96,8 @@ public class CadastroAvisosActivity extends AppCompatActivity {
         });
     }
 
+    private String mesDoRegistro;
+
     private void gravarAviso(String dataHora, String assunto, String descricao, List<String> anexosFinais) {
         Map<String, Object> avisoMap = new HashMap<>();
         avisoMap.put("datahora", dataHora);
@@ -103,6 +106,7 @@ public class CadastroAvisosActivity extends AppCompatActivity {
         // Texto JSON, mesmo formato de sempre (a lista e o painel web leem assim)
         avisoMap.put("anexos", new JSONArray(anexosFinais).toString());
         avisoMap.put("timestamp", System.currentTimeMillis());
+        if (mesDoRegistro != null) avisoMap.put("mes", mesDoRegistro);
 
         if (editarId != null) {
             db.collection("avisos").document(editarId).update(avisoMap)

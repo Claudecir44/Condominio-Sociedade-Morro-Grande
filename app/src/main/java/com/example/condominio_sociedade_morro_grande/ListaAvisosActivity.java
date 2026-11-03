@@ -89,6 +89,7 @@ public class ListaAvisosActivity extends AppCompatActivity {
         mainLayout.addView(scrollView);
 
         setContentView(mainLayout);
+        TempoReal.observar(this, this::exibirAvisos, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("avisos"));
 
         // Carrega os avisos
         exibirAvisos();
@@ -125,6 +126,7 @@ public class ListaAvisosActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         // Converte o documento para Map e depois para JSONObject (para compatibilidade com o código existente)
                         Map<String, Object> data = document.getData();
+                        if (!MesCadastro.pertence(getIntent().getStringExtra(MesCadastro.EXTRA_MES), data.get("mes"), data.get("datahora"))) continue;
                         JSONObject aviso = new JSONObject();
                         try {
                             aviso.put("id", document.getId()); // ID do documento

@@ -7,9 +7,10 @@
     android:background="#F0F2F8">
 
     <TextView
+        android:id="@+id/textTituloConversas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Conversas"
+        android:text="Chat com Moradores"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="#1A1A2E"
@@ -18,6 +19,7 @@
         android:paddingBottom="4dp" />
 
     <TextView
+        android:id="@+id/textDicaConversas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

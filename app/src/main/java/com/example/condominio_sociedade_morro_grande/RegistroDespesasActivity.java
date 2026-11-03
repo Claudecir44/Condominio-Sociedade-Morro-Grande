@@ -57,10 +57,12 @@ public class RegistroDespesasActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        mesDoRegistro = getIntent().getStringExtra(com.cjstudio.condominio_sociedade_morro_grande.MesCadastro.EXTRA_MES);
         if (getIntent().hasExtra("despesaJSON")) {
             Despesa d = despesaDAO.deJson(getIntent().getStringExtra("despesaJSON"));
             if (d != null) {
                 editId = d.getId();
+                mesDoRegistro = d.getMes();
                 editDataHora.setText(d.getDataHora());
                 editNome.setText(d.getNome());
                 editDescricao.setText(d.getDescricao());
@@ -108,7 +110,10 @@ public class RegistroDespesasActivity extends AppCompatActivity {
         });
     }
 
+    private String mesDoRegistro;
+
     private void gravarDespesa(Despesa despesa) {
+        despesa.setMes(mesDoRegistro);
         if (editId == null) {
             despesaDAO.inserir(despesa, new ColecaoFirestore.Callback<String>() {
                 @Override

@@ -24,8 +24,11 @@ import java.util.Map;
 /**
  * Morador envia a leitura do hidrômetro: número + foto tirada na hora.
  * Grava em leituras_agua (com quadra/lote do cadastro) e a foto em leituras/{uid}/ no Storage.
+ * Com EXTRA_PREVIA ("Ver como morador" do app Admins) a tela aparece igual, mas não envia nada.
  */
 public class LeituraAguaActivity extends AppCompatActivity {
+
+    public static final String EXTRA_PREVIA = "previa";
 
     private EditText editLeitura;
     private ImageView imagePrevia;
@@ -54,6 +57,14 @@ public class LeituraAguaActivity extends AppCompatActivity {
         findViewById(R.id.btnSuasLeituras).setOnClickListener(v -> startActivity(
                 new android.content.Intent(this, ListaLeiturasAguaActivity.class)
                         .putExtra(ListaLeiturasAguaActivity.EXTRA_SO_MINHAS, true)));
+
+        if (getIntent().getBooleanExtra(EXTRA_PREVIA, false)) {
+            editLeitura.setEnabled(false);
+            btnFoto.setEnabled(false);
+            btnEnviar.setEnabled(false);
+            findViewById(R.id.btnSuasLeituras).setEnabled(false);
+            Toast.makeText(this, "Visualização: nada é enviado por aqui.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void enviar() {

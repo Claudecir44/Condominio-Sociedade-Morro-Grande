@@ -13,7 +13,9 @@ import { readFileSync } from "node:fs";
 const PROJETO = "condominio-morro-grande";
 const USUARIO = "Condominio sociedade Morro grande";
 const LOGIN = USUARIO.normalize("NFD").replace(/[^A-Za-z0-9]/g, "").toLowerCase();
-const EMAIL_ADMIN = LOGIN + "@admins.morrogrande.app";
+// Admin master renomeado para "Condomínio Morro Grande" (scripts/renomear_admin_master.mjs)
+const USUARIO_ADMIN = "Condomínio Morro Grande";
+const EMAIL_ADMIN = USUARIO_ADMIN.normalize("NFD").replace(/[^A-Za-z0-9]/g, "").toLowerCase() + "@admins.morrogrande.app";
 const EMAIL_MORADOR = LOGIN + "@moradores.morrogrande.app";
 
 const emulador = process.argv.includes("--emulador");
@@ -106,8 +108,8 @@ console.log(emulador ? "Alvo: EMULADORES locais" : `Alvo: Firebase ${PROJETO} (p
 
 const uidAdmin = await contaComSenha(dono, EMAIL_ADMIN, senha);
 await gravar(dono, `administradores/${uidAdmin}`, {
-  nome: USUARIO, nomeLowercase: USUARIO.toLowerCase(), primeiroNome: "Condominio", primeiroNomeLowercase: "condominio",
-  email: EMAIL_ADMIN, usuario: USUARIO, telefone: "", tipo: "admin", master: true,
+  nome: USUARIO_ADMIN, nomeLowercase: USUARIO_ADMIN.toLowerCase(), primeiroNome: "Condomínio", primeiroNomeLowercase: "condomínio",
+  email: EMAIL_ADMIN, usuario: USUARIO_ADMIN, telefone: "", tipo: "admin", master: true,
 });
 console.log("Admin master pronto:", uidAdmin);
 

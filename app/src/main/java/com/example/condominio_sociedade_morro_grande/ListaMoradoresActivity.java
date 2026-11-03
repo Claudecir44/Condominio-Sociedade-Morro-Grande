@@ -26,12 +26,13 @@ public class ListaMoradoresActivity extends AppCompatActivity {
     private com.cjstudio.condominio_sociedade_morro_grande.MoradorAdapter adapter;
     private List<JSONObject> moradores = new ArrayList<>();
     private MoradorFirestoreRepository repository;
-    // Conta master no app Moradores: cards compactos por quadra/lote, sem Editar/Excluir
+    // Quadro "Boletos Morador" do app Admins: cards compactos por quadra/lote, sem Editar/Excluir
     private boolean somenteLeitura;
     private final BoletosRepository boletosRepository = new BoletosRepository();
     private ActivityResultLauncher<String[]> escolherPdf;
     // UID do morador que vai receber o boleto escolhido no seletor de arquivos
     private String moradorDoBoleto;
+    private String mesDoBoleto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +82,15 @@ public class ListaMoradoresActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAdicionarBoleto(JSONObject morador) {
+            public void onAdicionarBoleto(JSONObject morador, String mes) {
                 moradorDoBoleto = morador.optString("cod");
+                mesDoBoleto = mes;
                 escolherPdf.launch(new String[]{"application/pdf"});
+            }
+
+            @Override
+            public void onCriarMes(JSONObject morador, String mes) {
+                boletosRepository.criarMes(morador.optString("cod"), mes, aoTerminar("Mês criado."));
             }
 
             @Override
@@ -101,12 +108,18 @@ public class ListaMoradoresActivity extends AppCompatActivity {
         escolherPdf = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri == null || moradorDoBoleto == null) return;
             Toast.makeText(this, "Enviando boleto…", Toast.LENGTH_SHORT).show();
-            boletosRepository.postar(this, moradorDoBoleto, uri, aoTerminar("Boleto postado!"));
+            boletosRepository.postar(this, moradorDoBoleto, mesDoBoleto, uri, aoTerminar("Boleto postado!"));
         });
 
         somenteLeitura = getIntent().getBooleanExtra("somenteLeitura", false);
+        if (somenteLeitura) {
+            TempoReal.observar(this, this::carregarLista, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("moradores"), com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("boletos"), com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("boletos_meses"));
+        } else {
+            TempoReal.observar(this, this::carregarLista, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("moradores"));
+        }
         adapter.setSomenteLeitura(somenteLeitura);
         recyclerMoradores.setAdapter(adapter);
+        if (somenteLeitura) ((android.widget.TextView) findViewById(R.id.textTituloMoradores)).setText("Boletos Morador");
 
         carregarLista();
     }
@@ -118,10 +131,10 @@ public class ListaMoradoresActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     moradores.clear();
                     moradores.addAll(lista);
-                    // Nas duas listas (Admins e conta master): quadra em ordem alfabética, depois lote
+                    // Nas duas listas: quadra em ordem alfabética, depois lote
                     MoradorAdapter.ordenarPorQuadraELote(moradores);
                     adapter.notifyDataSetChanged();
-                    // Boletos só na lista da conta master (app Moradores)
+                    // Boletos só na lista "Boletos Morador"
                     if (somenteLeitura) carregarBoletos();
                 });
             }
@@ -145,6 +158,18 @@ public class ListaMoradoresActivity extends AppCompatActivity {
             public void onErro(Exception e) {
                 Toast.makeText(ListaMoradoresActivity.this,
                         "Erro ao carregar boletos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        boletosRepository.listarMesesCriados(new ColecaoFirestore.Callback<Map<String, java.util.Set<String>>>() {
+            @Override
+            public void onSucesso(Map<String, java.util.Set<String>> meses) {
+                adapter.setMesesCriados(meses);
+            }
+
+            @Override
+            public void onErro(Exception e) {
+                Toast.makeText(ListaMoradoresActivity.this,
+                        "Erro ao carregar os meses: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

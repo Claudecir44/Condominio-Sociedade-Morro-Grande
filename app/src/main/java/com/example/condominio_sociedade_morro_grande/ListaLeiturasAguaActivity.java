@@ -25,23 +25,25 @@ import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Leituras d'água, mais recentes primeiro, um cartão por envio.
- * Admin: todas, com Excluir. Conta master do app Moradores (EXTRA_SO_VER): todas, sem Excluir.
+ * Admin: todas, com Excluir, leitura anterior e gasto do mês (por quadra e lote).
  * Morador (EXTRA_SO_MINHAS): só as dele, sem Excluir.
  */
 public class ListaLeiturasAguaActivity extends AppCompatActivity {
 
     public static final String EXTRA_SO_MINHAS = "so_minhas";
-    public static final String EXTRA_SO_VER = "so_ver";
 
     private boolean soMinhas;
-    private boolean soVer;
     private LinearLayout lista;
     private TextView textResumo;
+    // Leitura anterior de cada envio, pelo id do documento
+    private final Map<String, String> anteriores = new HashMap<>();
     private final SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", new Locale("pt", "BR"));
 
     @Override
@@ -51,8 +53,9 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
         lista = findViewById(R.id.listaLeituras);
         textResumo = findViewById(R.id.textResumoLeituras);
         soMinhas = getIntent().getBooleanExtra(EXTRA_SO_MINHAS, false);
-        soVer = getIntent().getBooleanExtra(EXTRA_SO_VER, false);
         if (soMinhas) ((TextView) findViewById(R.id.textTituloLeituras)).setText("Sua Leitura");
+        Query consulta = consulta();
+        if (consulta != null) TempoReal.observar(this, this::carregar, consulta);
     }
 
     @Override
@@ -61,18 +64,20 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
         carregar();
     }
 
-    private void carregar() {
+    /** null quando a sessão do morador expirou. */
+    private Query consulta() {
         Query consulta = FirebaseFirestore.getInstance().collection("leituras_agua");
-        if (soMinhas) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                textResumo.setText("Sessão expirada. Faça o login de novo.");
-                return;
-            }
-            // Só o filtro (sem orderBy junto, que exigiria índice composto); a ordem é feita aqui
-            consulta = consulta.whereEqualTo("moradorUid", user.getUid());
-        } else {
-            consulta = consulta.orderBy("criadoEm", Query.Direction.DESCENDING);
+        if (!soMinhas) return consulta.orderBy("criadoEm", Query.Direction.DESCENDING);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        // Só o filtro (sem orderBy junto, que exigiria índice composto); a ordem é feita aqui
+        return user != null ? consulta.whereEqualTo("moradorUid", user.getUid()) : null;
+    }
+
+    private void carregar() {
+        Query consulta = consulta();
+        if (consulta == null) {
+            textResumo.setText("Sessão expirada. Faça o login de novo.");
+            return;
         }
         consulta.get()
                 .addOnSuccessListener(query -> {
@@ -88,11 +93,66 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
                             return tb.compareTo(ta);
                         });
                     }
+                    guardarAnteriores(docs);
                     for (DocumentSnapshot doc : docs) {
                         lista.addView(criarCartao(doc));
                     }
                 })
                 .addOnFailureListener(e -> textResumo.setText("Erro ao carregar: " + e.getMessage()));
+    }
+
+    /** docs vem do mais novo para o mais antigo: a anterior é a do envio de antes, no mesmo lote. */
+    private void guardarAnteriores(List<DocumentSnapshot> docs) {
+        anteriores.clear();
+        Map<String, String> ultimaDoLote = new HashMap<>();
+        for (int i = docs.size() - 1; i >= 0; i--) {
+            DocumentSnapshot doc = docs.get(i);
+            String lote = valor(doc, "quadra").toUpperCase(Locale.ROOT) + "|" + valor(doc, "lote");
+            if (ultimaDoLote.containsKey(lote)) anteriores.put(doc.getId(), ultimaDoLote.get(lote));
+            ultimaDoLote.put(lote, doc.getString("leitura"));
+        }
+    }
+
+    /** Admin: "Leitura anterior" pequena em cima da atual e, ao lado, "Gastos do mês". */
+    private void mostrarLeituraComGasto(LinearLayout cartao, DocumentSnapshot doc) {
+        String anterior = anteriores.get(doc.getId());
+        TextView textoAnterior = new TextView(this);
+        textoAnterior.setText("Leitura anterior: " + (anterior != null ? anterior : "—"));
+        textoAnterior.setTextSize(13);
+        textoAnterior.setTextColor(Color.parseColor("#6B7280"));
+        textoAnterior.setPadding(0, dp(10), 0, dp(2));
+        cartao.addView(textoAnterior);
+
+        LinearLayout linha = new LinearLayout(this);
+        linha.setOrientation(LinearLayout.HORIZONTAL);
+        linha.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        linha.setPadding(0, 0, 0, dp(10));
+
+        TextView atual = new TextView(this);
+        atual.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        atual.setText("Leitura atual: " + valor(doc, "leitura"));
+        atual.setTextSize(20);
+        atual.setTypeface(null, Typeface.BOLD);
+        atual.setTextColor(Color.parseColor("#1A1A2E"));
+        linha.addView(atual);
+
+        LinearLayout gasto = new LinearLayout(this);
+        gasto.setOrientation(LinearLayout.VERTICAL);
+        gasto.setGravity(android.view.Gravity.END);
+        gasto.setPadding(dp(10), 0, 0, 0);
+        TextView tituloGasto = new TextView(this);
+        tituloGasto.setText("Gastos do mês");
+        tituloGasto.setTextSize(13);
+        tituloGasto.setTextColor(Color.parseColor("#6B7280"));
+        gasto.addView(tituloGasto);
+        TextView valorGasto = new TextView(this);
+        valorGasto.setText(ConsumoAgua.gasto(doc.getString("leitura"), anterior));
+        valorGasto.setTextSize(20);
+        valorGasto.setTypeface(null, Typeface.BOLD);
+        valorGasto.setTextColor(Color.parseColor("#0C4A6E"));
+        gasto.addView(valorGasto);
+        linha.addView(gasto);
+        cartao.addView(linha);
     }
 
     private int dp(int valor) {
@@ -128,13 +188,17 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
         nomeData.setTextColor(Color.parseColor("#6B7280"));
         cartao.addView(nomeData);
 
-        TextView leitura = new TextView(this);
-        leitura.setText("Leitura: " + valor(doc, "leitura"));
-        leitura.setTextSize(22);
-        leitura.setTypeface(null, Typeface.BOLD);
-        leitura.setTextColor(Color.parseColor("#1A1A2E"));
-        leitura.setPadding(0, dp(10), 0, dp(10));
-        cartao.addView(leitura);
+        if (soMinhas) {
+            TextView leitura = new TextView(this);
+            leitura.setText("Leitura: " + valor(doc, "leitura"));
+            leitura.setTextSize(22);
+            leitura.setTypeface(null, Typeface.BOLD);
+            leitura.setTextColor(Color.parseColor("#1A1A2E"));
+            leitura.setPadding(0, dp(10), 0, dp(10));
+            cartao.addView(leitura);
+        } else {
+            mostrarLeituraComGasto(cartao, doc);
+        }
 
         String linkFoto = doc.getString("foto");
         if (linkFoto != null && !linkFoto.isEmpty()) {
@@ -146,7 +210,7 @@ public class ListaLeiturasAguaActivity extends AppCompatActivity {
             foto.setOnClickListener(v -> ArquivosStorage.abrir(this, linkFoto));
             cartao.addView(foto);
         }
-        if (soMinhas || soVer) return cartao; // morador e conta master só consultam
+        if (soMinhas) return cartao; // morador só consulta
 
         Button excluir = new Button(this);
         excluir.setText("Excluir");

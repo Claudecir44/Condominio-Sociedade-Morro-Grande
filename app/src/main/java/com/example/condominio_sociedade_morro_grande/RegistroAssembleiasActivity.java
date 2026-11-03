@@ -67,10 +67,12 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        mesDoRegistro = getIntent().getStringExtra(com.cjstudio.condominio_sociedade_morro_grande.MesCadastro.EXTRA_MES);
         if (getIntent().hasExtra("assembleiaJSON")) {
             try {
                 JSONObject assembleia = new JSONObject(getIntent().getStringExtra("assembleiaJSON"));
                 editarId = assembleia.optString("id", null);
+                mesDoRegistro = assembleia.optString("mes", null);
                 modoVisualizacao = getIntent().getBooleanExtra("modoVisualizacao", false);
                 preencherCampos(assembleia);
             } catch (Exception e) {
@@ -87,6 +89,8 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
             painelAnexos.somenteLeitura();
         }
     }
+
+    private String mesDoRegistro;
 
     private void salvarAssembleia() {
         String dataHora = editDataHora.getText().toString().trim();
@@ -105,6 +109,7 @@ public class RegistroAssembleiasActivity extends AppCompatActivity {
             assembleia.put("assunto", assunto);
             assembleia.put("local", local);
             assembleia.put("descricao", descricao);
+            if (mesDoRegistro != null) assembleia.put("mes", mesDoRegistro);
 
             buttonSalvar.setEnabled(false);
             // Anexos vão pro Firebase Storage; o registro guarda os links

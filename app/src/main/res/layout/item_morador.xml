@@ -245,7 +245,7 @@
             android:orientation="vertical"
             android:visibility="gone" />
 
-        <!-- Boletos (PDF): só na lista da conta master (app Moradores); vencimento sempre no dia 15 -->
+        <!-- Boletos (PDF): só na lista "Boletos Morador"; vencimento sempre no dia 15 -->
         <LinearLayout
             android:id="@+id/layoutSecaoBoletos"
             android:layout_width="match_parent"
@@ -275,17 +275,14 @@
             android:orientation="vertical" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAdicionarBoleto"
+            android:id="@+id/btnCriarProximoMes"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Adicionar boleto (PDF)"
             android:textAllCaps="false"
             android:textSize="13sp"
-            app:icon="@drawable/ic_anexar"
-            app:iconTint="#FFFFFF"
-            app:cornerRadius="14dp"
-            app:backgroundTint="@color/botaoSucesso" />
+            app:cornerRadius="14dp" />
         </LinearLayout>
 
         <!-- Botões -->

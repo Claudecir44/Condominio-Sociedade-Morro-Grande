@@ -116,13 +116,14 @@ service cloud.firestore {
       allow delete: if ehAdmin();
     }
 
-    // Boletos (PDF): o admin ou a conta master posta para um morador (data/hora do servidor),
-    // marca "não pago" e exclui. O morador vê só os dele.
+    // Boletos (PDF): o admin ou a conta master posta para um morador (data/hora do servidor), com
+    // o mês de referência ("2026-11"), marca "não pago" e exclui. O morador vê só os dele.
     match /boletos/{id} {
       allow read: if ehAdmin() || moradorVeTodos()
                   || (logado() && resource.data.moradorUid == request.auth.uid);
       allow create: if (ehAdmin() || moradorVeTodos())
-                    && request.resource.data.keys().hasOnly(['moradorUid', 'arquivo', 'nomeArquivo', 'postadoEm', 'naoPago'])
+                    && request.resource.data.keys().hasOnly(['moradorUid', 'arquivo', 'nomeArquivo', 'postadoEm', 'naoPago', 'mes'])
+                    && request.resource.data.get('mes', '2000-01').matches('[0-9]{4}-[0-9]{2}')
                     && request.resource.data.moradorUid is string
                     && request.resource.data.arquivo is string
                     && request.resource.data.postadoEm == request.time
@@ -131,6 +132,24 @@ service cloud.firestore {
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['naoPago'])
                     && request.resource.data.naoPago is bool;
       allow delete: if ehAdmin() || moradorVeTodos();
+    }
+
+    // Meses criados em "Boletos Morador", por morador: boletos_meses/{moradorUid}.meses. Valem
+    // mesmo sem boleto, para o mês aparecer no app Admins e no painel web.
+    match /boletos_meses/{moradorUid} {
+      allow read: if ehAdmin();
+      allow create, update: if ehAdmin()
+                            && request.resource.data.keys().hasOnly(['meses'])
+                            && request.resource.data.meses is list;
+    }
+
+    // Meses criados no mês a mês de cada cadastro: meses_cadastro/{colecao}.meses
+    match /meses_cadastro/{colecao} {
+      // Moradores leem para ver as listas mês a mês (Prestação de Contas); só o admin cria meses
+      allow read: if membro();
+      allow create, update: if ehAdmin()
+                            && request.resource.data.keys().hasOnly(['meses'])
+                            && request.resource.data.meses is list;
     }
 
     // Chat morador x Administração: uma conversa por morador (conversas/{moradorUid}); qualquer
@@ -168,6 +187,41 @@ service cloud.firestore {
                           && soMudou(['deletadoParaTodos', 'conteudo', 'tipo', 'imagemUrl']));
         allow delete: if ehAdministracao();
       }
+    }
+
+    // Chat admin: conversa privada entre dois administradores (conversasAdmin/{uidMenor_uidMaior}).
+    // Só os dois participantes leem e escrevem; "resource == null" deixa ver se a conversa já existe.
+    function participaChatAdmin(conversaId) {
+      return ehAdmin() && request.auth.uid in get(caminho('conversasAdmin', conversaId)).data.participantes;
+    }
+    match /conversasAdmin/{conversaId} {
+      allow read: if ehAdmin() && (resource == null || request.auth.uid in resource.data.participantes);
+      allow create: if ehAdmin()
+                    && request.auth.uid in request.resource.data.participantes
+                    && request.resource.data.participantes.size() == 2;
+      allow update: if ehAdmin()
+                    && request.auth.uid in resource.data.participantes
+                    && soMudou(['ultimaMensagem', 'ultimoTimestamp', 'ultimoRemetenteId', 'naoLidas1', 'naoLidas2']);
+      allow delete: if ehAdmin() && request.auth.uid in resource.data.participantes;
+
+      match /mensagens/{id} {
+        allow read, delete: if participaChatAdmin(conversaId);
+        allow create: if participaChatAdmin(conversaId)
+                      && request.resource.data.remetenteId == request.auth.uid
+                      && request.auth.uid != request.resource.data.destinatarioId
+                      && request.resource.data.destinatarioId in get(caminho('conversasAdmin', conversaId)).data.participantes
+                      && request.resource.data.timestamp == request.time;
+        allow update: if participaChatAdmin(conversaId)
+                      && (soMudou(['lida', 'deletadoParaRemetente', 'deletadoParaDestinatario'])
+                          || (resource.data.remetenteId == request.auth.uid
+                              && soMudou(['deletadoParaTodos', 'conteudo'])));
+      }
+    }
+
+    // Backups: o servidor grava (Admin SDK); os admins só veem a lista.
+    match /backups/{id} {
+      allow read: if ehAdmin();
+      allow write: if false;
     }
 
     // Aparelho de cada conta pra notificação do chat (token do Firebase Messaging). Cada um só

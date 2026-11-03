@@ -9,6 +9,7 @@ public class Despesa {
     private String descricao;
     private double valor;
     private List<String> anexos;
+    private String mes;
 
     public Despesa() {}
 
@@ -23,6 +24,8 @@ public class Despesa {
     // Getters e Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+    public String getMes() { return mes; }
+    public void setMes(String mes) { this.mes = mes; }
 
     public String getDataHora() { return dataHora; }
     public void setDataHora(String dataHora) { this.dataHora = dataHora; }

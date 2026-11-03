@@ -38,6 +38,7 @@ public class AdministradoresActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_administradores);
+        TempoReal.observar(this, this::carregarAdministradores, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("administradores"), com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("solicitacoes_admin").whereEqualTo("status", "pendente"));
 
         listaAdmins = findViewById(R.id.listaAdmins);
         repository = new AdminFirestoreRepository();

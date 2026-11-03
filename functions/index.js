@@ -4,6 +4,9 @@
 //   Assinatura.java, precisam bater com estas).
 // - Notificação de mensagem nova no chat com a Administração (notificarMensagemChat).
 // - Senha do lote quando muda o responsável (inquilino): definirSenhaResponsavelMorador.
+// - Login do lote quando o admin muda a quadra/lote: alterarLoginMorador.
+// - Notificação do Chat admin (notificarMensagemChatAdmin).
+// - Backup diário e Pacote completo: backup.js.
 require('dotenv').config();
 
 const functions = require('firebase-functions');
@@ -39,7 +42,7 @@ if (!GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) {
 const PRODUTO_ASSINATURA = 'condominio_assinatura_mensal';
 const VALOR_ASSINATURA = 460;
 // Primeiro mês cobrado (Assinatura.MES_INICIO_COBRANCA).
-const MES_INICIO_COBRANCA = '2026-11';
+const MES_INICIO_COBRANCA = '2027-01';
 
 let androidPublisherClient = null;
 function obterAndroidPublisher() {
@@ -243,6 +246,25 @@ exports.notificarMensagemChat = functionsV1.region(REGIAO).runWith({ serviceAcco
     });
 
 
+// Chat admin: avisa só o outro administrador da conversa
+exports.notificarMensagemChatAdmin = functionsV1.region(REGIAO).runWith({ serviceAccount: CONTA_EXECUCAO }).firestore
+    .document('conversasAdmin/{conversaId}/mensagens/{mensagemId}')
+    .onCreate(async (snap) => {
+        const msg = snap.data() || {};
+        const db = admin.firestore();
+        const destino = await db.collection('dispositivos').doc(msg.destinatarioId).get();
+        if (!destino.exists) return;
+        const remetente = (await db.collection('administradores').doc(msg.remetenteId).get()).data() || {};
+        const texto = decifrarChat(msg.conteudo);
+        const corpo = texto.length > 120 ? texto.slice(0, 117) + '...' : texto;
+        await enviarPush([destino], { tipo: 'chatAdmin', titulo: remetente.nome || 'Administrador', corpo });
+    });
+
+const backup = require('./backup');
+exports.backupDiario = backup.backupDiario;
+exports.gerarBackupAgora = backup.gerarBackupAgora;
+exports.gerarPacoteCompleto = backup.gerarPacoteCompleto;
+
 // ============================================================
 // Inquilino: quando o admin põe/tira o inquilino ou muda o CPF de quem usa o app, a senha do
 // login do lote passa a ser os 6 primeiros dígitos do CPF do novo responsável. Só o servidor
@@ -275,4 +297,43 @@ exports.definirSenhaResponsavelMorador = functions.https.onCall(async (request) 
     await admin.auth().revokeRefreshTokens(moradorUid);
     await db.collection('dispositivos').doc(moradorUid).delete();
     return { success: true };
+});
+
+
+// ============================================================
+// Login do lote quando o admin muda a quadra/lote na edição: o usuário (quadra+lote) é o e-mail
+// interno da conta no Auth, então só o servidor troca. A senha continua a mesma. Mesmo formato
+// de ContaHelper.emailDoMorador (app) e emailDoMorador (painel web).
+// ============================================================
+exports.alterarLoginMorador = functions.https.onCall(async (request) => {
+    if (!request.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'Usuário não autenticado.');
+    }
+    const db = admin.firestore();
+    const adminDoc = await db.collection('administradores').doc(request.auth.uid).get();
+    if (!adminDoc.exists || adminDoc.get('tipo') !== 'admin') {
+        throw new functions.https.HttpsError('permission-denied', 'Só administradores trocam o login do morador.');
+    }
+    const { moradorUid } = request.data || {};
+    const usuario = String((request.data || {}).usuario || '').trim().toUpperCase();
+    const login = usuario.normalize('NFD').replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+    if (!moradorUid || !login) throw new functions.https.HttpsError('invalid-argument', 'Morador ou login não informado.');
+
+    const ref = db.collection('moradores').doc(moradorUid);
+    const morador = (await ref.get()).data();
+    if (!morador) throw new functions.https.HttpsError('not-found', 'Morador não encontrado.');
+    if (morador.verTodos === true) {
+        throw new functions.https.HttpsError('permission-denied', 'O login da conta master não é trocado por aqui.');
+    }
+    const loginEmail = login + '@moradores.morrogrande.app';
+    const conta = await admin.auth().getUser(moradorUid);
+    if (conta.email !== loginEmail) {
+        const dono = await admin.auth().getUserByEmail(loginEmail).catch(() => null);
+        if (dono && dono.uid !== moradorUid) {
+            throw new functions.https.HttpsError('already-exists', `Já existe um morador com o login ${usuario}.`);
+        }
+        await admin.auth().updateUser(moradorUid, { email: loginEmail });
+    }
+    await ref.update({ usuario, loginEmail });
+    return { success: true, usuario };
 });

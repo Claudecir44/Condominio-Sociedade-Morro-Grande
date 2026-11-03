@@ -1,3 +1,14 @@
+import java.util.Properties
+
+// Chave de envio da Play Store em keystore.properties (fora do git), mesmo padrão do Caronas.
+// Sem ela o release sai com a chave de debug: instala para teste, mas não serve para a Play Store.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+val temKeystoreDeRelease = keystorePropertiesFile.exists()
+if (temKeystoreDeRelease) {
+    keystoreProperties.load(keystorePropertiesFile.inputStream().reader(Charsets.UTF_8))
+}
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,21 +17,34 @@ plugins {
 
 android {
     namespace = "com.cjstudio.condominio_sociedade_morro_grande"
-    compileSdk = 34
+    // SDK 36: a Play Store não aceita app novo com alvo mais antigo
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.cjstudio.condominio_sociedade_morro_grande"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 36
+        versionCode = 3
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (temKeystoreDeRelease) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            signingConfig = if (temKeystoreDeRelease) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -42,6 +66,9 @@ android {
         viewBinding = true
     }
 
+    // Política de Privacidade dentro do app (tela Configurações), copiada do painel-web: um texto só
+    sourceSets["main"].assets.srcDir(layout.buildDirectory.dir("generated/politica"))
+
     flavorDimensions += "version"
 
     productFlavors {
@@ -61,6 +88,12 @@ android {
         }
     }
 }
+
+val copiarPoliticaPrivacidade by tasks.registering(Copy::class) {
+    from(rootProject.file("painel-web")) { include("privacidade.html", "icone.png", "favicon.png") }
+    into(layout.buildDirectory.dir("generated/politica"))
+}
+tasks.named("preBuild") { dependsOn(copiarPoliticaPrivacidade) }
 
 dependencies {
     // Android Core

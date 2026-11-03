@@ -29,6 +29,7 @@ public class ListaManutencaoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_manutencao);
+        TempoReal.observar(this, this::carregarLista, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("manutencoes"));
 
         recyclerViewManutencao = findViewById(R.id.recyclerViewManutencao);
         recyclerViewManutencao.setLayoutManager(new LinearLayoutManager(this));
@@ -40,6 +41,8 @@ public class ListaManutencaoActivity extends AppCompatActivity {
         manutencaoDAO.getTodasManutencoes(new ColecaoFirestore.Callback<List<Manutencao>>() {
             @Override
             public void onSucesso(List<Manutencao> lista) {
+                String filtro = getIntent().getStringExtra(MesCadastro.EXTRA_MES);
+                lista.removeIf(m -> !MesCadastro.pertence(filtro, m.getMes(), m.getDataHora()));
                 listaManutencoes = lista;
                 mostrarLista();
             }

@@ -65,6 +65,7 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        mesDoRegistro = getIntent().getStringExtra(com.cjstudio.condominio_sociedade_morro_grande.MesCadastro.EXTRA_MES);
         if (getIntent().hasExtra("manutencaoJSON")) {
             carregarManutencaoParaEdicao(manutencaoDAO.deJson(getIntent().getStringExtra("manutencaoJSON")));
         }
@@ -129,7 +130,10 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
         });
     }
 
+    private String mesDoRegistro;
+
     private void gravarManutencao(Manutencao m) {
+        m.setMes(mesDoRegistro);
         manutencaoDAO.salvarManutencao(m, new ColecaoFirestore.Callback<Void>() {
             @Override
             public void onSucesso(Void resultado) {
@@ -162,6 +166,7 @@ public class CadastroManutencaoActivity extends AppCompatActivity {
     private void carregarManutencaoParaEdicao(Manutencao m) {
         if (m != null) {
             idEdicao = m.getId();
+            mesDoRegistro = m.getMes();
             etTipo.setText(m.getTipo());
             etDataHora.setText(m.getDataHora());
             etLocal.setText(m.getLocal());

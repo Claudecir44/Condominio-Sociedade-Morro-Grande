@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F2F8"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:text="Configurações"
+        android:textColor="#1A1A2E"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Abre/fecha a política aqui mesmo, logo abaixo (a mesma publicada para a Play Store) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPoliticaPrivacidade"
+        style="@style/Widget.Condominio.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Política de Privacidade" />
+
+    <WebView
+        android:id="@+id/webPolitica"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textVersao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+</LinearLayout>

@@ -1,0 +1,13 @@
+{
+  "name": "Área do Morador · Morro Grande",
+  "short_name": "Morro Grande",
+  "start_url": "morador.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1E3A8A",
+  "theme_color": "#1E3A8A",
+  "icons": [
+    { "src": "icone.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "logo.png", "sizes": "640x640", "type": "image/png" }
+  ]
+}

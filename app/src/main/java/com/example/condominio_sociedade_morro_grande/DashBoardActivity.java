@@ -12,12 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.cjstudio.condominio_sociedade_morro_grande.AdministradoresActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.Assinatura;
-import com.cjstudio.condominio_sociedade_morro_grande.CadastroAvisosActivity;
-import com.cjstudio.condominio_sociedade_morro_grande.CadastroManutencaoActivity;
-import com.cjstudio.condominio_sociedade_morro_grande.CadastroMoradorActivity;
-import com.cjstudio.condominio_sociedade_morro_grande.FuncionariosActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaAssembleiasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.LeituraAguaActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaAvisosActivity;
@@ -27,9 +22,6 @@ import com.cjstudio.condominio_sociedade_morro_grande.MainActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListaMoradoresActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.ListasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.R;
-import com.cjstudio.condominio_sociedade_morro_grande.RegistroAssembleiasActivity;
-import com.cjstudio.condominio_sociedade_morro_grande.RegistroDespesasActivity;
-import com.cjstudio.condominio_sociedade_morro_grande.RegistroOcorrenciasActivity;
 import com.cjstudio.condominio_sociedade_morro_grande.domain.model.ButtonVisibility;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,6 +54,10 @@ public class DashBoardActivity extends AppCompatActivity {
         if ("morador".equals(tipoUsuario)) {
             String primeiroNome = moradorNome != null ? moradorNome.trim().split(" ")[0] : "";
             titulo.setText(primeiroNome.isEmpty() ? "Área do Morador" : "Olá, " + primeiroNome + "!");
+        } else if ("admin".equals(tipoUsuario) && moradorNome != null && !moradorNome.trim().isEmpty()) {
+            TextView adminLogado = findViewById(R.id.textAdminLogado);
+            adminLogado.setText(moradorNome.trim());
+            adminLogado.setVisibility(View.VISIBLE);
         }
 
         // Voltar não sai do app nem desloga: só o botão "Sair" faz isso
@@ -73,6 +69,14 @@ public class DashBoardActivity extends AppCompatActivity {
             }
         });
         prepararNotificacoes();
+        observarEmTempoReal(tipoUsuario);
+
+        // Configurações: engrenagem no canto superior esquerdo da barra, para admin e morador
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_configuracoes);
+            getSupportActionBar().setHomeActionContentDescription("Configurações");
+        }
 
         findViewById(R.id.buttonSair).setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle("Sair")
@@ -86,6 +90,7 @@ public class DashBoardActivity extends AppCompatActivity {
 
     private TextView seloChat;
     private com.google.firebase.firestore.ListenerRegistration ouvinteChat;
+    private com.google.firebase.firestore.ListenerRegistration ouvinteChatAdmin;
 
     /**
      * Botão "Chat" no canto superior direito, na barra "Moradores"/"Admins". Admins e a conta
@@ -93,6 +98,8 @@ public class DashBoardActivity extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        // No app Admins os chats são quadros do painel, com as não lidas no nome
+        if ("admin".equals(getIntent().getStringExtra("tipo_usuario"))) return false;
         getMenuInflater().inflate(R.menu.menu_dashboard, menu);
         View acao = menu.findItem(R.id.acaoChat).getActionView();
         if (acao != null) {
@@ -101,6 +108,15 @@ public class DashBoardActivity extends AppCompatActivity {
         }
         escutarSeloChat();
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            startActivity(new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.ConfiguracoesActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /** Admin ou conta master: fala como "Administração" (lista de conversas). */
@@ -115,7 +131,24 @@ public class DashBoardActivity extends AppCompatActivity {
                 : new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.ChatActivity.class));
     }
 
+    /** Quadros de chat do admin: as não lidas aparecem no nome e atualizam na hora. */
+    private void escutarQuadrosDeChat() {
+        if (!"admin".equals(getIntent().getStringExtra("tipo_usuario")) || ouvinteChat != null) return;
+        String uid = com.cjstudio.condominio_sociedade_morro_grande.ChatRepository.meuUid();
+        if (uid == null) return;
+        ouvinteChat = new com.cjstudio.condominio_sociedade_morro_grande.ChatRepository().escutarNaoLidas(true, total ->
+                mostrarNaoLidas("chatMoradores", "Chat com Moradores", total));
+        ouvinteChatAdmin = new com.cjstudio.condominio_sociedade_morro_grande.ChatAdminRepository().escutarNaoLidas(uid, total ->
+                mostrarNaoLidas("chatAdmin", "Chat admin", total));
+    }
+
+    private void mostrarNaoLidas(String quadro, String nome, int total) {
+        Button botao = buttons.get(quadro);
+        if (botao != null) botao.setText(total > 0 ? nome + " (" + (total > 99 ? "99+" : total) + ")" : nome);
+    }
+
     private void escutarSeloChat() {
+        escutarQuadrosDeChat();
         if (seloChat == null || ouvinteChat != null) return;
         ouvinteChat = new com.cjstudio.condominio_sociedade_morro_grande.ChatRepository().escutarNaoLidas(falaComoAdministracao(), total -> {
             seloChat.setVisibility(total > 0 ? View.VISIBLE : View.GONE);
@@ -135,6 +168,10 @@ public class DashBoardActivity extends AppCompatActivity {
             ouvinteChat.remove();
             ouvinteChat = null;
         }
+        if (ouvinteChatAdmin != null) {
+            ouvinteChatAdmin.remove();
+            ouvinteChatAdmin = null;
+        }
         super.onStop();
     }
 
@@ -145,6 +182,18 @@ public class DashBoardActivity extends AppCompatActivity {
                 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+        }
+    }
+
+    /** Assinatura paga ou vencida e boleto novo refletem no painel com a tela aberta. */
+    private void observarEmTempoReal(String tipoUsuario) {
+        com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+        com.cjstudio.condominio_sociedade_morro_grande.TempoReal.observar(this, this::conferirAssinatura,
+                db.collection("config").document("assinatura"));
+        com.google.firebase.auth.FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if ("morador".equals(tipoUsuario) && !ehMaster() && user != null) {
+            com.cjstudio.condominio_sociedade_morro_grande.TempoReal.observar(this, this::atualizarAlertaDeBoleto,
+                    db.collection("boletos").whereEqualTo("moradorUid", user.getUid()));
         }
     }
 
@@ -160,14 +209,12 @@ public class DashBoardActivity extends AppCompatActivity {
 
     private void initializeButtons() {
         // Admin
-        buttons.put("administradores", findViewById(R.id.buttonAdministradores));
-        buttons.put("assembleias", findViewById(R.id.buttonAssembleias));
-        buttons.put("despesas", findViewById(R.id.buttonDespesas));
-        buttons.put("avisos", findViewById(R.id.buttonAvisos));
-        buttons.put("cadastro", findViewById(R.id.buttonCadastroMoradores));
-        buttons.put("ocorrencias", findViewById(R.id.buttonRegistroOcorrencias));
-        buttons.put("manutencao", findViewById(R.id.buttonManutencao));
-        buttons.put("funcionarios", findViewById(R.id.buttonFuncionarios));
+        buttons.put("cadastro", findViewById(R.id.buttonCadastro));
+        buttons.put("boletosMorador", findViewById(R.id.buttonBoletosMorador));
+        buttons.put("verComoMorador", findViewById(R.id.buttonVerComoMorador));
+        buttons.put("chatMoradores", findViewById(R.id.buttonChatMoradores));
+        buttons.put("chatAdmin", findViewById(R.id.buttonChatAdmin));
+        buttons.put("backup", findViewById(R.id.buttonBackup));
         buttons.put("leiturasAgua", findViewById(R.id.buttonLeiturasAgua));
 
         // Botões do morador (apenas os que ficam na Dashboard)
@@ -175,7 +222,6 @@ public class DashBoardActivity extends AppCompatActivity {
         buttons.put("avisosMorador", findViewById(R.id.buttonAvisosMorador));
         buttons.put("leituraAgua", findViewById(R.id.buttonLeituraAgua));
         buttons.put("pagamentos", findViewById(R.id.buttonPagamentos));
-        buttons.put("moradoresMaster", findViewById(R.id.buttonMoradoresMaster));
         buttons.put("assinaturas", findViewById(R.id.buttonAssinaturas));
         buttons.put("assembleiasMorador", findViewById(R.id.buttonAssembleiasMorador));
 
@@ -211,34 +257,25 @@ public class DashBoardActivity extends AppCompatActivity {
     private void handleNavigation(com.cjstudio.condominio_sociedade_morro_grande.presentation.dashboard.DashBoardViewModel.NavigationEvent event) {
         Intent intent = null;
         switch (event.getTarget()) {
-            case CADASTRO_MORADOR:
-                intent = new Intent(this, CadastroMoradorActivity.class);
+            case CADASTROS:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.CadastrosActivity.class);
                 break;
-            case LISTA_MORADORES:
+            case CHAT_MORADORES:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.ConversasActivity.class);
+                break;
+            case CHAT_ADMIN:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.ConversasAdminActivity.class);
+                break;
+            case BACKUP:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.BackupActivity.class);
+                break;
+            case VER_COMO_MORADOR:
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.VerComoMoradorActivity.class);
+                break;
+            case BOLETOS_MORADOR:
                 intent = new Intent(this, ListaMoradoresActivity.class);
-                // Master no app Moradores: cards compactos, sem Editar/Excluir
-                intent.putExtra("somenteLeitura", "morador".equals(event.getTipoUsuario()));
-                break;
-            case REGISTRO_OCORRENCIAS:
-                intent = new Intent(this, RegistroOcorrenciasActivity.class);
-                break;
-            case FUNCIONARIOS:
-                intent = new Intent(this, FuncionariosActivity.class);
-                break;
-            case MANUTENCAO:
-                intent = new Intent(this, CadastroManutencaoActivity.class);
-                break;
-            case REGISTRO_ASSEMBLEIAS:
-                intent = new Intent(this, RegistroAssembleiasActivity.class);
-                break;
-            case REGISTRO_DESPESAS:
-                intent = new Intent(this, RegistroDespesasActivity.class);
-                break;
-            case ADMINISTRADORES:
-                intent = new Intent(this, AdministradoresActivity.class);
-                break;
-            case CADASTRO_AVISOS:
-                intent = new Intent(this, CadastroAvisosActivity.class);
+                // Cards compactos por quadra/lote, com os boletos e sem Editar/Excluir
+                intent.putExtra("somenteLeitura", true);
                 break;
             case LISTA_ASSEMBLEIAS:
                 // Quadro "Assembleias" do painel do morador (no app Moradores não há mais "Listas")
@@ -246,8 +283,11 @@ public class DashBoardActivity extends AppCompatActivity {
                 intent.putExtra("tipo_usuario", event.getTipoUsuario());
                 break;
             case LISTA_DESPESAS:
-                intent = new Intent(this, ListaDespesasActivity.class);
-                intent.putExtra("tipo_usuario", event.getTipoUsuario());
+                // Mês a mês, como o admin vê em Cadastro, mas só para consulta
+                intent = new Intent(this, com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.class);
+                intent.putExtra(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.EXTRA_MODULO,
+                        com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.Modulo.DESPESAS.name());
+                intent.putExtra(com.cjstudio.condominio_sociedade_morro_grande.MesesCadastroActivity.EXTRA_SO_VER, true);
                 break;
             case LISTA_AVISOS:
                 intent = new Intent(this, ListaAvisosActivity.class);
@@ -257,11 +297,7 @@ public class DashBoardActivity extends AppCompatActivity {
                 intent = new Intent(this, ListasActivity.class);
                 break;
             case LEITURA_AGUA:
-                // Conta master: em vez de enviar leitura, vê as leituras enviadas pelos moradores
-                intent = ehMaster()
-                        ? new Intent(this, ListaLeiturasAguaActivity.class)
-                                .putExtra(ListaLeiturasAguaActivity.EXTRA_SO_VER, true)
-                        : new Intent(this, LeituraAguaActivity.class);
+                intent = new Intent(this, LeituraAguaActivity.class);
                 break;
             case LISTA_LEITURAS_AGUA:
                 intent = new Intent(this, ListaLeiturasAguaActivity.class);

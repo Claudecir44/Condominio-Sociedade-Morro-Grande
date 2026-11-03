@@ -43,23 +43,20 @@ public class DashBoardViewModel extends AndroidViewModel {
         boolean isMorador = "morador".equals(currentTipoUsuario);
 
         // Admin – todos os botões de admin
-        visibility.setVisible("administradores", isAdmin);
-        visibility.setVisible("assembleias", isAdmin);
-        visibility.setVisible("despesas", isAdmin);
-        visibility.setVisible("avisos", isAdmin);
         visibility.setVisible("cadastro", isAdmin);
-        visibility.setVisible("ocorrencias", isAdmin);
-        visibility.setVisible("manutencao", isAdmin);
-        visibility.setVisible("funcionarios", isAdmin);
+        visibility.setVisible("boletosMorador", isAdmin);
+        visibility.setVisible("verComoMorador", isAdmin);
+        visibility.setVisible("chatMoradores", isAdmin);
+        visibility.setVisible("chatAdmin", isAdmin);
+        visibility.setVisible("backup", isAdmin);
         visibility.setVisible("leiturasAgua", isAdmin);
 
         // Morador – apenas os que ficam na Dashboard (sem listaAssembleias)
-        // Conta master: sem Prestação de Contas e Assembleias
+        // Conta master: só Assinaturas
         visibility.setVisible("listaDespesas", isMorador && !currentMaster);
-        visibility.setVisible("avisosMorador", isMorador);
-        visibility.setVisible("leituraAgua", isMorador);
+        visibility.setVisible("avisosMorador", isMorador && !currentMaster);
+        visibility.setVisible("leituraAgua", isMorador && !currentMaster);
         visibility.setVisible("pagamentos", isMorador && !currentMaster);
-        visibility.setVisible("moradoresMaster", isMorador && currentMaster);
         visibility.setVisible("assinaturas", isMorador && currentMaster);
         visibility.setVisible("assembleiasMorador", isMorador && !currentMaster);
 
@@ -81,14 +78,12 @@ public class DashBoardViewModel extends AndroidViewModel {
     private NavigationTarget getNavigationTarget(String buttonKey) {
         switch (buttonKey) {
             // Admin
-            case "administradores": return NavigationTarget.ADMINISTRADORES;
-            case "assembleias": return NavigationTarget.REGISTRO_ASSEMBLEIAS;
-            case "despesas": return NavigationTarget.REGISTRO_DESPESAS;
-            case "avisos": return NavigationTarget.CADASTRO_AVISOS;
-            case "cadastro": return NavigationTarget.CADASTRO_MORADOR;
-            case "ocorrencias": return NavigationTarget.REGISTRO_OCORRENCIAS;
-            case "manutencao": return NavigationTarget.MANUTENCAO;
-            case "funcionarios": return NavigationTarget.FUNCIONARIOS;
+            case "cadastro": return NavigationTarget.CADASTROS;
+            case "boletosMorador": return NavigationTarget.BOLETOS_MORADOR;
+            case "verComoMorador": return NavigationTarget.VER_COMO_MORADOR;
+            case "chatMoradores": return NavigationTarget.CHAT_MORADORES;
+            case "chatAdmin": return NavigationTarget.CHAT_ADMIN;
+            case "backup": return NavigationTarget.BACKUP;
             case "listas": return NavigationTarget.LISTAS;
             case "leiturasAgua": return NavigationTarget.LISTA_LEITURAS_AGUA;
             // Morador
@@ -96,7 +91,6 @@ public class DashBoardViewModel extends AndroidViewModel {
             case "avisosMorador": return NavigationTarget.LISTA_AVISOS;
             case "leituraAgua": return NavigationTarget.LEITURA_AGUA;
             case "pagamentos": return NavigationTarget.PAGAMENTOS;
-            case "moradoresMaster": return NavigationTarget.LISTA_MORADORES;
             case "assinaturas": return NavigationTarget.ASSINATURAS;
             case "assembleiasMorador": return NavigationTarget.LISTA_ASSEMBLEIAS;
             // O case "listaAssembleias" não é mais usado na Dashboard
@@ -105,19 +99,16 @@ public class DashBoardViewModel extends AndroidViewModel {
     }
 
     public enum NavigationTarget {
-        CADASTRO_MORADOR,
-        REGISTRO_OCORRENCIAS,
-        FUNCIONARIOS,
-        MANUTENCAO,
-        REGISTRO_ASSEMBLEIAS,
-        REGISTRO_DESPESAS,
-        ADMINISTRADORES,
-        CADASTRO_AVISOS,
+        CADASTROS,
+        VER_COMO_MORADOR,
+        CHAT_MORADORES,
+        CHAT_ADMIN,
+        BACKUP,
         LISTAS,
         LISTA_ASSEMBLEIAS,
         LISTA_DESPESAS,
         LISTA_AVISOS,
-        LISTA_MORADORES,
+        BOLETOS_MORADOR,
         LEITURA_AGUA,
         LISTA_LEITURAS_AGUA,
         PAGAMENTOS,

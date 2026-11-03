@@ -31,6 +31,10 @@ public class PagamentosActivity extends AppCompatActivity {
 
         layoutBoletos = findViewById(R.id.layoutBoletos);
         layoutAvisoVencido = findViewById(R.id.layoutAvisoVencido);
+        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuario != null) {
+            TempoReal.observar(this, this::carregar, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("boletos").whereEqualTo("moradorUid", usuario.getUid()));
+        }
 
         Calendar hoje = Calendar.getInstance();
         hoje.set(Calendar.DAY_OF_MONTH, Boleto.DIA_VENCIMENTO);
@@ -54,7 +58,7 @@ public class PagamentosActivity extends AppCompatActivity {
                 boolean algumVencido = false;
                 for (Boleto b : boletos) if (b.isNaoPago()) algumVencido = true;
                 layoutAvisoVencido.setVisibility(algumVencido ? View.VISIBLE : View.GONE);
-                ListaBoletos.mostrar(layoutBoletos, boletos, null);
+                ListaBoletos.mostrar(layoutBoletos, boletos);
             }
 
             @Override

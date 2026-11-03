@@ -17,11 +17,12 @@
         <img src="logo.png" alt="Condomínio Sociedade Morro Grande" width="220" height="220">
         <p>Painel administrativo</p>
       </div>
-      <label>E-mail<input id="loginEmail" type="text" autocomplete="username" required></label>
+      <label>E-mail<input id="loginEmail" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
       <label>Senha<input id="loginSenha" type="password" autocomplete="current-password" required></label>
       <button type="submit" class="btn primario" id="btnEntrar">Entrar</button>
       <p class="erro" id="erroLogin"></p>
       <p class="dica">Acesso só para administradores (mesma conta do app Administradores).</p>
+      <p class="dica">É morador? <a href="morador.html">Entre na Área do Morador</a></p>
     </form>
   </section>
 
@@ -39,16 +40,32 @@
     <main class="conteudo">
       <header class="topo">
         <button class="btn icone so-celular" id="btnMenu" aria-label="Abrir menu">☰</button>
+        <div class="config">
+          <button type="button" class="btn icone" id="btnConfig" aria-label="Configurações" title="Configurações"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.030,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.840,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z"/></svg></button>
+          <div class="config-menu" id="menuConfig" hidden>
+            <button type="button" id="btnPrivacidade">Política de Privacidade</button>
+          </div>
+        </div>
         <div class="topo-titulo">
           <h1>Painel Condomínio Sociedade Morro Grande</h1>
           <p id="olaAdmin"></p>
         </div>
+        <button class="btn contorno" id="btnChat">Chat com Moradores<span class="selo" id="seloChat" hidden></span></button>
+        <button class="btn contorno" id="btnChatAdmin">Chat admin<span class="selo" id="seloChatAdmin" hidden></span></button>
         <button class="btn contorno" id="btnSair">Sair</button>
       </header>
+      <!-- Política de Privacidade aberta aqui mesmo, logo abaixo do topo (Configurações) -->
+      <section class="privacidade-inline" id="painelPrivacidade" hidden>
+        <div class="privacidade-topo"><h2>Política de Privacidade</h2><button type="button" class="btn contorno pequeno" id="btnFecharPrivacidade">Fechar</button></div>
+        <div id="textoPrivacidade"></div>
+      </section>
 
       <section class="secao">
         <div class="secao-cabecalho">
-          <h2 id="tituloSecao"></h2>
+          <div class="titulo-secao">
+            <button class="btn contorno pequeno" id="btnVoltar" hidden></button>
+            <h2 id="tituloSecao"></h2>
+          </div>
           <div class="acoes">
             <input type="search" id="busca" placeholder="Buscar…">
             <button class="btn contorno" id="btnExportar">Exportar (Excel/CSV)</button>

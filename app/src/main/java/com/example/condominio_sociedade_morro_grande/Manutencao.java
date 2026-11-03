@@ -12,6 +12,7 @@ public class Manutencao {
     private String valor;
     private String notas;
     private List<String> anexos;
+    private String mes;
 
     // Construtor vazio (explícito, para segurança)
     public Manutencao() { }
@@ -19,6 +20,8 @@ public class Manutencao {
     // Getters e Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+    public String getMes() { return mes; }
+    public void setMes(String mes) { this.mes = mes; }
 
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }

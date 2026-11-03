@@ -22,8 +22,8 @@ public final class Assinatura {
     public static final int DIA_VENCIMENTO = 1;
     public static final int ULTIMO_DIA_SEM_TRAVAR = 5;
     public static final int DIA_LEMBRETE = 25;
-    /** Primeiro mês cobrado: antes disso o app está liberado. */
-    public static final String MES_INICIO_COBRANCA = "2026-11";
+    /** Primeiro mês cobrado (01/01/2027): antes disso o app está liberado. */
+    public static final String MES_INICIO_COBRANCA = "2027-01";
     /**
      * Cobrança desligada enquanto o app não é finalizado (Play Console, chave do Google Play e
      * deploy da função): ninguém trava, sem lembretes nem ícone. Ligar junto com o

@@ -48,6 +48,8 @@ public class CadastroMoradorActivity extends AppCompatActivity {
     private EditText editInquilinoNome, editInquilinoCpf, editInquilinoTelefone;
     // Como estava ao abrir a edição, pra saber se o responsável pelo app mudou
     private String cpfResponsavelAntes;
+    // Login (quadra+lote) da conta ao abrir a edição, pra saber se a quadra/lote mudou
+    private String usuarioAntes;
     private boolean fotoEscolhidaAgora = false;
 
     @Override
@@ -192,6 +194,7 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                             editInquilinoCpf.setText(morador.optString("inquilinoCpf"));
                             editInquilinoTelefone.setText(morador.optString("inquilinoTelefone"));
                             cpfResponsavelAntes = Inquilino.cpfResponsavel(morador);
+                            usuarioAntes = morador.optString("usuario");
                             painelAnexos.definir(ListaAnexos.deValor(morador.opt("anexos")));
 
                             String imagePath = morador.optString("foto");
@@ -339,27 +342,15 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                                boolean temInquilino, boolean responsavelMudou) {
         String deQuem = temInquilino ? "do inquilino" : "do morador";
         if (editarCod != null) {
-            // Atualiza
-            repository.atualizarMorador(editarCod, morador, new MoradorFirestoreRepository.OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(Void result) {
-                    runOnUiThread(() -> {
-                        if (responsavelMudou) {
-                            trocarSenhaDoResponsavel(usuario, senha, deQuem);
-                        } else {
-                            Toast.makeText(CadastroMoradorActivity.this, "Morador atualizado!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                    });
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    btnSalvar.setEnabled(true);
-                    runOnUiThread(() -> Toast.makeText(CadastroMoradorActivity.this,
-                            "Erro ao atualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                }
-            });
+            // Mudou a quadra/lote: o login passa a ser o novo antes de salvar (se já for de
+            // outro morador, nada é salvo)
+            boolean loginMudou = usuarioAntes != null && !usuarioAntes.isEmpty()
+                    && !usuarioAntes.equalsIgnoreCase(usuario);
+            if (loginMudou) {
+                trocarLogin(usuario, () -> atualizarMorador(morador, usuario, senha, deQuem, responsavelMudou, true));
+            } else {
+                atualizarMorador(morador, usuario, senha, deQuem, responsavelMudou, false);
+            }
         } else {
             // Insere
             repository.inserirMorador(this, morador, usuario, senha, new MoradorFirestoreRepository.OnCompleteListener<String>() {
@@ -383,6 +374,60 @@ public class CadastroMoradorActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void atualizarMorador(JSONObject morador, String usuario, String senha, String deQuem,
+                                  boolean responsavelMudou, boolean loginMudou) {
+        repository.atualizarMorador(editarCod, morador, new MoradorFirestoreRepository.OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(Void result) {
+                runOnUiThread(() -> {
+                    if (responsavelMudou) {
+                        trocarSenhaDoResponsavel(usuario, senha, deQuem);
+                    } else if (loginMudou) {
+                        new AlertDialog.Builder(CadastroMoradorActivity.this)
+                                .setTitle("Morador atualizado!")
+                                .setMessage("Mudou a quadra/lote, então o login mudou. Passe o novo usuário:\n\nUsuário: "
+                                        + usuario + "\nSenha: a mesma de antes")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", (d, w) -> finish())
+                                .show();
+                    } else {
+                        Toast.makeText(CadastroMoradorActivity.this, "Morador atualizado!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                btnSalvar.setEnabled(true);
+                runOnUiThread(() -> Toast.makeText(CadastroMoradorActivity.this,
+                        "Erro ao atualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    /**
+     * Mudou a quadra/lote: o login (quadra+lote) é o e-mail interno da conta no Auth, e só o
+     * servidor troca o de outra conta (Cloud Function alterarLoginMorador). A senha não muda.
+     */
+    private void trocarLogin(String usuario, Runnable depois) {
+        java.util.Map<String, Object> dados = new java.util.HashMap<>();
+        dados.put("moradorUid", editarCod);
+        dados.put("usuario", usuario);
+        com.google.firebase.functions.FirebaseFunctions.getInstance(AssinaturaRepository.REGIAO_FUNCOES)
+                .getHttpsCallable("alterarLoginMorador").call(dados)
+                .addOnSuccessListener(r -> depois.run())
+                .addOnFailureListener(e -> {
+                    btnSalvar.setEnabled(true);
+                    new AlertDialog.Builder(this)
+                            .setTitle("Nada foi salvo")
+                            .setMessage("Não deu pra trocar o login para " + usuario + ": " + e.getMessage()
+                                    + "\n\nO login continua " + usuarioAntes + ".")
+                            .setPositiveButton("OK", null)
+                            .show();
+                });
     }
 
     /**

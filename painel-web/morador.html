@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Área do Morador · Morro Grande</title>
+  <meta name="description" content="Área do Morador do Condomínio Sociedade Morro Grande">
+  <meta name="theme-color" content="#1E3A8A">
+  <!-- iPhone: "Adicionar à Tela de Início" abre como app, sem a barra do Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Morro Grande">
+  <link rel="manifest" href="morador.webmanifest">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icone.png">
+  <link rel="stylesheet" href="estilo.css">
+  <link rel="stylesheet" href="morador.css">
+</head>
+<body class="area-morador">
+  <!-- Login -->
+  <section id="telaLogin" class="login" hidden>
+    <form id="formLogin" class="cartao-login">
+      <div class="marca marca-login">
+        <img src="logo.png" alt="Condomínio Sociedade Morro Grande" width="220" height="220">
+        <p>Área do Morador</p>
+      </div>
+      <label>Usuário<input id="loginUsuario" type="text" autocomplete="username" autocapitalize="characters" autocorrect="off" spellcheck="false"
+             placeholder="Quadra e lote, ex.: A10" required></label>
+      <label>Senha<input id="loginSenha" type="password" inputmode="numeric" autocomplete="current-password"
+             placeholder="6 primeiros dígitos do CPF" required></label>
+      <button type="submit" class="btn primario" id="btnEntrar">Entrar</button>
+      <p class="erro" id="erroLogin"></p>
+      <p class="dica">Mesmo usuário e senha do app Moradores.</p>
+      <p class="dica"><a href="./">Sou administrador</a></p>
+    </form>
+  </section>
+
+  <!-- Primeiro acesso: foto obrigatória, como no app -->
+  <section id="telaFoto" class="login" hidden>
+    <div class="cartao-login">
+      <h2>Sua foto</h2>
+      <p id="textoFoto" class="dica"></p>
+      <img id="previaFoto" class="previa-foto" alt="" hidden>
+      <div class="botoes-arquivo">
+        <label class="btn primario">Tirar foto<input type="file" id="fotoCamera" accept="image/*" capture="user" hidden></label>
+        <label class="btn contorno">Escolher da galeria<input type="file" id="fotoGaleria" accept="image/*" hidden></label>
+      </div>
+      <button type="button" class="btn sucesso" id="btnSalvarFoto" disabled>Salvar foto e entrar</button>
+      <button type="button" class="btn contorno" data-sair>Sair</button>
+    </div>
+  </section>
+
+  <!-- Assinatura do app vencida (mesma regra do app) -->
+  <section id="telaBloqueio" class="login" hidden>
+    <div class="cartao-login">
+      <h2>App temporariamente bloqueado</h2>
+      <p class="dica">A assinatura mensal do aplicativo do condomínio não foi paga. Assim que a administração
+        regularizar, o acesso volta sozinho.</p>
+      <button type="button" class="btn contorno" data-sair>Sair</button>
+    </div>
+  </section>
+
+  <!-- Conta master: as funções dela (Assinaturas e responder como Administração) ficam no app -->
+  <section id="telaMaster" class="login" hidden>
+    <div class="cartao-login">
+      <h2>Conta master</h2>
+      <p class="dica">Esta conta paga a assinatura e responde os moradores como Administração. Use o app
+        Moradores no Android ou o painel administrativo.</p>
+      <a class="btn primario" href="./">Abrir o painel administrativo</a>
+      <button type="button" class="btn contorno" data-sair>Sair</button>
+    </div>
+  </section>
+
+  <!-- Painel do morador -->
+  <div id="telaPainel" hidden>
+    <header class="topo">
+      <div class="config">
+        <button type="button" class="btn icone" id="btnConfig" aria-label="Configurações" title="Configurações"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.030,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.840,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z"/></svg></button>
+        <div class="config-menu" id="menuConfig" hidden>
+          <button type="button" id="btnPrivacidade">Política de Privacidade</button>
+        </div>
+      </div>
+      <img class="topo-icone" src="icone.png" alt="" width="40" height="40">
+      <div class="topo-titulo">
+        <h1 id="olaMorador">Área do Morador</h1>
+        <p id="loteMorador"></p>
+      </div>
+      <button class="btn contorno" id="btnChat">Chat<span class="selo" id="seloChat" hidden></span></button>
+      <button class="btn contorno" data-sair>Sair</button>
+    </header>
+    <!-- Política de Privacidade aberta aqui mesmo, logo abaixo do topo (Configurações) -->
+    <section class="privacidade-inline" id="painelPrivacidade" hidden>
+      <div class="privacidade-topo"><h2>Política de Privacidade</h2><button type="button" class="btn contorno pequeno" id="btnFecharPrivacidade">Fechar</button></div>
+      <div id="textoPrivacidade"></div>
+    </section>
+
+    <main class="secao">
+      <div class="secao-cabecalho" id="cabecalhoSecao" hidden>
+        <div class="titulo-secao">
+          <button class="btn contorno pequeno" id="btnVoltar">← Início</button>
+          <h2 id="tituloSecao"></h2>
+        </div>
+      </div>
+      <div id="conteudo"></div>
+    </main>
+  </div>
+
+  <div id="aviso" class="aviso" role="status"></div>
+
+  <script type="module" src="morador.js"></script>
+</body>
+</html>

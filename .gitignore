@@ -17,3 +17,7 @@ local.properties
 # Firebase CLI / emulador
 *.log
 .firebase/
+
+# Chave de envio da Play Store (nunca no git)
+keystore.properties
+*.jks

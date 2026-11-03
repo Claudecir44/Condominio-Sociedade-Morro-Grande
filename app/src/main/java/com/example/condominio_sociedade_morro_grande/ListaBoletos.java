@@ -16,13 +16,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.button.MaterialButton;
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Mostra os boletos (PDF) como linhas: nome, data/hora da postagem e o vencimento (dia 15 do mês
  * vigente) em verde, ou "Boleto vencido" em vermelho quando o admin marcou que não foi pago.
  * Tocar abre o menu do arquivo: abrir, baixar, exportar.
- * Com AcoesAdmin: checkbox "não pago" (liberada depois do dia 15) e excluir.
+ * Em "Boletos Morador" (mostrarPorMes): mês e ano expansíveis, com "Adicionar boleto", checkbox
+ * "não pago" (liberada depois do dia 15) e excluir.
  */
 public final class ListaBoletos {
 
@@ -31,27 +40,110 @@ public final class ListaBoletos {
     public interface AcoesAdmin {
         void marcarNaoPago(Boleto boleto, boolean naoPago);
         void excluir(Boleto boleto);
+        void adicionar(String mes);
     }
 
     private static final int VERDE = Color.parseColor("#16A34A");
     private static final int VERMELHO = Color.parseColor("#DC2626");
     private static final int CINZA = Color.parseColor("#6B7280");
 
-    public static void mostrar(LinearLayout container, List<Boleto> boletos, AcoesAdmin acoes) {
+    /** Tela "Pagamentos" do morador. */
+    public static void mostrar(LinearLayout container, List<Boleto> boletos) {
         Context context = container.getContext();
         container.removeAllViews();
         if (boletos == null || boletos.isEmpty()) {
-            TextView vazio = new TextView(context);
-            vazio.setText("Nenhum boleto postado.");
-            vazio.setTextSize(13);
-            vazio.setTextColor(CINZA);
-            vazio.setPadding(0, ListaAnexos.dp(context, 4), 0, 0);
-            container.addView(vazio);
+            container.addView(vazio(context));
             return;
         }
         for (Boleto boleto : boletos) {
-            container.addView(linha(context, boleto, acoes));
+            container.addView(linha(context, boleto, null));
         }
+    }
+
+    private static View vazio(Context context) {
+        TextView vazio = new TextView(context);
+        vazio.setText("Nenhum boleto postado.");
+        vazio.setTextSize(13);
+        vazio.setTextColor(CINZA);
+        vazio.setPadding(0, ListaAnexos.dp(context, 4), 0, 0);
+        return vazio;
+    }
+
+    /** Meses da lista de um morador, em ordem: o mês atual, os criados e os que têm boleto. */
+    public static TreeSet<String> meses(List<Boleto> boletos, Set<String> mesesCriados) {
+        TreeSet<String> meses = new TreeSet<>(mesesCriados);
+        meses.add(Boleto.mesDe(new Date()));
+        if (boletos != null) for (Boleto b : boletos) meses.add(b.getMes());
+        return meses;
+    }
+
+    /** "Boletos Morador": cada mês fechado; aberto, mostra os boletos dele e "Adicionar boleto". */
+    public static void mostrarPorMes(LinearLayout container, String moradorUid, List<Boleto> boletos,
+                                     Set<String> mesesCriados, AcoesAdmin acoes, Set<String> mesesAbertos) {
+        Context context = container.getContext();
+        container.removeAllViews();
+        Map<String, List<Boleto>> porMes = new TreeMap<>();
+        for (String mes : meses(boletos, mesesCriados)) porMes.put(mes, new ArrayList<>());
+        if (boletos != null) for (Boleto b : boletos) porMes.get(b.getMes()).add(b);
+
+        for (Map.Entry<String, List<Boleto>> entrada : porMes.entrySet()) {
+            String mes = entrada.getKey();
+            LinearLayout grupo = new LinearLayout(context);
+            grupo.setOrientation(LinearLayout.VERTICAL);
+            if (entrada.getValue().isEmpty()) grupo.addView(vazio(context));
+            for (Boleto boleto : entrada.getValue()) grupo.addView(linha(context, boleto, acoes));
+            grupo.addView(botaoAdicionar(context, mes, acoes));
+            container.addView(tituloMes(context, Boleto.textoDoMes(mes), moradorUid + "|" + mes, grupo, mesesAbertos));
+            container.addView(grupo);
+            container.addView(separador(context));
+        }
+    }
+
+    /** Linha entre um mês e outro, e entre o último mês e "Criar próximo mês". */
+    static View separador(Context context) {
+        View linha = new View(context);
+        linha.setBackgroundColor(Color.parseColor("#E0E0E0"));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(context, 1));
+        lp.topMargin = dp(context, 8);
+        linha.setLayoutParams(lp);
+        return linha;
+    }
+
+    private static View botaoAdicionar(Context context, String mes, AcoesAdmin acoes) {
+        MaterialButton botao = new MaterialButton(context);
+        botao.setText("Adicionar boleto (PDF)");
+        botao.setAllCaps(false);
+        botao.setTextSize(13);
+        botao.setIconResource(R.drawable.ic_anexar);
+        botao.setIconTint(ColorStateList.valueOf(Color.WHITE));
+        botao.setCornerRadius(dp(context, 14));
+        botao.setBackgroundTintList(ColorStateList.valueOf(context.getColor(R.color.botaoSucesso)));
+        botao.setOnClickListener(v -> acoes.adicionar(mes));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = dp(context, 6);
+        botao.setLayoutParams(lp);
+        return botao;
+    }
+
+    /** Link do mês: toque abre ou fecha os boletos dele. mesesAbertos guarda o que ficou aberto. */
+    static View tituloMes(Context context, String mes, String chave, LinearLayout grupo, Set<String> mesesAbertos) {
+        TextView titulo = new TextView(context);
+        titulo.setTextSize(15);
+        titulo.setTypeface(null, Typeface.BOLD);
+        titulo.setTextColor(Color.parseColor("#2563EB"));
+        titulo.setPadding(0, dp(context, 12), 0, dp(context, 4));
+        boolean aberto = mesesAbertos.contains(chave);
+        grupo.setVisibility(aberto ? View.VISIBLE : View.GONE);
+        titulo.setText((aberto ? "▼ " : "▶ ") + mes);
+        titulo.setOnClickListener(v -> {
+            boolean abrir = mesesAbertos.add(chave);
+            if (!abrir) mesesAbertos.remove(chave);
+            grupo.setVisibility(abrir ? View.VISIBLE : View.GONE);
+            titulo.setText((abrir ? "▼ " : "▶ ") + mes);
+        });
+        return titulo;
     }
 
     private static View linha(Context context, Boleto boleto, AcoesAdmin acoes) {
@@ -136,7 +228,7 @@ public final class ListaBoletos {
             textoStatus.setTextColor(VERMELHO);
             textoStatus.setTypeface(null, Typeface.BOLD);
         } else {
-            textoStatus.setText("Vence em " + boleto.vencimentoTexto() + " (sempre dia 15 do mês vigente)");
+            textoStatus.setText("Vence em " + boleto.vencimentoTexto() + " (sempre dia 15 do mês do boleto)");
             textoStatus.setTextColor(VERDE);
         }
         status.addView(textoStatus);

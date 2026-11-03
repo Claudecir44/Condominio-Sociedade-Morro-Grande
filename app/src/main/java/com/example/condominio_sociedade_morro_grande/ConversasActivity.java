@@ -52,6 +52,7 @@ public class ConversasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversas);
+        TempoReal.observar(this, this::carregarMoradores, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("moradores"));
 
         tvVazio = findViewById(R.id.tvConversasVazio);
         RecyclerView recycler = findViewById(R.id.recyclerConversas);

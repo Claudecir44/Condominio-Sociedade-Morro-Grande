@@ -63,16 +63,20 @@ public class RegistroOcorrenciasActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        mesDoRegistro = getIntent().getStringExtra(com.cjstudio.condominio_sociedade_morro_grande.MesCadastro.EXTRA_MES);
         if (getIntent().hasExtra("ocorrenciaJSON")) {
             try {
                 JSONObject ocorrencia = new JSONObject(getIntent().getStringExtra("ocorrenciaJSON"));
                 editarId = ocorrencia.optString("id", null);
+                mesDoRegistro = ocorrencia.optString("mes", null);
                 preencherCamposParaEdicao(ocorrencia);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private String mesDoRegistro;
 
     private void salvarOcorrencia() {
         String tipo = editTipo.getText().toString().trim();
@@ -89,6 +93,7 @@ public class RegistroOcorrenciasActivity extends AppCompatActivity {
             ocorrencia.put("tipo", tipo);
             ocorrencia.put("descricao", descricao);
             ocorrencia.put("datahora", dataHora);
+            if (mesDoRegistro != null) ocorrencia.put("mes", mesDoRegistro);
 
             JSONArray jsonEnvolvidos = new JSONArray();
             for (int i = 0; i < layoutEnvolvidos.getChildCount(); i++) {

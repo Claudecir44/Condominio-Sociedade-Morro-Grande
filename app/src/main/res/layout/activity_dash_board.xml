@@ -27,6 +27,16 @@
             android:paddingEnd="24dp"
             android:paddingBottom="26dp">
 
+            <!-- Admin: nome de quem está logado, acima do título -->
+            <TextView
+                android:id="@+id/textAdminLogado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,60 +96,19 @@
 
             <!-- ========== ADMIN ========== -->
             <Button
-                android:id="@+id/buttonAdministradores"
+                android:id="@+id/buttonCadastro"
                 style="@style/Widget.Condominio.Painel"
-                android:text="Administradores"
+                android:text="Cadastro"
                 app:backgroundTint="@color/painelAdministradores"
-                app:icon="@drawable/ic_painel_administradores" />
+                app:icon="@drawable/ic_painel_cadastro" />
 
+            <!-- Lista por quadra/lote com os boletos em PDF -->
             <Button
-                android:id="@+id/buttonAssembleias"
+                android:id="@+id/buttonBoletosMorador"
                 style="@style/Widget.Condominio.Painel"
-                android:text="Assembleias"
-                app:backgroundTint="@color/painelAssembleias"
-                app:icon="@drawable/ic_painel_assembleias" />
-
-            <Button
-                android:id="@+id/buttonDespesas"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Despesas"
-                app:backgroundTint="@color/painelDespesas"
-                app:icon="@drawable/ic_painel_despesas" />
-
-            <Button
-                android:id="@+id/buttonAvisos"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Avisos"
-                app:backgroundTint="@color/painelAvisos"
-                app:icon="@drawable/ic_painel_avisos" />
-
-            <Button
-                android:id="@+id/buttonCadastroMoradores"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Moradores"
-                app:backgroundTint="@color/painelMoradores"
-                app:icon="@drawable/ic_painel_moradores" />
-
-            <Button
-                android:id="@+id/buttonRegistroOcorrencias"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Ocorrências"
-                app:backgroundTint="@color/painelOcorrencias"
-                app:icon="@drawable/ic_painel_ocorrencias" />
-
-            <Button
-                android:id="@+id/buttonManutencao"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Manutenção"
-                app:backgroundTint="@color/painelManutencao"
-                app:icon="@drawable/ic_painel_manutencao" />
-
-            <Button
-                android:id="@+id/buttonFuncionarios"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Funcionários"
-                app:backgroundTint="@color/painelFuncionarios"
-                app:icon="@drawable/ic_painel_funcionarios" />
+                android:text="Boletos Morador"
+                app:backgroundTint="@color/painelPagamentos"
+                app:icon="@drawable/ic_painel_pagamentos" />
 
             <Button
                 android:id="@+id/buttonLeiturasAgua"
@@ -178,15 +147,7 @@
                 app:backgroundTint="@color/painelPagamentos"
                 app:icon="@drawable/ic_painel_pagamentos" />
 
-            <!-- Só o master (morador de visualização): fica embaixo de "Avisos" -->
-            <Button
-                android:id="@+id/buttonMoradoresMaster"
-                style="@style/Widget.Condominio.Painel"
-                android:text="Moradores"
-                app:backgroundTint="@color/painelMoradores"
-                app:icon="@drawable/ic_painel_moradores" />
-
-            <!-- Só o master: assinatura do app; fica embaixo de "Leitura d'Água" -->
+            <!-- Só o master: assinatura do app -->
             <Button
                 android:id="@+id/buttonAssinaturas"
                 style="@style/Widget.Condominio.Painel"
@@ -194,7 +155,7 @@
                 app:backgroundTint="@color/painelAdministradores"
                 app:icon="@drawable/ic_painel_assinaturas" />
 
-            <!-- Morador e conta master: lista de assembleias (antes ficava em "Listas") -->
+            <!-- Morador: lista de assembleias (antes ficava em "Listas") -->
             <Button
                 android:id="@+id/buttonAssembleiasMorador"
                 style="@style/Widget.Condominio.Painel"
@@ -202,17 +163,43 @@
                 app:backgroundTint="@color/painelAssembleias"
                 app:icon="@drawable/ic_painel_assembleias" />
 
-            <!-- ========== LISTAS (admin e morador): linha inteira ========== -->
+            <!-- ========== LISTAS (admin) ========== -->
             <Button
                 android:id="@+id/buttonListas"
                 style="@style/Widget.Condominio.Painel"
-                android:layout_height="84dp"
-                android:layout_columnSpan="2"
                 android:text="Listas"
                 app:backgroundTint="@color/painelListas"
-                app:icon="@drawable/ic_painel_listas"
-                app:iconGravity="textStart"
-                app:iconSize="28dp" />
+                app:icon="@drawable/ic_painel_listas" />
+
+            <!-- Admin: chat com os moradores, chat entre administradores e backup -->
+            <Button
+                android:id="@+id/buttonChatMoradores"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Chat com Moradores"
+                app:backgroundTint="@color/painelMoradores"
+                app:icon="@drawable/ic_chat_branco" />
+
+            <Button
+                android:id="@+id/buttonChatAdmin"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Chat admin"
+                app:backgroundTint="@color/painelAdministradores"
+                app:icon="@drawable/ic_chat_branco" />
+
+            <Button
+                android:id="@+id/buttonBackup"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Backup"
+                app:backgroundTint="@color/painelListas"
+                app:icon="@drawable/ic_painel_backup" />
+
+            <!-- Admin: os quadros que o morador vê ao entrar -->
+            <Button
+                android:id="@+id/buttonVerComoMorador"
+                style="@style/Widget.Condominio.Painel"
+                android:text="Ver como morador"
+                app:backgroundTint="@color/painelMoradores"
+                app:icon="@drawable/ic_painel_moradores" />
         </GridLayout>
     </LinearLayout>
 </ScrollView>

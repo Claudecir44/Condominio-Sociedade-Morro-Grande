@@ -25,7 +25,9 @@ public final class ContaHelper {
     private static final String APP_CADASTRO = "cadastro-contas";
     private static final String DOMINIO_MORADOR = "@moradores.morrogrande.app";
     private static final String DOMINIO_ADMIN = "@admins.morrogrande.app";
-    private static final String USUARIO_MASTER = "condominiosociedademorrogrande";
+    // Contas master: "Condomínio Morro Grande" (o nome antigo ainda é aceito no campo de senha)
+    private static final String USUARIO_MASTER = "condominiomorrogrande";
+    private static final String USUARIO_MASTER_MORADOR = "condominiosociedademorrogrande";
 
     private ContaHelper() { }
 
@@ -36,16 +38,17 @@ public final class ContaHelper {
 
     /**
      * Login do admin: e-mail normal, ou um nome de usuário sem @ (ex.: o admin master
-     * "Condominio sociedade Morro grande") convertido no e-mail interno do Firebase Auth.
+     * "Condomínio Morro Grande") convertido no e-mail interno do Firebase Auth.
      */
     public static String emailDoAdmin(String usuario) {
         String texto = usuario.trim();
         return texto.contains("@") ? texto : limpar(texto) + DOMINIO_ADMIN;
     }
 
-    /** Usuário "Condominio sociedade Morro grande" (admin master e morador de visualização). */
+    /** Usuário "Condomínio Morro Grande" (admin master) ou "Condominio sociedade Morro grande" (morador de visualização). */
     public static boolean ehUsuarioMaster(String usuario) {
-        return USUARIO_MASTER.equals(limpar(usuario));
+        String login = limpar(usuario);
+        return USUARIO_MASTER.equals(login) || USUARIO_MASTER_MORADOR.equals(login);
     }
 
     /**

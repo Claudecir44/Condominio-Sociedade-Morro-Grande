@@ -1,40 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutBackup"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center_horizontal">
+    android:fillViewport="true"
+    android:background="#F0F2F8">
 
-    <!-- Título -->
-    <TextView
-        android:id="@+id/textTituloControles"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Controles"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="32dp"/>
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <!-- Botão Exportar -->
-    <Button
-        android:id="@+id/buttonExportar"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="Exportar"
-        android:textSize="18sp"
-        android:backgroundTint="@color/botaoSucesso"
-        android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="12dp"
+            android:text="Backup"
+            android:textColor="#1A1A2E"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <!-- Botão Importar -->
-    <Button
-        android:id="@+id/buttonImportar"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="Importar"
-        android:textSize="18sp"
-        android:backgroundTint="@color/botaoSucesso"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Todo dia, à meia-noite, o banco de dados é salvo aqui automaticamente, e os últimos 15 backups ficam guardados (os mais antigos são apagados sozinhos).\n\nPara levar os dados para outro aplicativo ou empresa, use o Pacote completo: ele traz o banco, planilhas, todos os arquivos enviados e um LEIA-ME explicando como implantar. Baixe e guarde em um local seu."
+            android:textColor="#374151"
+            android:textSize="14sp" />
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackupAgora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fazer backup agora"
+            android:textAllCaps="false"
+            app:cornerRadius="14dp"
+            app:backgroundTint="@color/painelAdministradores" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPacoteCompleto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Gerar Pacote completo"
+            android:textAllCaps="false"
+            app:cornerRadius="14dp"
+            app:backgroundTint="@color/botaoSucesso" />
+
+        <LinearLayout
+            android:id="@+id/layoutBackups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

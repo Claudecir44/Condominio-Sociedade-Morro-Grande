@@ -40,4 +40,17 @@ await gravar("avisos/aviso1", {
   datahora: "16/10/2026 09:00", assunto: "Aviso de teste", descricao: "Texto do aviso de teste.",
   anexos: "[]", timestamp: Date.now(),
 });
-console.log("Emulador semeado. Admin de teste:", uid);
+await gravar("despesas/despesa1", {
+  dataHora: "10/10/2026 14:00", nome: "Conta de luz", valor: "350,00", descricao: "Iluminação das ruas.",
+});
+await gravar("assembleias/assembleia1", {
+  datahora: "20/10/2026 19:30", assunto: "Assembleia de teste", local: "Salão de festas",
+  descricao: "Pauta de teste.", documento: "[]",
+});
+// Morador de teste na Área do Morador (http://localhost:5000/morador.html?emulador):
+//   usuário: A10   senha: 123456   (sem foto, para testar o primeiro acesso)
+const uidMorador = await criarConta("a10@moradores.morrogrande.app", "123456");
+await gravar(`moradores/${uidMorador}`, {
+  nome: "Maria Teste da Silva", cpf: "123.456.789-00", quadra: "A", lote: "10", usuario: "A10", anexos: [],
+});
+console.log("Emulador semeado. Admin de teste:", uid, "· Morador de teste:", uidMorador);

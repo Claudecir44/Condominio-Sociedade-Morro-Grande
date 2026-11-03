@@ -11,12 +11,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Boletos em boletos/{id} (moradorUid, arquivo, nomeArquivo, postadoEm, naoPago) e o PDF em
@@ -25,6 +28,7 @@ import java.util.Map;
 public class BoletosRepository {
 
     private final CollectionReference boletos = FirebaseFirestore.getInstance().collection("boletos");
+    private final CollectionReference mesesCriados = FirebaseFirestore.getInstance().collection("boletos_meses");
 
     /** Todos os boletos (admin e conta master), agrupados pelo UID do morador, mais novo primeiro. */
     public void listarPorMorador(ColecaoFirestore.Callback<Map<String, List<Boleto>>> callback) {
@@ -51,8 +55,8 @@ public class BoletosRepository {
                 .addOnFailureListener(callback::onErro);
     }
 
-    /** Sobe o PDF para boletos/{moradorUid}/ e grava o boleto com a data/hora da postagem. */
-    public void postar(Context context, String moradorUid, Uri pdf, ColecaoFirestore.Callback<Void> callback) {
+    /** Sobe o PDF para boletos/{moradorUid}/ e grava o boleto do mês ("2026-11") com a data/hora da postagem. */
+    public void postar(Context context, String moradorUid, String mes, Uri pdf, ColecaoFirestore.Callback<Void> callback) {
         String nome = ArquivosStorage.nomeDoAnexo(context, pdf.toString());
         if (!nome.toLowerCase().endsWith(".pdf")) nome = nome + ".pdf";
         String nomeFinal = nome;
@@ -66,6 +70,7 @@ public class BoletosRepository {
                         dados.put("nomeArquivo", nomeFinal);
                         dados.put("postadoEm", FieldValue.serverTimestamp());
                         dados.put("naoPago", false);
+                        dados.put("mes", mes);
                         boletos.add(dados)
                                 .addOnSuccessListener(ref -> callback.onSucesso(null))
                                 .addOnFailureListener(callback::onErro);
@@ -76,6 +81,30 @@ public class BoletosRepository {
                         callback.onErro(e);
                     }
                 });
+    }
+
+    /** Meses criados em "Boletos Morador", pelo UID do morador. */
+    public void listarMesesCriados(ColecaoFirestore.Callback<Map<String, Set<String>>> callback) {
+        mesesCriados.get()
+                .addOnSuccessListener(snapshot -> {
+                    Map<String, Set<String>> mapa = new HashMap<>();
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        Set<String> meses = new HashSet<>();
+                        Object lista = doc.get("meses");
+                        if (lista instanceof List) for (Object mes : (List<?>) lista) meses.add(String.valueOf(mes));
+                        mapa.put(doc.getId(), meses);
+                    }
+                    callback.onSucesso(mapa);
+                })
+                .addOnFailureListener(callback::onErro);
+    }
+
+    public void criarMes(String moradorUid, String mes, ColecaoFirestore.Callback<Void> callback) {
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("meses", FieldValue.arrayUnion(mes));
+        mesesCriados.document(moradorUid).set(dados, SetOptions.merge())
+                .addOnSuccessListener(v -> callback.onSucesso(null))
+                .addOnFailureListener(callback::onErro);
     }
 
     public void marcarNaoPago(String id, boolean naoPago, ColecaoFirestore.Callback<Void> callback) {
@@ -99,7 +128,8 @@ public class BoletosRepository {
                     doc.getString("arquivo"),
                     doc.getString("nomeArquivo"),
                     postado != null ? postado.toDate() : null,
-                    Boolean.TRUE.equals(doc.getBoolean("naoPago"))));
+                    Boolean.TRUE.equals(doc.getBoolean("naoPago")),
+                    doc.getString("mes")));
         }
         Collections.sort(lista, (a, b) -> b.getPostadoEm().compareTo(a.getPostadoEm()));
         return lista;

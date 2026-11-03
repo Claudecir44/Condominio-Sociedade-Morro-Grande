@@ -4,7 +4,82 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f53192ae-819a-433f-9a38-dc7c13aef964" name="Changes" comment="" />
+    <list default="true" id="f53192ae-819a-433f-9a38-dc7c13aef964" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AdministradoresActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AdministradoresActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Assinatura.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Assinatura.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AssinaturasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/AssinaturasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/BloqueioAssinaturaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/BloqueioAssinaturaActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Boleto.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Boleto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/BoletosRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/BoletosRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/CadastroAvisosActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/CadastroAvisosActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/CadastroManutencaoActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/CadastroManutencaoActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/CadastroMoradorActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/CadastroMoradorActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ChatActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ContaHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ContaHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ConversasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ConversasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/DashBoardActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/DashBoardActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/DashBoardViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/DashBoardViewModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Despesa.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Despesa.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/LeituraAguaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/LeituraAguaActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAssembleiasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAssembleiasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAvisosActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaAvisosActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaBoletos.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaBoletos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaDespesasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaDespesasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaFuncionariosActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaFuncionariosActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaLeiturasAguaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaLeiturasAguaActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaManutencaoActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaManutencaoActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaMoradoresActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaMoradoresActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaOcorrenciasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListaOcorrenciasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/ListasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Manutencao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/Manutencao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/MoradorAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/MoradorAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/PagamentosActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/PagamentosActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/RegistroAssembleiasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/RegistroAssembleiasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/RegistroDespesasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/RegistroDespesasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/RegistroOcorrenciasActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/condominio_sociedade_morro_grande/RegistroOcorrenciasActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/logo_azul-playstore.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/logo_azul-playstore.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_backup.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_backup.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_conversas.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_conversas.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_dash_board.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_dash_board.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_morador.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_morador.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/logo_azul.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/logo_azul.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/logo_azul_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/logo_azul_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/logo_azul_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/logo_azul_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/logo_azul.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/logo_azul.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/logo_azul_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/logo_azul_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/logo_azul_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/logo_azul_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/logo_azul.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/logo_azul.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/logo_azul_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/logo_azul_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/logo_azul_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/logo_azul_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/logo_azul.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/logo_azul.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/logo_azul_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/logo_azul_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/logo_azul_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/logo_azul_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/logo_azul.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/logo_azul.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/logo_azul_foreground.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/logo_azul_foreground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/logo_azul_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/logo_azul_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/cjstudio/condominio_sociedade_morro_grande/AssinaturaTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/cjstudio/condominio_sociedade_morro_grande/AssinaturaTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firestore.rules" beforeDir="false" afterPath="$PROJECT_DIR$/firestore.rules" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logo/logo_icone.png" beforeDir="false" afterPath="$PROJECT_DIR$/logo/logo_icone.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logo/logo_icone.svg" beforeDir="false" afterPath="$PROJECT_DIR$/logo/logo_icone.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logo/logo_morro_grande.png" beforeDir="false" afterPath="$PROJECT_DIR$/logo/logo_morro_grande.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logo/logo_morro_grande.svg" beforeDir="false" afterPath="$PROJECT_DIR$/logo/logo_morro_grande.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/painel-web/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/painel-web/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/painel-web/estilo.css" beforeDir="false" afterPath="$PROJECT_DIR$/painel-web/estilo.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/painel-web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/painel-web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/criar_contas_master.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/criar_contas_master.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/emulador/semear.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/emulador/semear.mjs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,41 +88,135 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=3895d4300404]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Condominio-Sociedade-Morro-Grande" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Claudecir44"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Claudecir44&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Claudecir44/Condom-nio-Sociedade-Morro-Grande.git",
-    "accountId": "48c7ede7-7ead-46bf-8386-284a364ae671"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Claudecir44/Condominio-Sociedade-Morro-Grande.git&quot;,
+    &quot;accountId&quot;: &quot;41b26517-11c8-44e8-9d97-c8ff5e8c0903&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="3FVTTj9CwGWhBXDPKqpaFPBzd9G" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RunManager">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="Condominio-Sociedade-Morro-Grande.app" />
+      <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="ALLOW_ASSUME_VERIFIED" value="false" />
+      <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="RESTORE_ENABLED" value="false" />
+      <option name="RESTORE_FILE" value="" />
+      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+      </Hybrid>
+      <Java>
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+      </Java>
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Trace" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

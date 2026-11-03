@@ -48,6 +48,7 @@ public class ListaAssembleiasActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_assembleias);
+        TempoReal.observar(this, this::carregarAssembleias, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("assembleias"));
 
         tipoUsuario = getIntent().getStringExtra("tipo_usuario");
         if (tipoUsuario == null) {
@@ -106,6 +107,7 @@ public class ListaAssembleiasActivity extends AppCompatActivity implements
         assembleiaDAO.listarAssembleias(new ColecaoFirestore.Callback<List<JSONObject>>() {
             @Override
             public void onSucesso(List<JSONObject> lista) {
+                MesCadastro.filtrar(lista, "datahora", getIntent().getStringExtra(MesCadastro.EXTRA_MES));
                 adapter = new AssembleiaAdapter(ListaAssembleiasActivity.this, lista,
                         ListaAssembleiasActivity.this, ListaAssembleiasActivity.this,
                         ListaAssembleiasActivity.this, tipoUsuario);

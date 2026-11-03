@@ -22,7 +22,8 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     public interface OnItemClickListener {
         void onEditar(JSONObject morador, int position);
         void onExcluir(JSONObject morador, int position);
-        void onAdicionarBoleto(JSONObject morador);
+        void onAdicionarBoleto(JSONObject morador, String mes);
+        void onCriarMes(JSONObject morador, String mes);
         void onMarcarBoletoNaoPago(Boleto boleto, boolean naoPago);
         void onExcluirBoleto(Boleto boleto);
     }
@@ -36,6 +37,10 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
     private final java.util.Set<String> expandidos = new java.util.HashSet<>();
     // Boletos de cada morador, pelo UID (cod)
     private java.util.Map<String, List<Boleto>> boletos = new java.util.HashMap<>();
+    // Meses abertos em "Boletos Morador": continuam abertos quando a lista recarrega
+    private final java.util.Set<String> mesesAbertos = new java.util.HashSet<>();
+    // Meses criados em "Criar próximo mês", por morador (boletos_meses no Firestore)
+    private java.util.Map<String, java.util.Set<String>> mesesCriados = new java.util.HashMap<>();
 
     public MoradorAdapter(Context context, List<JSONObject> moradores, OnItemClickListener listener) {
         this.context = context;
@@ -45,6 +50,11 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
 
     public void setSomenteLeitura(boolean somenteLeitura) {
         this.somenteLeitura = somenteLeitura;
+    }
+
+    public void setMesesCriados(java.util.Map<String, java.util.Set<String>> mesesCriados) {
+        this.mesesCriados = mesesCriados;
+        notifyDataSetChanged();
     }
 
     public void setBoletos(java.util.Map<String, List<Boleto>> boletos) {
@@ -175,32 +185,19 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
 
         carregarFoto(holder.imageMoradorItem, imagePath);
 
-        // Lista do app Admins: quadra/lote pequeno por cima da foto (na do master já está no resumo)
+        // Lista de moradores: quadra/lote pequeno por cima da foto (em "Boletos Morador" já está no resumo)
         boolean mostrarEtiqueta = !somenteLeitura && (!quadra.trim().isEmpty() || !lote.trim().isEmpty());
         holder.tvQuadraLoteFoto.setVisibility(mostrarEtiqueta ? View.VISIBLE : View.GONE);
         if (mostrarEtiqueta) holder.tvQuadraLoteFoto.setText(etiquetaQuadraLote(quadra, lote));
 
-        // Boletos: só na lista da conta master (app Moradores), que posta PDF, marca "não pago" e exclui.
-        // Na lista do app Admins o card fica como antes, sem boletos.
+        // Boletos: só na lista "Boletos Morador", que posta PDF, marca "não pago" e exclui.
+        // Na lista de moradores o card fica como antes, sem boletos.
         holder.layoutSecaoBoletos.setVisibility(somenteLeitura ? View.VISIBLE : View.GONE);
-        if (somenteLeitura) ListaBoletos.mostrar(holder.layoutBoletosMorador, boletos.get(codigo), new ListaBoletos.AcoesAdmin() {
-                    @Override
-                    public void marcarNaoPago(Boleto boleto, boolean naoPago) {
-                        if (listener != null) listener.onMarcarBoletoNaoPago(boleto, naoPago);
-                    }
-
-                    @Override
-                    public void excluir(Boleto boleto) {
-                        if (listener != null) listener.onExcluirBoleto(boleto);
-                    }
-                });
-        holder.btnAdicionarBoleto.setOnClickListener(v -> {
-            if (listener != null) listener.onAdicionarBoleto(morador);
-        });
+        if (somenteLeitura) mostrarBoletos(holder, morador, codigo);
 
         holder.layoutBotoesMorador.setVisibility(somenteLeitura ? View.GONE : View.VISIBLE);
 
-        // Somente leitura (master): card pequeno "Quadra A · Lote 01" que expande com os dados
+        // "Boletos Morador": card pequeno "Quadra A · Lote 01" que expande com os dados
         if (somenteLeitura) {
             holder.layoutResumoMorador.setVisibility(View.VISIBLE);
             holder.tvResumoQuadraLote.setText(tituloQuadraLote(quadra, lote));
@@ -224,6 +221,43 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
 
         holder.btnExcluirMorador.setOnClickListener(v -> {
             if (listener != null) listener.onExcluir(morador, position);
+        });
+    }
+
+    /** Meses do morador e, embaixo deles, o botão que cria o mês seguinte. */
+    private void mostrarBoletos(MoradorViewHolder holder, JSONObject morador, String codigo) {
+        List<Boleto> doMorador = boletos.get(codigo);
+        java.util.Set<String> criados = mesesCriados.get(codigo);
+        if (criados == null) {
+            criados = new java.util.HashSet<>();
+            mesesCriados.put(codigo, criados);
+        }
+        ListaBoletos.mostrarPorMes(holder.layoutBoletosMorador, codigo, doMorador, criados, new ListaBoletos.AcoesAdmin() {
+            @Override
+            public void marcarNaoPago(Boleto boleto, boolean naoPago) {
+                if (listener != null) listener.onMarcarBoletoNaoPago(boleto, naoPago);
+            }
+
+            @Override
+            public void excluir(Boleto boleto) {
+                if (listener != null) listener.onExcluirBoleto(boleto);
+            }
+
+            @Override
+            public void adicionar(String mes) {
+                if (listener != null) listener.onAdicionarBoleto(morador, mes);
+            }
+        }, mesesAbertos);
+
+        String proximo = Boleto.proximoMes(ListaBoletos.meses(doMorador, criados).last());
+        java.util.Set<String> criadosDoMorador = criados;
+        holder.btnCriarProximoMes.setText("Criar " + Boleto.textoDoMes(proximo));
+        holder.btnCriarProximoMes.setOnClickListener(v -> {
+            criadosDoMorador.add(proximo);
+            mesesAbertos.add(codigo + "|" + proximo);
+            int pos = holder.getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) notifyItemChanged(pos);
+            if (listener != null) listener.onCriarMes(morador, proximo);
         });
     }
 
@@ -333,7 +367,7 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
         TextView tvResumoNome;
         TextView tvResumoSeta;
         LinearLayout layoutBoletosMorador;
-        Button btnAdicionarBoleto;
+        Button btnCriarProximoMes;
         LinearLayout layoutSecaoBoletos;
         TextView tvQuadraLoteFoto;
         LinearLayout layoutInquilinoMorador;
@@ -346,7 +380,7 @@ public class MoradorAdapter extends RecyclerView.Adapter<MoradorAdapter.MoradorV
             tvQuadraLoteFoto = itemView.findViewById(R.id.tvQuadraLoteFoto);
             layoutSecaoBoletos = itemView.findViewById(R.id.layoutSecaoBoletos);
             layoutBoletosMorador = itemView.findViewById(R.id.layoutBoletosMorador);
-            btnAdicionarBoleto = itemView.findViewById(R.id.btnAdicionarBoleto);
+            btnCriarProximoMes = itemView.findViewById(R.id.btnCriarProximoMes);
             layoutBotoesMorador = itemView.findViewById(R.id.layoutBotoesMorador);
             layoutResumoMorador = itemView.findViewById(R.id.layoutResumoMorador);
             layoutDetalhesMorador = itemView.findViewById(R.id.layoutDetalhesMorador);

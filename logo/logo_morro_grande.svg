@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <!-- Logo do Condomínio Sociedade Morro Grande (vetor). As fontes vêm do
-       Google Fonts: Cinzel (MORRO GRANDE, SOCIEDADE), Playfair Display
+  <!-- Logo do Condomínio Morro Grande (vetor). As fontes vêm do
+       Google Fonts: Cinzel (MORRO GRANDE), Playfair Display
        (Condomínio) e Montserrat (slogan). -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&amp;family=Playfair+Display:wght@700&amp;family=Montserrat:wght@600;700&amp;display=block');
@@ -96,9 +96,7 @@
   <!-- ===== Textos ===== -->
   <text x="512" y="586" text-anchor="middle" class="condominio" font-size="152" fill="url(#azul)" filter="url(#sombra)">Condomínio</text>
 
-  <rect x="176" y="626" width="180" height="4" rx="2" fill="url(#ouroLinha)"/>
-  <rect x="668" y="626" width="180" height="4" rx="2" fill="url(#ouroLinha)"/>
-  <text x="512" y="641" text-anchor="middle" class="cinzel" font-weight="700" font-size="38" letter-spacing="11" fill="#1d3a8f">SOCIEDADE</text>
+  <rect x="192" y="626" width="640" height="4" rx="2" fill="url(#ouroLinha)"/>
 
   <text x="512" y="752" text-anchor="middle" class="cinzel" font-weight="800" font-size="106" fill="url(#azul)" filter="url(#sombra)" textLength="790" lengthAdjust="spacingAndGlyphs">MORRO GRANDE</text>
 

@@ -48,6 +48,7 @@ public class ListaOcorrenciasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_ocorrencias);
+        TempoReal.observar(this, this::atualizarLista, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("ocorrencias"));
 
         recyclerView = findViewById(R.id.recyclerOcorrencias);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +86,7 @@ public class ListaOcorrenciasActivity extends AppCompatActivity {
             public void onSucesso(List<JSONObject> lista) {
                 listaOcorrencias.clear();
                 listaOcorrencias.addAll(lista);
+                MesCadastro.filtrar(listaOcorrencias, "datahora", getIntent().getStringExtra(MesCadastro.EXTRA_MES));
                 ordenarPorDataHora();
                 adapter.notifyDataSetChanged();
             }

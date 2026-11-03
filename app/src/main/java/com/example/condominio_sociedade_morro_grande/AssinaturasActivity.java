@@ -43,6 +43,7 @@ public class AssinaturasActivity extends AppCompatActivity implements GooglePlay
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assinaturas);
+        TempoReal.observar(this, this::carregar, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("config").document("assinatura"));
 
         layoutSituacao = findViewById(R.id.layoutSituacao);
         imgSituacao = findViewById(R.id.imgSituacao);

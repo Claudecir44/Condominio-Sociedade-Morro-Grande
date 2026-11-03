@@ -27,6 +27,7 @@ public class ListaFuncionariosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_funcionarios);
+        TempoReal.observar(this, this::carregarLista, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("funcionarios"));
 
         recyclerView = findViewById(R.id.recyclerFuncionarios);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

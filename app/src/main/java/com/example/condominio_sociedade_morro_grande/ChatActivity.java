@@ -77,7 +77,10 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new Adapter();
         recycler.setAdapter(adapter);
 
-        if (souAdmin) carregarCabecalhoDoMorador();
+        if (souAdmin) {
+            carregarCabecalhoDoMorador();
+            TempoReal.observar(this, this::carregarCabecalhoDoMorador, com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("moradores").document(moradorUid));
+        }
 
         btnEnviar.setOnClickListener(v -> enviarTexto());
         escolherFoto = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
